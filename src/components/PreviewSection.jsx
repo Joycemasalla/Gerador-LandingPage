@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaLaptop, FaMobileAlt, FaDownload, FaCode, FaRobot, FaMagic, FaFilePdf } from 'react-icons/fa';
-import ModernTemplate from './LandingTemplates/ModernTemplate';
+import { FaLaptop, FaMobileAlt, FaDownload, FaCode, FaRobot, FaMagic, FaFilePdf, FaPalette, FaFont } from 'react-icons/fa';
+import DynamicTemplate from './LandingTemplates/DynamicTemplate';
 import { generateHTML, generateReactCode, downloadFile } from '../utils/exporter';
 
 export default function PreviewSection({ 
@@ -11,24 +11,45 @@ export default function PreviewSection({
   generationLogs = [] 
 }) {
   const [device, setDevice] = useState('desktop');
+  const [editedData, setEditedData] = useState(null);
+
+  // Sincronizar com os dados gerados pela IA com sanitização de fallback
+  useEffect(() => {
+    if (generatedData) {
+      const parsed = JSON.parse(JSON.stringify(generatedData));
+      parsed.theme = {
+        themeName: 'minimalist',
+        primaryColor: '#3b82f6',
+        secondaryColor: '#10b981',
+        lightColor: '#f8fafc',
+        darkColor: '#0f172a',
+        fontFamily: 'Inter',
+        secondaryFontFamily: 'Inter',
+        ...(parsed.theme || {})
+      };
+      setEditedData(parsed);
+    } else {
+      setEditedData(null);
+    }
+  }, [generatedData]);
 
   const handleExportHTML = () => {
-    if (!generatedData) return;
-    const htmlContent = generateHTML(generatedData, images);
-    const fileName = `${generatedData.businessName.toLowerCase().replace(/\s+/g, '_')}_landing_page.html`;
+    if (!editedData) return;
+    const htmlContent = generateHTML(editedData, images);
+    const fileName = `${editedData.businessName.toLowerCase().replace(/\s+/g, '_')}_landing_page.html`;
     downloadFile(htmlContent, fileName, 'text/html');
   };
 
   const handleExportReact = () => {
-    if (!generatedData) return;
-    const reactContent = generateReactCode(generatedData, images);
+    if (!editedData) return;
+    const reactContent = generateReactCode(editedData, images);
     const fileName = 'GeneratedLandingPage.jsx';
     downloadFile(reactContent, fileName, 'text/plain');
   };
 
   const handleExportPDF = () => {
-    if (!generatedData) return;
-    const htmlContent = generateHTML(generatedData, images);
+    if (!editedData) return;
+    const htmlContent = generateHTML(editedData, images);
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
       alert('Por favor, permita pop-ups para exportar em PDF.');
@@ -43,6 +64,36 @@ export default function PreviewSection({
         printWindow.print();
       }, 500);
     };
+  };
+
+  const updateThemeField = (field, value) => {
+    setEditedData(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        theme: {
+          ...prev.theme,
+          [field]: value
+        }
+      };
+    });
+  };
+
+  const applyPalettePreset = (themeName, primaryColor, secondaryColor, lightColor, darkColor) => {
+    setEditedData(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        theme: {
+          ...prev.theme,
+          themeName,
+          primaryColor,
+          secondaryColor,
+          lightColor,
+          darkColor
+        }
+      };
+    });
   };
 
   return (
@@ -82,7 +133,7 @@ export default function PreviewSection({
       </ControlBar>
 
       {/* Janela de preview */}
-      <ViewportWrapper>
+      <ViewportWrapper $hasData={!!editedData && !isGenerating}>
         {isGenerating ? (
           <LoadingScreen>
             <LoaderCircle>
@@ -98,10 +149,147 @@ export default function PreviewSection({
               ))}
             </LogConsole>
           </LoadingScreen>
-        ) : generatedData ? (
-          <DeviceFrame className={device}>
-            <ModernTemplate data={generatedData} images={images} />
-          </DeviceFrame>
+        ) : editedData ? (
+          <>
+            {/* Editor de Estilos lateral */}
+            <StyleEditorPanel>
+              <h3><FaPalette /> Estilos Premium</h3>
+              
+              <EditorSection>
+                <label>Personalidade do Design</label>
+                <div className="theme-options">
+                  {['minimalist', 'bold', 'elegant', 'friendly'].map(name => (
+                    <button 
+                      key={name}
+                      type="button" 
+                      className={`theme-btn ${editedData.theme.themeName === name ? 'active' : ''}`}
+                      onClick={() => updateThemeField('themeName', name)}
+                    >
+                      {name.charAt(0).toUpperCase() + name.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </EditorSection>
+
+              <EditorSection>
+                <label>Paletas Curadas Premium</label>
+                <div className="preset-options">
+                  <button 
+                    type="button" 
+                    className="preset-btn"
+                    style={{ background: 'linear-gradient(135deg, #1e293b 50%, #475569 50%)' }}
+                    onClick={() => applyPalettePreset('minimalist', '#1e293b', '#475569', '#f8fafc', '#0f172a')}
+                    title="Menta Clean / Slate"
+                  >
+                    Clean
+                  </button>
+                  <button 
+                    type="button" 
+                    className="preset-btn"
+                    style={{ background: 'linear-gradient(135deg, #ff0055 50%, #00f0ff 50%)', color: 'black' }}
+                    onClick={() => applyPalettePreset('bold', '#ff0055', '#00f0ff', '#0a0a0c', '#111115')}
+                    title="Sunset Neon / Cyber"
+                  >
+                    Neon
+                  </button>
+                  <button 
+                    type="button" 
+                    className="preset-btn"
+                    style={{ background: 'linear-gradient(135deg, #14532d 50%, #c5a880 50%)' }}
+                    onClick={() => applyPalettePreset('elegant', '#14532d', '#c5a880', '#fafaf9', '#0a0712')}
+                    title="Emerald Luxury"
+                  >
+                    Luxo
+                  </button>
+                  <button 
+                    type="button" 
+                    className="preset-btn"
+                    style={{ background: 'linear-gradient(135deg, #ff7a59 50%, #ffc53d 50%)' }}
+                    onClick={() => applyPalettePreset('friendly', '#ff7a59', '#ffc53d', '#fdfbf7', '#1e293b')}
+                    title="Coral Amigável"
+                  >
+                    Warm
+                  </button>
+                </div>
+              </EditorSection>
+
+              <EditorSection>
+                <label><FaFont /> Fonte de Títulos</label>
+                <select 
+                  value={editedData.theme.fontFamily || 'Inter'} 
+                  onChange={(e) => updateThemeField('fontFamily', e.target.value)}
+                >
+                  <option value="Inter">Inter (Padrão)</option>
+                  <option value="Cinzel">Cinzel (Luxo)</option>
+                  <option value="Playfair Display">Playfair Display (Elegante)</option>
+                  <option value="Space Grotesk">Space Grotesk (Tech/Bold)</option>
+                  <option value="Poppins">Poppins (Friendly)</option>
+                  <option value="Lora">Lora (Serif clássica)</option>
+                </select>
+              </EditorSection>
+
+              <EditorSection>
+                <label><FaFont /> Fonte de Textos</label>
+                <select 
+                  value={editedData.theme.secondaryFontFamily || 'Inter'} 
+                  onChange={(e) => updateThemeField('secondaryFontFamily', e.target.value)}
+                >
+                  <option value="Inter">Inter (Limpa)</option>
+                  <option value="Montserrat">Montserrat (Moderna)</option>
+                  <option value="Plus Jakarta Sans">Plus Jakarta Sans (Sleek)</option>
+                  <option value="Quicksand">Quicksand (Amigável)</option>
+                  <option value="Poppins">Poppins (Redonda)</option>
+                </select>
+              </EditorSection>
+
+              <EditorSection>
+                <div className="color-inputs-grid">
+                  <div>
+                    <label>Cor Primária</label>
+                    <input 
+                      type="color" 
+                      value={editedData.theme.primaryColor || '#3b82f6'} 
+                      onChange={(e) => updateThemeField('primaryColor', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label>Cor Secundária</label>
+                    <input 
+                      type="color" 
+                      value={editedData.theme.secondaryColor || '#10b981'} 
+                      onChange={(e) => updateThemeField('secondaryColor', e.target.value)}
+                    />
+                  </div>
+                </div>
+              </EditorSection>
+
+              <EditorSection>
+                <div className="color-inputs-grid">
+                  <div>
+                    <label>Cor Fundo Claro</label>
+                    <input 
+                      type="color" 
+                      value={editedData.theme.lightColor || '#f9fafb'} 
+                      onChange={(e) => updateThemeField('lightColor', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label>Cor Fundo Escuro</label>
+                    <input 
+                      type="color" 
+                      value={editedData.theme.darkColor || '#1f2937'} 
+                      onChange={(e) => updateThemeField('darkColor', e.target.value)}
+                    />
+                  </div>
+                </div>
+              </EditorSection>
+            </StyleEditorPanel>
+
+            {/* Visualizador */}
+            <DeviceFrame className={device}>
+              <DynamicTemplate data={editedData} images={images} />
+            </DeviceFrame>
+          </>
         ) : (
           <WelcomeScreen>
             <IconContainer>
@@ -135,6 +323,7 @@ export default function PreviewSection({
           </WelcomeScreen>
         )}
       </ViewportWrapper>
+
     </PreviewContainer>
   );
 }
@@ -231,11 +420,162 @@ const ViewportWrapper = styled.div`
   overflow: hidden;
   position: relative;
   background: #090d16;
-  display: flex;
+  display: ${props => props.$hasData ? 'grid' : 'flex'};
+  grid-template-columns: ${props => props.$hasData ? '320px 1fr' : '1fr'};
+  gap: 20px;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  height: calc(100% - 56px);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
 `;
+
+const StyleEditorPanel = styled.div`
+  background: #1e293b;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 16px;
+  overflow-y: auto;
+  text-align: left;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+`;
+
+const EditorSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Opções de temas */
+  .theme-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .theme-btn {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
+  }
+
+  /* Presets rápidos */
+  .preset-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .preset-btn {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s;
+    text-align: center;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  select {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: white;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+
+    &:focus {
+      border-color: #3b82f6;
+    }
+  }
+
+  /* Inputs de cores lado a lado */
+  .color-inputs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.7rem;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      background: none;
+      cursor: pointer;
+      padding: 0;
+
+      &::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+      &::-webkit-color-swatch {
+        border: none;
+        border-radius: 5px;
+      }
+    }
+  }
+`;
+
 
 const DeviceFrame = styled.div`
   background: white;
