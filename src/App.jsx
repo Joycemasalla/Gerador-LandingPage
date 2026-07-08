@@ -4,7 +4,7 @@ import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft } from 'react-icons/f
 import confetti from 'canvas-confetti';
 import InterviewWizard from './components/InterviewWizard/InterviewWizard';
 import PreviewSection from './components/PreviewSection';
-import { generateLandingPage } from './services/aiService';
+import { LandingEngine } from './core/landing-engine';
 
 export default function App() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -41,15 +41,21 @@ export default function App() {
       await addLog('🎨 Selecionando fontes e harmonizando paleta de cores (WCAG)...', 700);
       await addLog('🛠️ Validando integridade e estruturação de saída da Landing Page...', 700);
 
-      // Chamada real ao proxy de geração rico
-      const data = await generateLandingPage(richClientJson, extractedImages, customApiKey);
+      // Chamada real à nova Landing Engine (Data-driven)
+      const engine = new LandingEngine(null, customApiKey);
+      const data = await engine.generate(JSON.stringify(richClientJson, null, 2));
+
+      // Mock injetando as imagens no assetModel, já que o engine ainda não puxa.
+      if (extractedImages && extractedImages.length > 0) {
+        data.assetModel = { assets: extractedImages };
+      }
 
       await addLog('📦 Resposta recebida da IA com sucesso!', 300);
       await addLog('🚀 Renderizando Landing Page...', 200);
 
       setGeneratedData(data);
-      if (data.images && data.images.length > 0) {
-        setImages(data.images);
+      if (extractedImages && extractedImages.length > 0) {
+        setImages(extractedImages);
       }
       
       // Disparar confetes para comemoração

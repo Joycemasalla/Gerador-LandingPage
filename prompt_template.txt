@@ -28,7 +28,7 @@ Escolha exatamente uma das 4 personalidades e justifique por que ela se aplica p
   * Paleta: Slate escuro #1e293b, fundo #f8fafc.
 - `bold` (Moderno/Brutalismo): Barbearias, hamburguerias, estúdios de tatuagem, agências modernas.
   * Títulos: Space Grotesk ou Syne. Textos: Plus Jakarta Sans.
-  * Paleta: Cores vibrantes com fundo escuro bruto #0a0a0c.
+  * Paleta: Cores vibrantes com fundo escuro bruto #0a0a0c. ATENÇÃO: Para serviços locais, evite tons "tech" (como roxo espacial ou neon) se não for apropriado; prefira tons industriais, amadeirados ou neutros agressivos.
 - `elegant` (Luxo/Premium): Clínicas de estética de luxo, Spas, salões premium, odontologia VIP.
   * Títulos: Cinzel ou Cormorant. Textos: Montserrat.
   * Paleta: Dourado champagne #c5a880, fundos escuros profundos ou off-white.
@@ -39,7 +39,10 @@ Escolha exatamente uma das 4 personalidades e justifique por que ela se aplica p
 Passo 4 — Validação de Contraste (WCAG AA)
 Liste explicitamente os códigos hexadecimais para `primaryColor`, `secondaryColor`, `darkColor`, `lightColor`, `textColor` e `textColorOnDark`. Confirme: cada par texto/fundo apresenta uma razão de contraste igual ou superior a 4.5:1? Se não, ajuste as cores.
 
-Passo 5 — Signature Element
+Passo 5 — Autoridade Quantificável e Gatilhos
+Identifique ou crie de forma ética um dado de autoridade numérico (ex: "Centenas de clientes atendidos", "Referência na região") e pense em um gatilho de urgência sutil ("Vagas limitadas", "Atendimento rápido") para embasar a tomada de decisão do usuário.
+
+Passo 6 — Signature Element
 Descreva qual é o elemento visual ou de copy único que fará com que esta página pareça sob medida para ESTE cliente e não um template reaproveitável.
 
 Passo 6 — Autocrítica Final
@@ -53,18 +56,19 @@ Para cada seção da página, você deve planejar o conteúdo focando na convers
 
 1. HERO
 - Promessa central imediata com <span class="destaque"> no trecho mais impactante.
-- CTA chamativo com alto contraste.
-- trustBadge: selo rápido de confiança baseado nos dados reais (Ex: "Atendimento Especializado", "Atendimento em [Bairro]").
+- CTA chamativo com alto contraste. REGRA ABSOLUTA DE CRO: Nunca use termos fracos como "Falar no WhatsApp". Use verbos de ação imperativos e orientados ao benefício (Ex: "Agendar Meu Horário", "Garantir Minha Vaga", "Quero Minha Transformação").
+- trustBadge: selo rápido de confiança OBRIGATORIAMENTE contendo autoridade numérica ou forte indício de prova social (Ex: "+500 Clientes Satisfeitos", "Referência Número 1 no Bairro").
 
 2. IDENTIFICAÇÃO DE DOR (Pain Points)
 - 3 frases de identificação com as frustrações do cliente baseadas em `targetAudience.secondaryPains`. Se ausente, crie 3 dores plausíveis qualitativas e específicas do nicho.
 
 3. SOBRE / AUTORIDADE
 - Construa a história baseada em `identity.bio` e `identity.foundingStory`.
-- Omitir anos de negócio ou prêmios caso sejam nulos no JSON.
+- Injete autoridade numérica sempre que possível. Omitir anos de negócio exatos caso sejam nulos no JSON, mas use linguagem que reforce senioridade ("vasta experiência").
 
 4. SERVIÇOS / PRODUTOS
-- Liste os serviços de `services` mapeando cada um com um ícone específico do seu ofício (Ex: GiScissors para barbearia, FaGem para estética). Não use FaStar para tudo.
+- Liste os serviços mapeando cada um com um ícone ESPECÍFICO, ÚNICO e semântico do ofício (Ex: GiScissors para corte, FaTint para coloração). NUNCA repita o mesmo ícone genérico (como FaStar ou FaCheck) para múltiplos serviços.
+- Para reduzir fricção e incerteza (Lei de Hick), sempre que fizer sentido para o negócio local, inclua micro-dados na descrição ou no `targetResult`, como noção de tempo (ex: "⏱ 45 min de atendimento") ou indicativo de preço (ex: "Preços acessíveis" ou "A partir de R$ XX").
 - Destaque o serviço com `featured: true` na apresentação.
 
 5. DIFERENCIAIS

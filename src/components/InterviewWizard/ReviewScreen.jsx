@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaCheckCircle, FaExclamationCircle, FaEdit, FaSave, FaArrowLeft, FaRocket, FaTrash, FaPalette, FaSearch, FaSpinner } from 'react-icons/fa';
+import { fetchInstagramImagesOnly } from '../../services/aiService';
 
 export default function ReviewScreen({ clientJson, onUpdate, onGenerate }) {
   const { identity = {}, targetAudience = {}, contacts = {}, services = [], differentials = [], branding = {} } = clientJson;
@@ -45,24 +46,11 @@ export default function ReviewScreen({ clientJson, onUpdate, onGenerate }) {
     setInstaFetchError('');
     try {
       console.log('Fetching Instagram images for:', handle);
-      const response = await fetch('/api/fetch-instagram-images', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          instagramHandle: handle,
-          segment: identityForm.segment || identity.segment || ''
-        })
-      });
+      const segment = identityForm.segment || identity.segment || '';
+      const images = await fetchInstagramImagesOnly(handle, segment);
       
-      if (!response.ok) {
-        throw new Error('Falha na resposta do servidor.');
-      }
-      
-      const data = await response.json();
-      if (data.images && data.images.length > 0) {
-        setImagesList(data.images);
+      if (images && images.length > 0) {
+        setImagesList(images);
       } else {
         setInstaFetchError('Nenhuma imagem pública encontrada para este perfil.');
       }

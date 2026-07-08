@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaLaptop, FaMobileAlt, FaDownload, FaCode, FaRobot, FaMagic, FaFilePdf, FaPalette, FaFont } from 'react-icons/fa';
-import DynamicTemplate from './LandingTemplates/DynamicTemplate';
+import { EngineRenderer } from '../core/landing-engine/renderer/EngineRenderer';
 import { generateHTML, generateReactCode, downloadFile } from '../utils/exporter';
 
 export default function PreviewSection({ 
@@ -16,18 +16,7 @@ export default function PreviewSection({
   // Sincronizar com os dados gerados pela IA com sanitização de fallback
   useEffect(() => {
     if (generatedData) {
-      const parsed = JSON.parse(JSON.stringify(generatedData));
-      parsed.theme = {
-        themeName: 'minimalist',
-        primaryColor: '#3b82f6',
-        secondaryColor: '#10b981',
-        lightColor: '#f8fafc',
-        darkColor: '#0f172a',
-        fontFamily: 'Inter',
-        secondaryFontFamily: 'Inter',
-        ...(parsed.theme || {})
-      };
-      setEditedData(parsed);
+      setEditedData(generatedData);
     } else {
       setEditedData(null);
     }
@@ -151,143 +140,14 @@ export default function PreviewSection({
           </LoadingScreen>
         ) : editedData ? (
           <>
-            {/* Editor de Estilos lateral */}
-            <StyleEditorPanel>
-              <h3><FaPalette /> Estilos Premium</h3>
-              
-              <EditorSection>
-                <label>Personalidade do Design</label>
-                <div className="theme-options">
-                  {['minimalist', 'bold', 'elegant', 'friendly'].map(name => (
-                    <button 
-                      key={name}
-                      type="button" 
-                      className={`theme-btn ${editedData.theme.themeName === name ? 'active' : ''}`}
-                      onClick={() => updateThemeField('themeName', name)}
-                    >
-                      {name.charAt(0).toUpperCase() + name.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </EditorSection>
-
-              <EditorSection>
-                <label>Paletas Curadas Premium</label>
-                <div className="preset-options">
-                  <button 
-                    type="button" 
-                    className="preset-btn"
-                    style={{ background: 'linear-gradient(135deg, #1e293b 50%, #475569 50%)' }}
-                    onClick={() => applyPalettePreset('minimalist', '#1e293b', '#475569', '#f8fafc', '#0f172a')}
-                    title="Menta Clean / Slate"
-                  >
-                    Clean
-                  </button>
-                  <button 
-                    type="button" 
-                    className="preset-btn"
-                    style={{ background: 'linear-gradient(135deg, #ff0055 50%, #00f0ff 50%)', color: 'black' }}
-                    onClick={() => applyPalettePreset('bold', '#ff0055', '#00f0ff', '#0a0a0c', '#111115')}
-                    title="Sunset Neon / Cyber"
-                  >
-                    Neon
-                  </button>
-                  <button 
-                    type="button" 
-                    className="preset-btn"
-                    style={{ background: 'linear-gradient(135deg, #14532d 50%, #c5a880 50%)' }}
-                    onClick={() => applyPalettePreset('elegant', '#14532d', '#c5a880', '#fafaf9', '#0a0712')}
-                    title="Emerald Luxury"
-                  >
-                    Luxo
-                  </button>
-                  <button 
-                    type="button" 
-                    className="preset-btn"
-                    style={{ background: 'linear-gradient(135deg, #ff7a59 50%, #ffc53d 50%)' }}
-                    onClick={() => applyPalettePreset('friendly', '#ff7a59', '#ffc53d', '#fdfbf7', '#1e293b')}
-                    title="Coral Amigável"
-                  >
-                    Warm
-                  </button>
-                </div>
-              </EditorSection>
-
-              <EditorSection>
-                <label><FaFont /> Fonte de Títulos</label>
-                <select 
-                  value={editedData.theme.fontFamily || 'Inter'} 
-                  onChange={(e) => updateThemeField('fontFamily', e.target.value)}
-                >
-                  <option value="Inter">Inter (Padrão)</option>
-                  <option value="Cinzel">Cinzel (Luxo)</option>
-                  <option value="Playfair Display">Playfair Display (Elegante)</option>
-                  <option value="Space Grotesk">Space Grotesk (Tech/Bold)</option>
-                  <option value="Poppins">Poppins (Friendly)</option>
-                  <option value="Lora">Lora (Serif clássica)</option>
-                </select>
-              </EditorSection>
-
-              <EditorSection>
-                <label><FaFont /> Fonte de Textos</label>
-                <select 
-                  value={editedData.theme.secondaryFontFamily || 'Inter'} 
-                  onChange={(e) => updateThemeField('secondaryFontFamily', e.target.value)}
-                >
-                  <option value="Inter">Inter (Limpa)</option>
-                  <option value="Montserrat">Montserrat (Moderna)</option>
-                  <option value="Plus Jakarta Sans">Plus Jakarta Sans (Sleek)</option>
-                  <option value="Quicksand">Quicksand (Amigável)</option>
-                  <option value="Poppins">Poppins (Redonda)</option>
-                </select>
-              </EditorSection>
-
-              <EditorSection>
-                <div className="color-inputs-grid">
-                  <div>
-                    <label>Cor Primária</label>
-                    <input 
-                      type="color" 
-                      value={editedData.theme.primaryColor || '#3b82f6'} 
-                      onChange={(e) => updateThemeField('primaryColor', e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label>Cor Secundária</label>
-                    <input 
-                      type="color" 
-                      value={editedData.theme.secondaryColor || '#10b981'} 
-                      onChange={(e) => updateThemeField('secondaryColor', e.target.value)}
-                    />
-                  </div>
-                </div>
-              </EditorSection>
-
-              <EditorSection>
-                <div className="color-inputs-grid">
-                  <div>
-                    <label>Cor Fundo Claro</label>
-                    <input 
-                      type="color" 
-                      value={editedData.theme.lightColor || '#f9fafb'} 
-                      onChange={(e) => updateThemeField('lightColor', e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label>Cor Fundo Escuro</label>
-                    <input 
-                      type="color" 
-                      value={editedData.theme.darkColor || '#1f2937'} 
-                      onChange={(e) => updateThemeField('darkColor', e.target.value)}
-                    />
-                  </div>
-                </div>
-              </EditorSection>
-            </StyleEditorPanel>
-
-            {/* Visualizador */}
-            <DeviceFrame className={device}>
-              <DynamicTemplate data={editedData} images={images} />
+            {/* Visualizador - Full Width sem painel lateral por enquanto */}
+            <DeviceFrame className={device} style={{ width: '100%', margin: '0 auto' }}>
+              <EngineRenderer 
+                blueprint={editedData.blueprint}
+                themeTokens={editedData.themeTokens}
+                copyModel={editedData.copyModel}
+                assetModel={editedData.assetModel}
+              />
             </DeviceFrame>
           </>
         ) : (
@@ -420,8 +280,7 @@ const ViewportWrapper = styled.div`
   overflow: hidden;
   position: relative;
   background: #090d16;
-  display: ${props => props.$hasData ? 'grid' : 'flex'};
-  grid-template-columns: ${props => props.$hasData ? '320px 1fr' : '1fr'};
+  display: ${props => props.$hasData ? 'flex' : 'flex'};
   gap: 20px;
   align-items: center;
   justify-content: center;

@@ -1,0 +1,709 @@
+Framework Universal de Criação de Landing Pages Premium
+
+Documentação metodológica agnóstica de nicho para geração sistemática de landing pages de alta conversão.
+
+---
+
+1. Filosofia do Design
+
+Princípio raiz: toda decisão visual serve a um único objetivo mensurável — normalmente a conversão. Estética sem função é ruído; função sem estética destrói confiança. Ambas caminham juntas.
+
+Princípios inegociáveis:
+
+1. Clareza acima de criatividade. Se o visitante precisa pensar, você já perdeu.
+2. Hierarquia acima de decoração. O olho precisa saber onde pousar em menos de 3 segundos.
+3. Consistência acima de variedade. Repetição gera reconhecimento; reconhecimento gera confiança.
+4. Restrição acima de abundância. Menos elementos, mais impacto por elemento.
+5. Sistema acima de decisões pontuais. Nada é escolhido "no olho" — tudo vem de tokens.
+6. Mobile-first sem exceção. 60–80% do tráfego vem de mobile. Design que quebra no celular é design quebrado.
+7. Performance é parte do design. Uma página bonita que carrega em 6s converte menos que uma média que carrega em 1.5s.
+
+Decisões automáticas (não se discutem):
+
+- 1 objetivo por página → 1 CTA primário repetido
+- 1 H1 por página
+- Máx. 2 famílias tipográficas
+- Máx. 5 cores no sistema (excluindo neutros)
+- Contraste mínimo AA (4.5:1 texto normal, 3:1 texto grande)
+- Container máximo entre 1200–1440px
+- Tap target mínimo 44×44px
+
+Equilíbrio estética × conversão: a estética existe para reduzir fricção emocional (parecer confiável, moderno, profissional). Cada elemento decorativo deve responder a "isso ajuda o clique ou apenas embeleza?". Se não ajuda, remove-se.
+
+---
+
+2. Processo Completo de Construção
+
+Fase 0 — Briefing (antes de qualquer pixel)
+1. Definir objetivo único mensurável (agendar, comprar, cadastrar, contatar).
+2. Definir público, dor primária, objeções, prova social disponível.
+3. Definir promessa central em uma frase.
+4. Definir CTA primário (verbo + resultado).
+
+Fase 1 — Fundação (design system antes das telas)
+5. Escolher paleta a partir do posicionamento (ver §7).
+6. Escolher pareamento tipográfico (ver §6).
+7. Definir escala de espaçamento base (4px ou 8px).
+8. Definir raio, sombras, tokens de motion.
+9. Materializar tudo como variáveis CSS / tokens antes de escrever qualquer componente.
+
+Fase 2 — Arquitetura de informação
+10. Listar todas as objeções do público.
+11. Mapear cada seção a uma objeção que ela dissolve.
+12. Ordenar seções pelo fluxo AIDA (Atenção → Interesse → Desejo → Ação).
+13. Definir onde repetir o CTA (mínimo 3 vezes: hero, meio, fim).
+
+Fase 3 — Wireframe estrutural
+14. Blocos cinza + placeholders. Zero cor, zero fonte final.
+15. Validar hierarquia apenas pelo tamanho e peso dos blocos.
+16. Testar escaneabilidade: fecha os olhos, abre, entende em 3s?
+
+Fase 4 — Aplicação visual
+17. Aplicar tokens. Nunca cores ou tamanhos "avulsos".
+18. Compor cada seção pelo template do §3.
+
+Fase 5 — Copy final
+19. Substituir todo lorem ipsum por copy real seguindo §16.
+20. Headlines antes de subheadlines; benefícios antes de features.
+
+Fase 6 — Responsivo
+21. Testar 360 / 768 / 1024 / 1440 / 1920.
+22. Validar tap targets, quebras de texto, ordem de leitura.
+
+Fase 7 — Motion
+23. Adicionar apenas microinterações que reduzem carga cognitiva ou reforçam feedback.
+
+Fase 8 — Validação
+24. Rodar checklist §19 completo.
+25. Auditar performance (Lighthouse ≥ 90).
+26. Auditar acessibilidade (contraste, foco, teclado, ARIA).
+27. Auditar SEO técnico (title, meta, OG, schema, headings, alts).
+
+Fase 9 — Instrumentação
+28. Eventos de clique nos CTAs, scroll depth, tempo em seção.
+
+---
+
+3. Arquitetura Universal de Seções
+
+Seções canônicas (ordem padrão):
+
+| # | Seção | Função psicológica | Obrigatória? |
+|---|---|---|---|
+| 1 | Navbar | Orientação + CTA sempre visível | Sim |
+| 2 | Hero | Promessa + CTA primário | Sim |
+| 3 | Prova social rápida (logos/estrelas) | Reduzir desconfiança inicial | Recomendada |
+| 4 | Benefícios / Diferenciais | Traduzir features em ganhos | Sim |
+| 5 | Como funciona | Reduzir fricção mental | Sim |
+| 6 | Produto/Serviço/Oferta | Objeto da compra | Sim |
+| 7 | Sobre / Autoridade | Confiança e conexão | Recomendada |
+| 8 | Prova social profunda (depoimentos, cases) | Validação por pares | Sim |
+| 9 | Comparativo / Antes-depois | Contraste com status quo | Opcional |
+| 10 | Preços / Planos | Transparência + ancoragem | Depende do modelo |
+| 11 | FAQ | Dissolver objeções finais | Sim |
+| 12 | CTA final | Última janela de conversão | Sim |
+| 13 | Footer | Confiança institucional + contato | Sim |
+| 14 | Elemento persistente (botão flutuante / navbar sticky) | Conversão a qualquer scroll | Sim em mobile |
+
+Regras de decisão:
+
+- Adicionar uma seção quando: existe uma objeção específica sem resposta em nenhuma outra seção.
+- Remover uma seção quando: ela é redundante, quebra o fluxo AIDA ou introduz nova fricção sem retorno.
+- Nunca: usar seção só porque "fica bonito". Cada seção paga o próprio custo em atenção.
+
+---
+
+4. Hierarquia Visual
+
+Regra F/Z: o olho ocidental escaneia em F (conteúdo denso) ou Z (páginas visuais). Elementos de decisão ficam nos pontos de repouso desse padrão.
+
+Camadas de foco (3 níveis, nunca mais):
+1. Foco 1 (headline + CTA): cor forte, tamanho grande, contraste máximo.
+2. Foco 2 (subtítulos de seção, benefícios): peso médio, cor forte, contraste alto.
+3. Foco 3 (corpo, apoio): peso normal, cor neutra, contraste suficiente.
+
+Escala de tamanho (ratio 1.25 ou 1.333):
+Cada nível hierárquico deve ser pelo menos 25% maior/menor que o adjacente para diferença perceptível.
+
+Contraste hierárquico:
+- Cor de destaque = apenas em CTAs, dados-chave, ícones essenciais.
+- Neutros carregam 80% do design; destaque carrega 20%.
+
+Ritmo visual: alternar densidade — seções densas seguem seções respiradas. Nunca duas seções visualmente pesadas em sequência.
+
+Regra do 3s: ao abrir a página, o usuário deve conseguir responder em 3 segundos: (1) do que se trata, (2) para quem é, (3) o que fazer a seguir.
+
+---
+
+5. Sistema Universal de Espaçamento
+
+Base 4px ou 8px. Toda medida é múltiplo dessa base. Elimina 90% das decisões subjetivas.
+
+Escala recomendada: 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 · 128 · 160
+
+Regras de aplicação:
+
+| Contexto | Espaço |
+|---|---|
+| Entre ícone e texto | 8 |
+| Padding interno de botão | 12–16 vertical / 24–32 horizontal |
+| Padding de card | 24–32 |
+| Gap entre cards | 16–24 |
+| Padding de seção (mobile) | 64–80 vertical |
+| Padding de seção (desktop) | 96–128 vertical |
+| Container máx. | 1200–1440 |
+| Padding lateral de container | 16 mobile / 24 tablet / 32+ desktop |
+
+Princípio da proximidade: elementos relacionados a ≤16px; elementos distintos a ≥32px. Espaço define agrupamento antes de qualquer linha divisória.
+
+Alinhamento: um único eixo dominante por seção (esquerda OU centro). Nunca alinhar corpos de texto ao centro em blocos longos.
+
+---
+
+6. Sistema Universal de Tipografia
+
+Máximo 2 famílias: uma para display (títulos), uma para UI/corpo. Uma terceira só se for monoespaçada com função semântica (código, números).
+
+Critérios de escolha:
+
+- Display: personalidade + presença. Deve carregar o "sabor" da marca.
+- Corpo: legibilidade acima de tudo. Sans-serif geométrica ou humanista, otimizada para tela.
+
+Escala tipográfica (ratio 1.25 mobile, 1.333 desktop):
+`12 · 14 · 16 · 18 · 20 · 24 · 30 · 36 · 48 · 60 · 72 · 96`
+
+Pesos: máx. 3 pesos por família (ex.: 400 / 500 / 700). Mais pesos poluem o sistema e pesam bundle.
+
+Line-height:
+- Display: 1.0–1.1
+- Subtítulos: 1.2–1.3
+- Corpo: 1.5–1.7
+- UI (botões, labels): 1.0–1.2
+
+Letter-spacing:
+- Display grande: -0.02em a -0.04em (mais apertado quanto maior)
+- Corpo: 0 (padrão)
+- Labels/uppercase: +0.05em a +0.25em
+
+Regras:
+- Nunca mais de 75 caracteres por linha em corpo.
+- Nunca corpo abaixo de 16px em mobile.
+- Nunca justificar texto na web.
+
+---
+
+7. Sistema Universal de Cores
+
+Modelo obrigatório (5 papéis, não mais):
+
+1. Background — base neutra (claro ou escuro).
+2. Foreground — texto principal, contraste máximo com background.
+3. Muted — texto secundário, superfícies suaves.
+4. Primary/Accent — cor de marca, usada com moderação (10–20% da tela).
+5. Feedback — success, warning, danger, info (semânticas, não estéticas).
+
+Critérios de escolha da cor de destaque:
+- Deve ter contraste ≥ 3:1 com o background.
+- Deve ser reservada quase exclusivamente para CTAs e sinais de ação.
+- Deve ser inequívoca: se está pintado com ela, é clicável ou é dado-chave.
+
+Neutros: escala de 10 tons entre background e foreground (ex.: 50, 100, 200… 900). Todo cinza da UI vem daqui.
+
+Fundos: máx. 2 níveis de background por página (base + elevated). Adicionar um terceiro só quando há hierarquia clara de superfícies (ex.: card sobre card).
+
+Estados dos elementos interativos (obrigatórios):
+- default · hover · active · focus-visible · disabled
+
+Regras de contraste (WCAG):
+- Texto normal ≥ 4.5:1
+- Texto grande (≥18px ou 14px bold) ≥ 3:1
+- Elementos gráficos e bordas de foco ≥ 3:1
+
+Modo escuro: não é toggle opcional — é uma decisão de branding. Se existir, deve ser sistema paralelo completo, não inversão automática.
+
+---
+
+8. Componentização
+
+Regra do 3: se um padrão aparece 3 vezes, vira componente.
+
+Componentes sempre presentes:
+`Button` · `Link` · `Container` · `Section` · `Heading` · `Text` · `Card` · `Badge` · `Icon` · `Input` · `Nav` · `Footer` · `Image` · `Divider`
+
+Componentes de página:
+`Navbar` · `Hero` · `FeatureGrid` · `StepList` · `TestimonialCard` · `PricingCard` · `FAQItem` · `CTABlock` · `SocialProofStrip` · `FloatingCTA`
+
+Regras:
+- Componentes recebem variantes, não props de estilo cru.
+- Um componente = uma responsabilidade.
+- Estilo vem de tokens; nunca hardcoded no componente.
+- Composição > configuração: preferir componentes pequenos combináveis a componentes gigantes com 20 props.
+
+---
+
+9. Sistema de Cards
+
+Anatomia canônica: ícone/mídia → título → descrição → ação (opcional).
+
+Regras:
+- Padding: 24 (compacto), 32 (padrão), 40 (destaque).
+- Raio: um único raio para todos os cards da página (ex.: 12 ou 16 ou 24).
+- Borda: 1px de neutro sutil OU sombra suave — nunca ambos com força total.
+- Sombra: discreta em repouso, elevada em hover (motion sutil).
+- Altura: grid com `align: stretch` para altura uniforme; nunca alturas irregulares em grade horizontal.
+- Hierarquia interna: um único elemento em destaque por card (ícone colorido OU número grande OU imagem — não os três).
+- Densidade: mínimo 3, ideal 3–6 cards por seção. 7+ vira ruído.
+
+---
+
+10. Sistema de Botões
+
+Hierarquia (3 níveis, nunca mais):
+
+| Nível | Uso | Estilo |
+|---|---|---|
+| Primário | Ação principal (CTA de conversão) | Cor de destaque sólida, alto contraste |
+| Secundário | Ação alternativa relevante | Contorno, ghost ou cor neutra |
+| Terciário | Ação de baixa prioridade | Link textual, ícone, underline |
+
+Regras:
+- 1 CTA primário por seção. Dois competem e reduzem conversão.
+- Tamanho mínimo: 44×44px (tap target). Padding recomendado: 12–16 vertical × 24–32 horizontal.
+- Peso da fonte: 500–600. Nunca regular.
+- Formato: raio consistente com o resto do sistema (todos pill, todos rounded, ou todos square — não misturar).
+- Ícone à esquerda: decorativo. À direita: indica progressão (ex.: "Continuar →").
+- Estados obrigatórios: default, hover, active, focus-visible, disabled, loading.
+- Copy: verbo de ação + resultado ("Agendar consulta", não "Enviar"). Máx. 4 palavras.
+- Posição: o CTA primário aparece acima da dobra E no fim de cada bloco persuasivo E no CTA final.
+
+---
+
+11. Sistema de Ícones
+
+Uma única biblioteca por projeto. Misturar estilos (Lucide + FontAwesome + emoji) destrói consistência instantaneamente.
+
+Critérios:
+- Estilo único: outline OU filled OU duotone. Nunca misturar.
+- Espessura única: 1.5px ou 2px consistente em todo o sistema.
+- Grid único: todos os ícones no mesmo canvas (ex.: 24×24).
+- Cor: herda de `currentColor`; nunca ícone com cor própria fixa.
+- Uso: funcional (indica ação/categoria) OU decorativo (reforça mensagem) — nunca aleatório.
+- Tamanhos: escala fechada (16 · 20 · 24 · 32 · 48).
+
+---
+
+12. Sistema de Imagens
+
+Critérios de seleção:
+
+| Tipo | Quando usar |
+|---|---|
+| Foto real | Serviços humanos, ambientes físicos, prova social |
+| Ilustração | Conceitos abstratos, produtos digitais, tom lúdico |
+| Mockup / screenshot | Produtos digitais (mostrar o que se compra) |
+| Vídeo | Demonstração de uso, atmosfera, storytelling curto (≤30s) |
+| Padrão/textura de fundo | Ritmo visual, evitar seções "chapadas" |
+
+Regras:
+- Toda imagem tem propósito narrativo. Sem imagem só por "encher espaço".
+- Consistência de tratamento: mesma paleta, mesmo estilo fotográfico, mesma direção de luz na página inteira.
+- Formato moderno: WebP/AVIF. Lazy-load em tudo exceto hero (LCP).
+- Sempre com `alt` descritivo; `alt=""` apenas se puramente decorativa.
+- Nunca texto crítico dentro de imagem (SEO + acessibilidade).
+- Proporções fechadas por contexto (1:1, 4:3, 16:9, 3:4) — não aleatórias.
+
+---
+
+13. Sistema de Layout Responsivo
+
+Breakpoints padrão:
+`sm: 640` · `md: 768` · `lg: 1024` · `xl: 1280` · `2xl: 1536`
+
+Container: fluido com padding lateral e `max-width` no maior breakpoint.
+
+Grid:
+- Mobile: 1 coluna.
+- Tablet: 2 colunas.
+- Desktop: 3–4 colunas.
+- Nunca mais de 4 em conteúdo denso; 6+ apenas em galerias visuais.
+
+Regras de reorganização automática:
+- Colunas viram linhas em ordem lógica de leitura (nunca inverter a ordem semântica).
+- Imagem lado-a-lado em desktop vira topo-do-bloco em mobile.
+- Navbar horizontal vira menu hambúrguer < 768px.
+- Fontes reduzem em escala (ratio menor) em mobile — nunca hard-reset.
+- Espaçamentos verticais reduzem ~40% em mobile.
+
+Nunca: design "desktop-first" adaptado. Sempre mobile-first, expandindo.
+
+---
+
+14. Sistema de Animações
+
+Princípio: motion serve à cognição, não ao ego do designer.
+
+Quando animar:
+- Feedback de ação (clique, hover, foco).
+- Entrada de conteúdo em viewport (fade+rise sutil).
+- Transições de estado (accordion, modal, toast).
+- Guiar atenção para elemento crítico (raro, com propósito).
+
+O que nunca animar:
+- Texto do corpo em loop.
+- Elementos críticos de conversão de forma que atrasem interação.
+- Múltiplos elementos simultâneos brigando pela atenção.
+- Parallax excessivo (quebra em mobile, causa nausea).
+
+Duração:
+- Micro (hover, toggle): 100–200ms
+- Padrão (entrada, saída): 200–350ms
+- Complexa (transições grandes): 400–600ms — nunca acima de 700ms
+
+Easing: `ease-out` para entradas, `ease-in` para saídas, `ease-in-out` para movimentos contínuos. Padrão: cubic-bezier suave — nunca linear em UI.
+
+Regra prefers-reduced-motion: sempre respeitar. Fallback deve remover animações sem quebrar layout.
+
+---
+
+15. Sistema de UX
+
+Fluxo de leitura: garantir que a ordem visual = ordem semântica = ordem de leitura em qualquer viewport.
+
+Redução de carga cognitiva:
+- 1 decisão por tela / seção.
+- Copy escaneável: bullets, negritos estratégicos, subtítulos curtos.
+- Progresso visível em fluxos multi-etapa.
+- Nomear ações pelo resultado, não pelo mecanismo.
+
+Consistência:
+- Mesma ação = mesmo componente = mesma posição = mesma cor.
+- Padrões de plataforma respeitados (nunca reinventar interações padrão).
+
+Feedback visual:
+- Toda ação do usuário gera resposta ≤100ms (visual mínimo).
+- Estados de carregamento explícitos.
+- Erros contextuais (junto ao campo, não em topo genérico).
+
+Acessibilidade (mínimos obrigatórios):
+- Navegação por teclado completa.
+- `focus-visible` presente em tudo interativo.
+- Landmarks HTML (`main`, `nav`, `footer`, `header`).
+- Contraste AA.
+- ARIA apenas onde HTML nativo não resolve.
+- `lang` no `<html>`.
+
+---
+
+16. Sistema de CRO
+
+Posicionamento de CTA:
+- Acima da dobra (hero).
+- A cada 1.5–2 alturas de tela.
+- No fim de cada bloco persuasivo (após benefícios, após depoimentos, após preços).
+- CTA final dedicado antes do footer.
+- Botão persistente em mobile.
+
+Gatilhos mentais (usar com sobriedade, nunca todos juntos):
+
+| Gatilho | Como aplicar |
+|---|---|
+| Autoridade | Credenciais, mídia, certificações, números de experiência |
+| Prova social | Depoimentos com nome + foto + contexto; contadores; logos |
+| Escassez | Vagas limitadas, estoque real (nunca fake) |
+| Urgência | Prazos reais, ofertas com data |
+| Reciprocidade | Recursos gratuitos, garantias, brindes |
+| Simplicidade | 3 passos, uma promessa, um clique |
+| Consistência | Micro-compromissos progressivos |
+| Aversão à perda | O que ele perde por não agir |
+
+Objeções — mapeamento obrigatório:
+Toda objeção antecipada deve ser respondida por uma seção específica: preço → planos/valor entregue; confiança → prova social + garantia; tempo → como funciona; complexidade → FAQ.
+
+Depoimentos: sempre com nome real, foto, cargo/contexto e resultado específico. Sem isso, viram ruído.
+
+Garantias: explicitar risco zero ("cancele quando quiser", "satisfação garantida em X dias").
+
+Microcopy:
+- Botões: verbo + resultado desejado pelo usuário.
+- Formulários: labels claras, placeholders como exemplo, mensagens de erro humanas.
+- Confirmações: reforçar o benefício, não apenas "enviado com sucesso".
+
+---
+
+17. Sistema de Design Tokens
+
+Estrutura de referência (nomes semânticos, não literais):
+
+```
+color:
+  background, foreground, muted, muted-foreground,
+  card, card-foreground, border, input, ring,
+  primary, primary-foreground,
+  secondary, secondary-foreground,
+  accent, accent-foreground,
+  success, warning, danger, info
+
+font-family:
+  display, sans, mono
+
+font-size:
+  xs 12 · sm 14 · base 16 · lg 18 · xl 20 ·
+  2xl 24 · 3xl 30 · 4xl 36 · 5xl 48 · 6xl 60 · 7xl 72
+
+font-weight: 400 · 500 · 600 · 700
+line-height: tight 1.1 · snug 1.25 · normal 1.5 · relaxed 1.7
+letter-spacing: tight -0.02 · normal 0 · wide 0.05 · wider 0.15
+
+space:
+  0 · 1(4) · 2(8) · 3(12) · 4(16) · 6(24) · 8(32) ·
+  12(48) · 16(64) · 24(96) · 32(128) · 40(160)
+
+radius: none 0 · sm 4 · md 8 · lg 12 · xl 16 · 2xl 24 · full 9999
+
+shadow: xs · sm · md · lg · xl · 2xl · inner · none
+
+transition:
+  fast 150ms · base 200ms · slow 300ms · slower 500ms
+  easing: standard · in · out · in-out
+
+z-index:
+  base 0 · dropdown 1000 · sticky 1100 · overlay 1200 ·
+  modal 1300 · popover 1400 · toast 1500 · tooltip 1600
+
+breakpoints: sm 640 · md 768 · lg 1024 · xl 1280 · 2xl 1536
+
+container: sm 640 · md 768 · lg 1024 · xl 1200 · 2xl 1440
+
+button: height (sm 36 · md 44 · lg 52) · padding-x (16 · 24 · 32) · radius (via token)
+input: height (sm 36 · md 44 · lg 52) · padding-x 12–16 · border 1
+card: padding (sm 16 · md 24 · lg 32) · radius (via token) · shadow (via token)
+badge: height 20–24 · padding-x 8–10 · radius full · font-size xs
+tag: height 24–28 · padding-x 10–12
+modal: max-width 480 · padding 24–32 · overlay opacity 60–80%
+tooltip: padding 6–10 · font-size xs · max-width 240
+```
+
+Todos os componentes leem exclusivamente destes tokens. Nenhum número mágico em código de componente.
+
+---
+
+18. Regras Universais Invioláveis
+
+1. Máx. 5 cores no sistema (fora escala neutra).
+2. Máx. 2 famílias tipográficas.
+3. Máx. 3 pesos por família.
+4. Máx. 3 níveis de botão.
+5. 1 H1 por página.
+6. 1 CTA primário por seção.
+7. 1 objetivo por página.
+8. Contraste mínimo 4.5:1 (texto normal), 3:1 (texto grande / bordas de foco).
+9. Tap target mínimo 44×44px.
+10. Corpo mínimo 16px em mobile.
+11. Linha máxima 75 caracteres.
+12. Container máximo 1440px.
+13. Padding mínimo lateral 16px em mobile.
+14. Padding vertical mínimo de seção 64px em mobile / 96px em desktop.
+15. Toda medida = múltiplo da unidade base (4 ou 8).
+16. Toda cor de UI = token semântico. Nunca hex direto no componente.
+17. Toda animação ≤ 700ms.
+18. Toda animação respeita prefers-reduced-motion.
+19. Toda imagem tem `alt`.
+20. Todo botão/link icon-only tem `aria-label`.
+21. Todo campo tem label associada.
+22. Todo estado interativo tem `focus-visible`.
+23. Nenhuma cor sozinha comunica estado (sempre + ícone ou texto).
+24. Nenhuma seção sem propósito de conversão ou confiança.
+25. Nenhum texto crítico dentro de imagem.
+26. Nenhum modal sem tecla ESC.
+27. Nenhum autoplay de vídeo com som.
+28. Nenhum carrossel como único meio de acesso ao conteúdo.
+29. Zero lorem ipsum na entrega final.
+30. Zero elemento decorativo sem função narrativa.
+
+---
+
+19. Checklist Completo de Validação (100+ itens)
+
+Estratégia
+1. Objetivo único definido.
+2. Público-alvo explícito.
+3. Promessa central em uma frase.
+4. CTA primário definido (verbo + resultado).
+5. Objeções mapeadas e endereçadas.
+6. Prova social disponível e usada.
+7. Diferencial competitivo claro.
+
+Arquitetura de Informação
+8. Ordem AIDA respeitada.
+9. Cada seção responde a uma objeção.
+10. CTA repetido em ≥3 pontos.
+11. Fluxo lógico sem saltos.
+12. Nenhuma seção redundante.
+13. Densidade alternada (respiro entre blocos densos).
+
+Hero
+14. Headline forte e específica.
+15. Subheadline complementa (não repete).
+16. CTA primário visível acima da dobra.
+17. Prova social imediata (estrelas, logos, número de clientes).
+18. Imagem/vídeo com propósito narrativo.
+19. Menos de 3s para entender do que se trata.
+
+Tipografia
+20. Máx. 2 famílias em uso.
+21. Escala tipográfica consistente.
+22. Line-height ajustado por contexto.
+23. Letter-spacing ajustado em títulos grandes.
+24. Corpo ≥16px em mobile.
+25. Linha ≤75 caracteres.
+26. Nenhum texto justificado.
+27. Nenhum uppercase em blocos longos.
+
+Cor
+28. Paleta ≤5 cores + neutros.
+29. Destaque reservado a ações/dados-chave.
+30. Contraste AA validado.
+31. Estados semânticos definidos (success/warning/danger/info).
+32. Cor não é único indicador de estado.
+33. Dark mode consistente (se existir).
+
+Espaçamento
+34. Todo valor é múltiplo da base.
+35. Padding de seção respeita mínimos.
+36. Gap consistente por contexto.
+37. Proximidade agrupa elementos relacionados.
+38. Alinhamento único por seção.
+
+Componentes
+39. Nenhum estilo hardcoded fora de tokens.
+40. Variantes claras (primary/secondary/ghost).
+41. Botões seguem hierarquia 3 níveis máx.
+42. Cards com padding e raio consistentes.
+43. Ícones de uma única biblioteca/estilo.
+44. Inputs com estados completos.
+
+CTA & Botões
+45. CTA primário único por seção.
+46. Copy verbo + resultado.
+47. Tamanho ≥44×44px.
+48. Estados hover/focus/active/disabled/loading.
+49. Contraste de botão suficiente.
+50. Botão flutuante em mobile (quando aplicável).
+
+Prova Social
+51. Depoimentos com nome real.
+52. Foto ou identificação visual.
+53. Contexto/cargo do depoente.
+54. Resultado específico mencionado.
+55. Métricas verificáveis.
+56. Logos/mídia (se disponíveis).
+
+FAQ
+57. Perguntas na voz do cliente.
+58. Respostas dissolvem objeções concretas.
+59. Ordem por prioridade de objeção.
+60. Interação acessível (teclado, ARIA).
+
+Formulários
+61. Labels visíveis e associadas.
+62. Placeholders como exemplo, não como label.
+63. Validação inline com mensagens humanas.
+64. Erros contextuais (não banner genérico).
+65. Autocomplete configurado.
+66. Mínimo de campos necessários.
+
+Responsivo
+67. 360, 768, 1024, 1440, 1920 testados.
+68. Ordem semântica preservada em mobile.
+69. Fontes reescalam com hierarquia mantida.
+70. Espaçamentos verticais reduzem em mobile.
+71. Tap targets ≥44px em todos os breakpoints.
+72. Menu hambúrguer funcional < 768px.
+73. Imagens adaptativas (srcset/sizes).
+
+Animação
+74. Motion serve à cognição.
+75. Durações dentro de 100–700ms.
+76. Easing curvado, nunca linear.
+77. `prefers-reduced-motion` respeitado.
+78. Nada em loop distraindo do CTA.
+79. Feedback visual em toda interação ≤100ms.
+
+Acessibilidade
+80. `lang` no `<html>`.
+81. `<main>` único e presente.
+82. Landmarks (`header`, `nav`, `footer`).
+83. Hierarquia de headings sem saltos.
+84. `alt` em todas as imagens.
+85. `aria-label` em icon-only.
+86. `focus-visible` em todos interativos.
+87. Navegação por teclado completa.
+88. Contraste AA em texto e bordas de foco.
+89. Sem `tabindex > 0`.
+90. Sem `autoFocus` fora de modal.
+91. Sem `aria-hidden` em containers focáveis.
+
+SEO Técnico
+92. `<title>` único e descritivo (<60 chars).
+93. `meta description` (<160 chars).
+94. Open Graph completo (title, description, image, url, type).
+95. Twitter card.
+96. Schema.org (LocalBusiness/Product/Article conforme aplicável).
+97. Canonical.
+98. `robots.txt` e `sitemap.xml`.
+99. URLs semânticas.
+100. Headings hierárquicos (1 H1, H2s por seção).
+
+Performance
+101. LCP < 2.5s.
+102. CLS < 0.1.
+103. Imagens em WebP/AVIF.
+104. Lazy-load fora do LCP.
+105. Fontes com `display=swap` e preconnect.
+106. JS crítico dividido/priorizado.
+107. Lighthouse ≥ 90 em performance e acessibilidade.
+
+Confiança & Contato
+108. Endereço/telefone/canais visíveis.
+109. Políticas de privacidade/termos linkadas.
+110. Mapa embed (se físico).
+111. Redes sociais no rodapé.
+
+QA Final
+112. Zero placeholder/lorem.
+113. Zero link quebrado.
+114. Zero console error/warning.
+115. Testado em Chrome, Safari, Firefox.
+116. Testado em iOS Safari e Android Chrome.
+117. Eventos analytics disparando.
+
+---
+
+20. Framework Final — Síntese Operacional
+
+Nome: Universal Premium Landing Framework (UPLF).
+
+Definição: metodologia agnóstica de nicho para geração sistemática de landing pages de alta conversão, baseada em três pilares:
+
+1. Sistema antes de tela. Design tokens são a fonte de verdade única. Nenhum pixel decidido fora deles.
+2. Estrutura antes de estilo. Wireframe cinza valida hierarquia; estilo apenas veste.
+3. Objeção antes de seção. Nenhuma seção existe sem uma objeção específica a dissolver.
+
+Pipeline canônico (aplicável a qualquer nicho):
+
+```
+Briefing → Tokens → Wireframe → Composição
+   → Copy → Motion → Responsivo → Validação → Instrumentação
+```
+
+Invariantes universais:
+- 1 objetivo · 1 H1 · 1 CTA primário por seção.
+- 5 cores máx · 2 fontes máx · 3 pesos máx · 3 níveis de botão.
+- Base 4/8 · escala tipográfica ratio 1.25–1.333.
+- Contraste AA · tap 44px · corpo 16px · linha 75ch.
+- Toda animação ≤700ms e reduzida sob preferência.
+- Toda seção mapeada a uma objeção; todo elemento a um propósito.
+
+Diferencial vs. templates genéricos: o UPLF não escolhe estilo — escolhe método. O estilo emerge dos tokens iniciais (paleta, tipografia, layout) que são adaptados ao posicionamento do nicho, mas as regras de composição, hierarquia, espaçamento, motion, acessibilidade e conversão permanecem idênticas em SaaS, clínica, barbearia, restaurante, escritório, imobiliária, academia, evento, curso, infoproduto, e-commerce, B2B ou B2C.
+
+Contrato de qualidade: uma página só pode ser considerada "premium" quando passa em 100% do checklist da §19. Abaixo disso, é rascunho — não entrega.

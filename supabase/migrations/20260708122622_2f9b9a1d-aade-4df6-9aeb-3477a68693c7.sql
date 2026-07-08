@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS public.mensagens_geradas CASCADE; DROP TABLE IF EXISTS public.leads CASCADE;
