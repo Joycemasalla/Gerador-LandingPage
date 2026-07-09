@@ -45,10 +45,11 @@ export default function App() {
       const engine = new LandingEngine(null, customApiKey);
       const data = await engine.generate(JSON.stringify(richClientJson, null, 2));
 
-      // Mock injetando as imagens no assetModel, já que o engine ainda não puxa.
-      if (extractedImages && extractedImages.length > 0) {
-        data.assetModel = { assets: extractedImages };
-      }
+      // Normalizar nomes que o EngineRenderer espera (copyModel, assetModel)
+      data.copyModel = data.copy;
+      data.assetModel = extractedImages && extractedImages.length > 0
+        ? { assets: extractedImages }
+        : (data.assets && data.assets.assets ? data.assets : { assets: [] });
 
       await addLog('📦 Resposta recebida da IA com sucesso!', 300);
       await addLog('🚀 Renderizando Landing Page...', 200);
