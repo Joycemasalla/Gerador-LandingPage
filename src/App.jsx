@@ -39,6 +39,7 @@ export default function App() {
       await addLog('📝 Estruturando Briefing de Neuromarketing e Copywriting...', 800);
       await addLog('🛠️ Redigindo o Super Prompt Otimizado para o Lovable...', 700);
 
+<<<<<<< HEAD
       if (customApiKey === 'mock') {
         await addLog('🧪 [MODO MOCK ATIVADO] Ignorando API...', 100);
         
@@ -54,6 +55,17 @@ export default function App() {
         const data = await generateStrategy(richClientJson, customApiKey);
         setGeneratedData(data);
       }
+=======
+      // Chamada real à nova Landing Engine (Data-driven)
+      const engine = new LandingEngine(null, customApiKey);
+      const data = await engine.generate(JSON.stringify(richClientJson, null, 2));
+
+      // Normalizar nomes que o EngineRenderer espera (copyModel, assetModel)
+      data.copyModel = data.copy;
+      data.assetModel = extractedImages && extractedImages.length > 0
+        ? { assets: extractedImages }
+        : (data.assets && data.assets.assets ? data.assets : { assets: [] });
+>>>>>>> ace6559c1ddd1f0d35aa7f290801132f9e025a86
 
       await addLog('📦 Documentos recebidos da IA com sucesso!', 300);
       await addLog('🚀 Renderizando Dashboard Estratégico...', 200);
