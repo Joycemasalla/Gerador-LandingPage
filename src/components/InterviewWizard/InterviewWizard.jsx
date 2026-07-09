@@ -212,6 +212,63 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
     setStep('interviewing');
   };
 
+  // Preencher com Dados Falsos de Teste
+  const handleMockExtraction = () => {
+    setErrorMsg('');
+    const mockJson = {
+      ...EMPTY_RICH_JSON,
+      identity: {
+        businessName: "Studio Beauty Test (MOCK)",
+        segment: "Salão de Beleza",
+        segmentKeywords: ["Cabelo", "Maquiagem", "Estética"],
+        bio: "O melhor salão da região focado em realçar sua beleza natural.",
+        foundingStory: "Criado em 2020.",
+        ownerName: "Maria da Silva",
+        neighborhood: "Centro",
+        city: "São Paulo",
+        state: "SP",
+        address: "Rua das Flores, 100",
+        yearsInBusiness: 4,
+        teamSize: 5,
+        certifications: [],
+        awards: []
+      },
+      targetAudience: {
+        idealClient: "Mulheres que buscam se sentir bonitas e confiantes",
+        primaryPain: "Cabelos danificados e sem vida",
+        secondaryPains: [],
+        mainObjection: "Preço alto ou medo de danificar mais o cabelo",
+        desiredTransformation: "Autoestima renovada e cabelos saudáveis"
+      },
+      services: [{ name: "Corte e Escova VIP", description: "Transformação completa do visual", targetResult: "Fios saudáveis, leves e com movimento", priceRange: "R$ 150", duration: "1h 30m", featured: true }],
+      differentials: [{ title: "Atendimento VIP", description: "Café, champanhe e um ambiente totalmente climatizado para você relaxar." }],
+      process: { steps: [{ order: 1, title: "Agendamento Fácil", description: "Fale conosco pelo WhatsApp e agende seu horário." }] },
+      testimonials: [{ name: "Ana Beatriz", role: "Cliente Fidelizada", rating: 5, text: "Amei o corte! O atendimento é excepcional e os produtos são de primeiríssima linha.", source: "Instagram", isPlaceholder: false }],
+      faq: [{ question: "Quais as formas de pagamento?", answer: "Aceitamos todos os cartões de crédito e Pix." }],
+      contacts: {
+        whatsapp: "11999999999",
+        instagram: "@studiobeautytest",
+        email: "contato@teste.com",
+        website: "",
+        googleMapsUrl: "",
+        openingHours: "Terça a Sábado, das 9h as 18h",
+        paymentMethods: ["Pix", "Cartão de Crédito"]
+      },
+      branding: {
+        preferredColors: ["#ff7a59"],
+        extractedColorsFromInstagram: ["#ff7a59"],
+        logoUrl: "",
+        existingBrandPersonality: "Elegante e descontraído",
+        preferredTone: "persuasivo",
+        preferredDesignStyle: "elegant"
+      }
+    };
+    
+    setExtractedData(mockJson);
+    setHistory([mockJson]);
+    setStep('reviewing');
+  };
+
   // Responder pergunta atual
   const handleAnswerQuestion = (answer) => {
     const currentQuestion = questionQueue[currentQuestionIdx];
@@ -330,6 +387,9 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
 
           <ManualBtn type="button" onClick={handleStartManual}>
             <FaMagic /> Criar Manualmente do Zero
+          </ManualBtn>
+          <ManualBtn type="button" onClick={handleMockExtraction} style={{ marginTop: '10px', background: '#1e293b', borderColor: '#334155' }}>
+            🧪 Preencher com Dados de Teste (Mock)
           </ManualBtn>
         </WelcomeCard>
       )}

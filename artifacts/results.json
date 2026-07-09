@@ -1,0 +1,1634 @@
+[
+  {
+    "id": 0,
+    "businessType": "SaaS",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_0.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroSplitBrowserMockup"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureBentoGrid"
+      },
+      {
+        "type": "Stats",
+        "variant": "StatsBigNumbersAnimated"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialMarqueeInfinite"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "businessType": "E-commerce",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_1.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "businessType": "InfoProduto",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_2.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "businessType": "B2B",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_3.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "businessType": "Serviço Produtizado",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_4.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "businessType": "B2C",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_5.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "businessType": "Startup",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_6.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "businessType": "Local Business",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_7.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "businessType": "SaaS",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_8.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroSplitBrowserMockup"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureBentoGrid"
+      },
+      {
+        "type": "Stats",
+        "variant": "StatsBigNumbersAnimated"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialMarqueeInfinite"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "businessType": "E-commerce",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_9.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "businessType": "InfoProduto",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_10.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "businessType": "B2B",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_11.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "businessType": "Serviço Produtizado",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_12.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "businessType": "B2C",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_13.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "businessType": "Startup",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_14.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "businessType": "Local Business",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_15.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "businessType": "SaaS",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_16.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroSplitBrowserMockup"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureBentoGrid"
+      },
+      {
+        "type": "Stats",
+        "variant": "StatsBigNumbersAnimated"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialMarqueeInfinite"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "businessType": "E-commerce",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_17.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "businessType": "InfoProduto",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_18.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "businessType": "B2B",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_19.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "businessType": "Serviço Produtizado",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_20.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "businessType": "B2C",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_21.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "businessType": "Startup",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_22.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "businessType": "Local Business",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_23.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "businessType": "SaaS",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_24.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroSplitBrowserMockup"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureBentoGrid"
+      },
+      {
+        "type": "Stats",
+        "variant": "StatsBigNumbersAnimated"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialMarqueeInfinite"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "businessType": "E-commerce",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_25.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "businessType": "InfoProduto",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_26.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "businessType": "B2B",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_27.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "businessType": "Serviço Produtizado",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_28.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "businessType": "B2C",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_29.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "businessType": "Startup",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_30.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "businessType": "Local Business",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_31.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "businessType": "SaaS",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_32.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroSplitBrowserMockup"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureBentoGrid"
+      },
+      {
+        "type": "Stats",
+        "variant": "StatsBigNumbersAnimated"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialMarqueeInfinite"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "businessType": "E-commerce",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_33.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "businessType": "InfoProduto",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_34.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "businessType": "B2B",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_35.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "businessType": "Serviço Produtizado",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_36.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "businessType": "B2C",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_37.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "businessType": "Startup",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_38.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "businessType": "Local Business",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_39.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "businessType": "SaaS",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_40.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroSplitBrowserMockup"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureBentoGrid"
+      },
+      {
+        "type": "Stats",
+        "variant": "StatsBigNumbersAnimated"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialMarqueeInfinite"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "businessType": "E-commerce",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_41.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "businessType": "InfoProduto",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_42.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "businessType": "B2B",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_43.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "businessType": "Serviço Produtizado",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_44.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "businessType": "B2C",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_45.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "businessType": "Startup",
+    "sophisticationLevel": "Premium",
+    "screenshot": "artifacts/screenshots/lp_46.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "businessType": "Local Business",
+    "sophisticationLevel": "Luxo",
+    "screenshot": "artifacts/screenshots/lp_47.png",
+    "axeViolations": 1,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroTypographicVideo"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "businessType": "SaaS",
+    "sophisticationLevel": "Popular",
+    "screenshot": "artifacts/screenshots/lp_48.png",
+    "axeViolations": 2,
+    "ctaCount": 14,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroSplitBrowserMockup"
+      },
+      {
+        "type": "Logos",
+        "variant": "LogosGridMuted"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureBentoGrid"
+      },
+      {
+        "type": "Stats",
+        "variant": "StatsBigNumbersAnimated"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialMarqueeInfinite"
+      },
+      {
+        "type": "Pricing",
+        "variant": "PricingTieredGlass"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "businessType": "E-commerce",
+    "sophisticationLevel": "Padrão",
+    "screenshot": "artifacts/screenshots/lp_49.png",
+    "axeViolations": 2,
+    "ctaCount": 11,
+    "blueprint": [
+      {
+        "type": "Hero",
+        "variant": "HeroCenteredGlow"
+      },
+      {
+        "type": "FeatureGrid",
+        "variant": "FeatureHoverGlassCards"
+      },
+      {
+        "type": "SocialProof",
+        "variant": "SocialGridAvatars"
+      },
+      {
+        "type": "FAQ",
+        "variant": "FAQMinimalAccordion"
+      },
+      {
+        "type": "CTABlock",
+        "variant": "CTABigDarkGlow"
+      }
+    ]
+  }
+]

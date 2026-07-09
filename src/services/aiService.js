@@ -1,3 +1,5 @@
+import { buildLovablePrompt } from '../utils/promptBuilder';
+
 const GEMINI_MODEL = "gemini-2.5-flash";
 
 const ANALYZE_PROMPT = `Você é um especialista em pesquisa de negócios locais, análise de concorrência e extração de perfis do Instagram com foco em CRO (Otimização de Conversão).
@@ -82,62 +84,63 @@ RETORNE EXCLUSIVAMENTE ESTE JSON (sem markdown, sem tags):
   }
 }`;
 
-const GENERATE_PROMPT = `Você é um Diretor de UX e Estrategista de Conversão (CRO) sênior, especializado em projetar landing pages de altíssima performance para negócios locais.
+const GENERATE_STRATEGY_PROMPT = `Você é um Consultor Estratégico de Conversão (CRO) Sênior e Copywriter Especialista.
+Sua missão é analisar TODAS as informações fornecidas sobre um negócio local e criar um briefing estruturado extremamente completo para que possamos alimentar um construtor de Landing Pages.
 
-INPUT (JSON Rico - Fonte da Verdade):
+INPUT (JSON Rico do Cliente):
 {{clientDataJson}}
 
-REGRA ABSOLUTA: Nunca invente dados factuais (endereços, telefones, prêmios). Se um campo é null, omita ou use linguagem qualitativa genérica.
+INSTRUÇÕES DE SAÍDA:
+Você DEVE gerar uma auditoria e estruturar os dados da estratégia, retornando EXATAMENTE no formato JSON abaixo.
+Seja detalhista, focado em neuromarketing, persuasão e conversão.
+Use linguagem em Português do Brasil.
 
-Escolha uma personalidade de design entre:
-- minimalist: Playfair Display + Inter. Paleta slate escuro #1e293b sobre #f8fafc. Para médicos, advogados, consultores, arquitetos.
-- bold: Space Grotesk + Plus Jakarta Sans. Cores vibrantes com fundo #0a0a0c. Para barbearias, hamburguerias, tatuagem.
-- elegant: Cinzel + Montserrat. Dourado #c5a880 sobre fundos escuros. Para estética premium, spa, odonto VIP.
-- friendly: Poppins + Quicksand. Coral #ff7a59 ou azul #3b82f6 sobre creme #fdfbf7. Para pet, doceria, escola infantil.
-
-Valide WCAG AA: contraste texto/fundo ≥ 4.5:1.
-
-Retorne EXATAMENTE este JSON (sem markdown, sem \`\`\`, sem tag <analise>):
+RETORNE EXATAMENTE ESTE JSON (sem markdown de bloco json ou \`\`\` em volta, deve ser parseável direto):
 
 {
-  "businessName": "string",
-  "tagline": "string",
-  "segment": "string",
-  "theme": {
-    "themeName": "minimalist | bold | elegant | friendly",
-    "primaryColor": "#hex",
-    "secondaryColor": "#hex",
-    "darkColor": "#hex",
-    "lightColor": "#hex",
-    "textColor": "#hex",
-    "textColorOnDark": "#hex",
-    "fontFamily": "string",
-    "secondaryFontFamily": "string"
-  },
-  "hero": { "headline": "string", "subheadline": "string", "ctaText": "string", "trustBadge": "string | null" },
-  "about": { "title": "string", "paragraphs": ["string", "string"] },
-  "services": [
-    { "title": "string", "description": "string", "targetResult": "string | null", "icon": "string (React Icon de Fa ou Gi)" }
-  ],
-  "benefits": [ { "title": "string", "description": "string" } ],
-  "painPoints": ["string", "string", "string"],
-  "tickerWords": ["string"],
-  "processSteps": [ { "step": "01", "title": "string", "description": "string" } ],
-  "testimonials": [
-    { "name": "string", "role": "string", "rating": 5, "text": "string", "isPlaceholder": "boolean" }
-  ],
-  "faq": [ { "question": "string", "answer": "string" } ],
-  "ctaSection": { "title": "string", "subtitle": "string", "buttonText": "string" },
-  "contacts": {
-    "phone": "string (só dígitos)",
-    "instagram": "string",
-    "email": "string",
-    "address": "string",
-    "openingHours": "string | null",
-    "paymentMethods": ["string"]
-  },
-  "whatsappMessage": "string"
-}`;
+  "audit": "# Auditoria Completa do Negócio\\n\\n...",
+  "problems": "# Problemas e Oportunidades\\n\\n...",
+  "briefing": "# Briefing Estratégico para Landing Page\\n\\n...",
+  "structuredStrategy": {
+    "nome": "string (Nome da Empresa)",
+    "nicho": "string",
+    "localizacao": "string (ex: São Paulo, SP ou 'Online')",
+    "publico": "string (Descreva a persona ideal detalhadamente)",
+    "objetivo": "string (Qual a ação principal esperada? ex: Agendar Consulta)",
+    "canal": "string (ex: WhatsApp, checkout, formulário, calendário)",
+    "oferta": "string (Qual é a grande oferta irrecusável?)",
+    "promessa": "string (Headline principal para a Hero section)",
+    "diferenciais": [ {"title": "...", "description": "..."} ],
+    "servicos": [ {"title": "...", "description": "..."} ],
+    "produtos": [ {"title": "...", "description": "..."} ],
+    "tom_marca": "string (Persuasivo, Clínico, Amigável, etc)",
+    "identidade_visual": "string (Ex: Minimalista e Elegante)",
+    "estilo_visual": "string (ex: Premium Editorial, Luxury Minimalism)",
+    "atmosfera": "string (ex: Clara, Elegante, Confortável)",
+    "fotografia": "string (ex: Usar imagens reais, dar destaque aos profissionais, foco em detalhes)",
+    "paleta": "string (ex: 60% claros, 30% neutros, 10% cor da marca. Evite fundos excessivamente escuros)",
+    "tipografia": "string (ex: Display sofisticada para títulos, Sans altamente legível para textos)",
+    "espacamento": "string (ex: Muito espaço em branco, ritmo visual rigoroso)",
+    "componentes": "string (ex: Glass apenas em destaque, cards grandes, bordas discretas, sombras suaves)",
+    "objetivo_emocional": "string (O que o visitante deve pensar ao abrir a página? Ex: 'Essa empresa parece extremamente profissional e premium.')",
+    "hero_layout": "string (Escolha UMA variação exata e descreva: 1. 'Cinematic Background Imersivo' | 2. 'Editorial Apple Minimalista' | 3. 'Split-Screen de Alta Conversão' | 4. 'Social-Proof First' | 5. 'Bento Grid Moderno'. Descreva como ela deve ser implementada para este nicho específico.)",
+    "cta": "string (Texto do botão principal)",
+    "redes_sociais": "string (Links ou arrobas encontrados)",
+    "provas_sociais": [ {"name": "...", "description": "Depoimento..."} ],
+    "objecoes": [ {"title": "Objeção X", "description": "Como quebrar..."} ],
+    "beneficios": [ {"title": "...", "description": "..."} ],
+    "faq": [ {"question": "...", "answer": "..."} ],
+    "regras_nicho": "string (Liste as regras e seções extras do UPLF referentes a este nicho. Ex: 'Ênfase extra em mapa. Seção adicional: Onde estamos')"
+  }
+}
+
+DICAS PARA OS DOCUMENTOS:
+1. "audit": Analise o posicionamento, clareza da oferta, instagram, site atual.
+2. "problems": Liste os problemas críticos encontrados de forma priorizada e oportunidades.
+3. "briefing": Detalhe a estratégia macro da Landing Page.
+4. "structuredStrategy": Preencha com TODOS os dados estruturados de forma precisa, sem inventar informações factuais do cliente (mas deduzindo de forma inteligente o que for estratégico, como copy, dores, objeções e FAQ).
+5. DIREÇÃO DE ARTE (Campos estilo_visual até objetivo_emocional): Deduza essas instruções a partir da análise do Instagram e do nicho. Por exemplo, se for um estúdio de beleza premium com fotos da equipe, defina que o uso de fotos reais é obrigatório e que a atmosfera deve ser sofisticada. Transforme a análise em um briefing de design rigoroso e premium.
+6. HERO LAYOUT: Escolha a variação de Hero que mais converte para o nicho atual. Ex: 'Split-Screen' para clínicas, 'Cinematic Imersivo' para estúdios ou serviços de alto padrão, 'Editorial Apple' para luxo ou SaaS, 'Social-Proof First' para negócios com grande prova social, e 'Bento Grid' para um design super moderno. Preencha o campo hero_layout com a instrução exata de estrutura.`;
 
 const SEGMENT_FALLBACK_IMAGES = {
   estetica: [
@@ -403,16 +406,29 @@ export async function fetchInstagramImagesOnly(instagramHandle, segment) {
 }
 
 /**
- * Gera uma Landing Page completa via IA.
+ * Gera a estratégia completa via IA retornando os 4 documentos.
  */
-export async function generateLandingPage(clientData, images = [], _customApiKey = '') {
+export async function generateStrategy(clientData, _customApiKey = '') {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada no .env. (Crie a variável VITE_GEMINI_API_KEY no .env)");
 
-    const prompt = GENERATE_PROMPT.replace("{{clientDataJson}}", JSON.stringify(clientData, null, 2));
+    const prompt = GENERATE_STRATEGY_PROMPT.replace("{{clientDataJson}}", JSON.stringify(clientData, null, 2));
 
     const raw = await callGemini(apiKey, prompt, { jsonMode: true });
-    const landingPageData = parseJsonFromAI(raw);
+    const strategyData = parseJsonFromAI(raw);
 
-    return landingPageData;
+    // Constrói o lovablePrompt usando o template mestre e os dados estruturados
+    if (strategyData && strategyData.structuredStrategy) {
+      // Injeta as imagens extraídas para que o prompt builder as inclua no template
+      if (clientData && clientData.instagramImages) {
+        strategyData.structuredStrategy.imagens = clientData.instagramImages;
+      }
+      strategyData.lovablePrompt = buildLovablePrompt(strategyData.structuredStrategy);
+      // Remove o objeto estruturado para não confundir o front-end, ou pode deixar
+    } else {
+      console.warn("A IA não retornou o objeto structuredStrategy esperado. Usando prompt genérico.");
+      strategyData.lovablePrompt = buildLovablePrompt({});
+    }
+
+    return strategyData;
 }

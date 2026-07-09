@@ -130,7 +130,7 @@ export default function ReviewScreen({ clientJson, onUpdate, onGenerate }) {
     <Container className="animate-fade-in">
       <HeaderSection>
         <h2>Revisão dos Dados do Negócio</h2>
-        <p>Confirme os dados antes de gerar a Landing Page. Dados em vermelho são essenciais e precisam ser preenchidos.</p>
+        <p>Confirme os dados antes de gerar a Estratégia e o Briefing. Dados em vermelho são essenciais e precisam ser preenchidos.</p>
       </HeaderSection>
 
       <CardsGrid>
@@ -438,7 +438,7 @@ export default function ReviewScreen({ clientJson, onUpdate, onGenerate }) {
       <FooterSection>
         {canGenerate ? (
           <GenerateBtn onClick={onGenerate} className="btn-generate">
-            <FaRocket /> Gerar Landing Page CRO
+            <FaRocket /> Gerar Estratégia & Briefing
           </GenerateBtn>
         ) : (
           <DisabledGenerateBtn title="Preencha os campos vermelhos para liberar">

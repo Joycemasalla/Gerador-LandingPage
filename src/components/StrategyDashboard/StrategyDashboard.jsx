@@ -1,0 +1,279 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { FaCopy, FaDownload, FaCheck, FaClipboardList, FaExclamationTriangle, FaLightbulb, FaRobot } from 'react-icons/fa';
+
+export default function StrategyDashboard({ strategyData, isGenerating, generationLogs }) {
+  const [activeTab, setActiveTab] = useState('audit');
+  const [copied, setCopied] = useState(null);
+
+  if (isGenerating) {
+    return (
+      <LoadingContainer className="animate-fade-in">
+        <FaRobot className="bot-icon spin-bounce" />
+        <h3>O Estrategista está trabalhando...</h3>
+        <LogsWrapper>
+          {generationLogs && generationLogs.map((log, index) => (
+            <LogItem key={index} className="animate-slide-up">
+              {log}
+            </LogItem>
+          ))}
+        </LogsWrapper>
+      </LoadingContainer>
+    );
+  }
+
+  const tabs = [
+    { id: 'audit', title: 'Auditoria', icon: <FaClipboardList /> },
+    { id: 'problems', title: 'Problemas & Oportunidades', icon: <FaExclamationTriangle /> },
+    { id: 'briefing', title: 'Briefing Estratégico', icon: <FaLightbulb /> },
+    { id: 'lovablePrompt', title: 'Prompt para Lovable', icon: <FaRobot /> }
+  ];
+
+  const handleCopy = (text, id) => {
+    navigator.clipboard.writeText(text);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const handleDownload = (text, filename) => {
+    const element = document.createElement("a");
+    const file = new Blob([text], {type: 'text/markdown'});
+    element.href = URL.createObjectURL(file);
+    element.download = filename;
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const renderContent = () => {
+    const content = strategyData[activeTab];
+    return (
+      <ContentArea className="animate-fade-in">
+        <ActionBar>
+          <ActionBtn onClick={() => handleCopy(content, activeTab)}>
+            {copied === activeTab ? <><FaCheck /> Copiado!</> : <><FaCopy /> Copiar</>}
+          </ActionBtn>
+          <ActionBtn onClick={() => handleDownload(content, `${activeTab}.md`)}>
+            <FaDownload /> Download .md
+          </ActionBtn>
+        </ActionBar>
+        <MarkdownPreview>
+          {content}
+        </MarkdownPreview>
+      </ContentArea>
+    );
+  };
+
+  return (
+    <DashboardContainer className="animate-fade-in">
+      <Header>
+        <h2>Estratégia e Briefing Concluídos!</h2>
+        <p>Aqui estão os 4 documentos estratégicos gerados pela IA. Use o "Prompt para Lovable" para gerar a página final no Lovable.</p>
+      </Header>
+
+      <TabsContainer>
+        {tabs.map(tab => (
+          <Tab 
+            key={tab.id} 
+            $active={activeTab === tab.id} 
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.icon} {tab.title}
+          </Tab>
+        ))}
+      </TabsContainer>
+
+      {strategyData && strategyData[activeTab] ? renderContent() : (
+        <EmptyState>Nenhum dado encontrado para esta aba.</EmptyState>
+      )}
+    </DashboardContainer>
+  );
+}
+
+// Styled Components
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  
+  .bot-icon {
+    font-size: 3rem;
+    color: #8b5cf6;
+  }
+  
+  .spin-bounce {
+    animation: bounce 2s infinite;
+  }
+  
+  h3 {
+    color: white;
+    font-size: 1.4rem;
+  }
+`;
+
+const LogsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  min-height: 200px;
+`;
+
+const LogItem = styled.div`
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  color: #a78bfa;
+  border-left: 3px solid #8b5cf6;
+  padding-left: 12px;
+`;
+
+const DashboardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 0;
+`;
+
+const Header = styled.div`
+  text-align: center;
+  margin-bottom: 10px;
+
+  h2 {
+    font-size: 1.8rem;
+    color: white;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin: 0;
+  }
+`;
+
+const TabsContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  background: rgba(30, 41, 59, 0.45);
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  
+  /* Esconder scrollbar */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
+
+const Tab = styled.button`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: ${props => props.$active ? 'rgba(139, 92, 246, 0.15)' : 'transparent'};
+  color: ${props => props.$active ? '#a78bfa' : '#94a3b8'};
+  border: 1px solid ${props => props.$active ? 'rgba(139, 92, 246, 0.3)' : 'transparent'};
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    color: ${props => props.$active ? '#a78bfa' : 'white'};
+    background: ${props => props.$active ? 'rgba(139, 92, 246, 0.15)' : 'rgba(255, 255, 255, 0.05)'};
+  }
+`;
+
+const ContentArea = styled.div`
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const ActionBar = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(30, 41, 59, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+`;
+
+const ActionBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+  }
+`;
+
+const MarkdownPreview = styled.pre`
+  margin: 0;
+  padding: 24px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+  height: 500px;
+  overflow-y: auto;
+
+  /* Custom scrollbar for content */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.1);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+`;
+
+const EmptyState = styled.div`
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+`;

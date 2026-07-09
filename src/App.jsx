@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
 import InterviewWizard from './components/InterviewWizard/InterviewWizard';
-import PreviewSection from './components/PreviewSection';
-import { LandingEngine } from './core/landing-engine';
+import StrategyDashboard from './components/StrategyDashboard/StrategyDashboard';
+import { generateStrategy } from './services/aiService';
 
 export default function App() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -32,31 +32,31 @@ export default function App() {
     setImages(extractedImages);
 
     try {
-      await addLog('🤖 Inicializando Agente InstaPage AI...', 200);
-      await addLog('🔗 Conectando ao Servidor Proxy Local na porta 3001...', 500);
-      await addLog('📊 Processando JSON rico de 10 blocos estruturado...', 400);
-      await addLog('🧠 IA analisando perfil do cliente ideal e dor real...', 600);
-      await addLog('⚡ Mapeando objeções comerciais e diferenciais do nicho...', 600);
-      await addLog('✨ Redigindo copywriting sob medida baseado nos Pilares CRO...', 800);
-      await addLog('🎨 Selecionando fontes e harmonizando paleta de cores (WCAG)...', 700);
-      await addLog('🛠️ Validando integridade e estruturação de saída da Landing Page...', 700);
+      await addLog('🤖 Inicializando Estrategista InstaPage AI...', 200);
+      await addLog('📊 Lendo dados extraídos e dores do negócio...', 400);
+      await addLog('🧠 Realizando auditoria comercial e de UX...', 600);
+      await addLog('⚡ Mapeando problemas críticos e oportunidades de conversão...', 600);
+      await addLog('📝 Estruturando Briefing de Neuromarketing e Copywriting...', 800);
+      await addLog('🛠️ Redigindo o Super Prompt Otimizado para o Lovable...', 700);
 
-      // Chamada real à nova Landing Engine (Data-driven)
-      const engine = new LandingEngine(null, customApiKey);
-      const data = await engine.generate(JSON.stringify(richClientJson, null, 2));
-
-      // Mock injetando as imagens no assetModel, já que o engine ainda não puxa.
-      if (extractedImages && extractedImages.length > 0) {
-        data.assetModel = { assets: extractedImages };
+      if (customApiKey === 'mock') {
+        await addLog('🧪 [MODO MOCK ATIVADO] Ignorando API...', 100);
+        
+        const mockData = {
+          audit: "# Auditoria Completa do Negócio (MOCK)\\n\\nAqui estaria a auditoria real...",
+          problems: "# Problemas e Oportunidades (MOCK)\\n\\nAqui estariam os problemas reais...",
+          briefing: "# Briefing Estratégico (MOCK)\\n\\nAqui estaria o briefing real...",
+          lovablePrompt: "Você é o Lovable... (MOCK PROMPT)"
+        };
+        
+        setGeneratedData(mockData);
+      } else {
+        const data = await generateStrategy(richClientJson, customApiKey);
+        setGeneratedData(data);
       }
 
-      await addLog('📦 Resposta recebida da IA com sucesso!', 300);
-      await addLog('🚀 Renderizando Landing Page...', 200);
-
-      setGeneratedData(data);
-      if (extractedImages && extractedImages.length > 0) {
-        setImages(extractedImages);
-      }
+      await addLog('📦 Documentos recebidos da IA com sucesso!', 300);
+      await addLog('🚀 Renderizando Dashboard Estratégico...', 200);
       
       // Disparar confetes para comemoração
       confetti({
@@ -78,7 +78,7 @@ export default function App() {
   };
 
   const handleReset = () => {
-    if (window.confirm('Tem certeza de que deseja criar uma nova Landing Page? Todo o progresso atual será perdido.')) {
+    if (window.confirm('Tem certeza de que deseja criar uma nova Estratégia? Todo o progresso atual será perdido.')) {
       setGeneratedData(null);
       setImages([]);
       setGenerationLogs([]);
@@ -126,13 +126,15 @@ export default function App() {
             <h4><FaKey /> Configurações do Agente de IA</h4>
             <p>
               Por padrão, o servidor proxy tenta ler <strong>GEMINI_API_KEY</strong> do arquivo <code>.env</code> na raiz do projeto. 
-              Caso prefira, você pode colar sua chave temporária do Gemini diretamente abaixo.
+              Caso prefira, você pode colar sua chave temporária do Gemini diretamente abaixo. 
+              <br/><br/>
+              <em>Dica: digite <strong>mock</strong> no campo abaixo para usar dados falsos e não consumir sua cota!</em>
             </p>
             <div className="input-group">
               <label>Gemini API Key</label>
               <input 
                 type="password" 
-                placeholder="Insira sua chave AIzaSy..." 
+                placeholder="Insira sua chave AIzaSy... (ou 'mock' para teste)" 
                 value={customApiKey}
                 onChange={(e) => setCustomApiKey(e.target.value)}
               />
@@ -145,9 +147,8 @@ export default function App() {
       {/* Área Principal de Conteúdo */}
       <ContentArea>
         {generatedData !== null || isGenerating ? (
-          <PreviewSection 
-            generatedData={generatedData} 
-            images={images} 
+          <StrategyDashboard 
+            strategyData={generatedData} 
             isGenerating={isGenerating} 
             generationLogs={generationLogs} 
           />
