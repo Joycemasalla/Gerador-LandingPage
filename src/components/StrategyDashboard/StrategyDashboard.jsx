@@ -45,16 +45,43 @@ export default function StrategyDashboard({ strategyData, isGenerating, generati
     document.body.removeChild(element);
   };
 
+  const handleDownloadAll = () => {
+    const fullContent = `
+# 1. Auditoria Comercial e UX
+${strategyData.audit}
+
+---
+
+# 2. Problemas e Oportunidades
+${strategyData.problems}
+
+---
+
+# 3. Briefing Estratégico
+${strategyData.briefing}
+
+---
+
+# 4. Prompt para Lovable
+${strategyData.lovablePrompt}
+    `.trim();
+
+    handleDownload(fullContent, 'Estrategia_Completa_InstaPage.md');
+  };
+
   const renderContent = () => {
     const content = strategyData[activeTab];
     return (
       <ContentArea className="animate-fade-in">
         <ActionBar>
+          <PrimaryActionBtn onClick={handleDownloadAll}>
+            <FaDownload /> Baixar Tudo
+          </PrimaryActionBtn>
           <ActionBtn onClick={() => handleCopy(content, activeTab)}>
-            {copied === activeTab ? <><FaCheck /> Copiado!</> : <><FaCopy /> Copiar</>}
+            {copied === activeTab ? <><FaCheck /> Copiado!</> : <><FaCopy /> Copiar Aba</>}
           </ActionBtn>
           <ActionBtn onClick={() => handleDownload(content, `${activeTab}.md`)}>
-            <FaDownload /> Download .md
+            <FaDownload /> Baixar Aba
           </ActionBtn>
         </ActionBar>
         <MarkdownPreview>
@@ -239,6 +266,16 @@ const ActionBtn = styled.button`
 
   &:hover {
     background: rgba(255, 255, 255, 0.05);
+    color: white;
+  }
+`;
+
+const PrimaryActionBtn = styled(ActionBtn)`
+  border-color: rgba(139, 92, 246, 0.5);
+  color: #a78bfa;
+
+  &:hover {
+    background: rgba(139, 92, 246, 0.15);
     color: white;
   }
 `;

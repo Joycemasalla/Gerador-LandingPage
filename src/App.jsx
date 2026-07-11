@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft } from 'react-icons/fa';
+import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft, FaHistory, FaTrash, FaTimes } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
 import InterviewWizard from './components/InterviewWizard/InterviewWizard';
 import StrategyDashboard from './components/StrategyDashboard/StrategyDashboard';
@@ -13,6 +13,20 @@ export default function App() {
   const [images, setImages] = useState([]);
   const [customApiKey, setCustomApiKey] = useState('');
   const [showConfig, setShowConfig] = useState(false);
+  const [savedStrategies, setSavedStrategies] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Carregar histórico inicial
+  useEffect(() => {
+    const saved = localStorage.getItem('instapage_history');
+    if (saved) {
+      try {
+        setSavedStrategies(JSON.parse(saved));
+      } catch (e) {
+        console.error('Erro ao carregar histórico', e);
+      }
+    }
+  }, []);
 
   // Helper para adicionar logs com atraso para leitura (UX Premium)
   const addLog = (message, delay = 0) => {
@@ -39,7 +53,8 @@ export default function App() {
       await addLog('📝 Estruturando Briefing de Neuromarketing e Copywriting...', 800);
       await addLog('🛠️ Redigindo o Super Prompt Otimizado para o Lovable...', 700);
 
-<<<<<<< HEAD
+      let dataToSave = null;
+
       if (customApiKey === 'mock') {
         await addLog('🧪 [MODO MOCK ATIVADO] Ignorando API...', 100);
         
@@ -51,21 +66,27 @@ export default function App() {
         };
         
         setGeneratedData(mockData);
+        dataToSave = mockData;
       } else {
         const data = await generateStrategy(richClientJson, customApiKey);
         setGeneratedData(data);
+        dataToSave = data;
       }
-=======
-      // Chamada real à nova Landing Engine (Data-driven)
-      const engine = new LandingEngine(null, customApiKey);
-      const data = await engine.generate(JSON.stringify(richClientJson, null, 2));
 
-      // Normalizar nomes que o EngineRenderer espera (copyModel, assetModel)
-      data.copyModel = data.copy;
-      data.assetModel = extractedImages && extractedImages.length > 0
-        ? { assets: extractedImages }
-        : (data.assets && data.assets.assets ? data.assets : { assets: [] });
->>>>>>> ace6559c1ddd1f0d35aa7f290801132f9e025a86
+      // Salvar no histórico
+      const newStrategy = {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        clientInfo: richClientJson,
+        data: dataToSave,
+        images: extractedImages
+      };
+
+      setSavedStrategies(prev => {
+        const updated = [newStrategy, ...prev];
+        localStorage.setItem('instapage_history', JSON.stringify(updated));
+        return updated;
+      });
 
       await addLog('📦 Documentos recebidos da IA com sucesso!', 300);
       await addLog('🚀 Renderizando Dashboard Estratégico...', 200);
@@ -97,6 +118,23 @@ export default function App() {
     }
   };
 
+  const loadStrategy = (strategy) => {
+    setGeneratedData(strategy.data);
+    setImages(strategy.images || []);
+    setShowHistory(false);
+  };
+
+  const deleteStrategy = (e, id) => {
+    e.stopPropagation();
+    if (window.confirm('Excluir esta estratégia salva?')) {
+      setSavedStrategies(prev => {
+        const updated = prev.filter(s => s.id !== id);
+        localStorage.setItem('instapage_history', JSON.stringify(updated));
+        return updated;
+      });
+    }
+  };
+
   return (
     <DashboardLayout>
       {/* Header Administrativo */}
@@ -112,6 +150,9 @@ export default function App() {
         </div>
 
         <HeaderActions>
+          <HistoryBtn onClick={() => setShowHistory(true)}>
+            <FaHistory /> Histórico
+          </HistoryBtn>
           {generatedData && !isGenerating && (
             <NewLpBtn onClick={handleReset}>
               <FaChevronLeft /> Criar Nova LP
@@ -154,6 +195,37 @@ export default function App() {
             <button className="close-btn" onClick={() => setShowConfig(false)}>Salvar e Fechar</button>
           </div>
         </ConfigPanel>
+      )}
+
+      {/* History Drawer */}
+      {showHistory && (
+        <HistoryOverlay onClick={() => setShowHistory(false)}>
+          <HistoryDrawer onClick={e => e.stopPropagation()}>
+            <div className="drawer-header">
+              <h3><FaHistory /> Histórico de LPs</h3>
+              <button className="close-btn" onClick={() => setShowHistory(false)}>
+                <FaTimes />
+              </button>
+            </div>
+            <div className="drawer-content">
+              {savedStrategies.length === 0 ? (
+                <div className="empty-state">Nenhum histórico salvo.</div>
+              ) : (
+                savedStrategies.map(strategy => (
+                  <HistoryCard key={strategy.id} onClick={() => loadStrategy(strategy)}>
+                    <div className="card-info">
+                      <h4>{strategy.clientInfo?.nomeDoNegocio || 'Estratégia Sem Nome'}</h4>
+                      <span>{new Date(strategy.timestamp).toLocaleString('pt-BR')}</span>
+                    </div>
+                    <button className="delete-btn" onClick={(e) => deleteStrategy(e, strategy.id)} title="Excluir">
+                      <FaTrash />
+                    </button>
+                  </HistoryCard>
+                ))
+              )}
+            </div>
+          </HistoryDrawer>
+        </HistoryOverlay>
       )}
 
       {/* Área Principal de Conteúdo */}
@@ -249,8 +321,30 @@ const HeaderActions = styled.div`
     transition: color 0.3s;
 
     &:hover {
-      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
     }
+  }
+`;
+
+const HistoryBtn = styled.button`
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+
+  &:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: #3b82f6;
+    color: white;
   }
 `;
 
@@ -378,4 +472,129 @@ const ContentArea = styled.div`
   flex-direction: column;
   overflow: hidden;
   position: relative;
+`;
+
+const HistoryOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const HistoryDrawer = styled.div`
+  width: 400px;
+  max-width: 100%;
+  height: 100%;
+  background: #0f172a;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: -4px 0 24px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.3s ease-out;
+
+  @keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    h3 {
+      margin: 0;
+      color: white;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.2s;
+
+      &:hover { color: white; }
+    }
+  }
+
+  .drawer-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .empty-state {
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+  }
+`;
+
+const HistoryCard = styled.div`
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    h4 {
+      margin: 0;
+      color: #f1f5f9;
+      font-size: 1rem;
+    }
+
+    span {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+  }
+
+  .delete-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    opacity: 0.6;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+
+    &:hover {
+      opacity: 1;
+      background: rgba(239, 68, 68, 0.1);
+    }
+  }
 `;

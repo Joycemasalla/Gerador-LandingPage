@@ -20,6 +20,11 @@ INSTRUÇÕES:
 
 RETORNE EXCLUSIVAMENTE ESTE JSON (sem markdown, sem tags):
 
+ATENÇÃO CRÍTICA PARA A FORMATAÇÃO JSON:
+- Você DEVE retornar APENAS o JSON válido.
+- ESCAPE corretamente todas as aspas duplas internas dentro das strings usando \\" (exemplo: "Ele disse \\"olá\\"").
+- ESCAPE todas as quebras de linha dentro das strings usando \\n (nunca use quebras de linha reais dentro do valor JSON).
+
 {
   "identity": {
     "businessName": "string | null",
@@ -91,56 +96,57 @@ INPUT (JSON Rico do Cliente):
 {{clientDataJson}}
 
 INSTRUÇÕES DE SAÍDA:
-Você DEVE gerar uma auditoria e estruturar os dados da estratégia, retornando EXATAMENTE no formato JSON abaixo.
-Seja detalhista, focado em neuromarketing, persuasão e conversão.
+Você DEVE retornar a resposta EXATAMENTE no formato abaixo, separando as seções pelos marcadores exatos (===NOME===).
 Use linguagem em Português do Brasil.
+Seja detalhista, focado em neuromarketing, persuasão e conversão.
 
-RETORNE EXATAMENTE ESTE JSON (sem markdown de bloco json ou \`\`\` em volta, deve ser parseável direto):
+RETORNE EXATAMENTE NESTA ESTRUTURA:
 
+===AUDITORIA===
+# Auditoria Completa do Negócio
+(escreva a auditoria em markdown aqui, detalhando posicionamento, clareza da oferta, instagram, etc)
+
+===PROBLEMAS===
+# Problemas e Oportunidades
+(escreva os problemas críticos priorizados e oportunidades em markdown aqui)
+
+===BRIEFING===
+# Briefing Estratégico
+(escreva o briefing macro da Landing Page em markdown aqui)
+
+===JSON_ESTRATEGIA===
 {
-  "audit": "# Auditoria Completa do Negócio\\n\\n...",
-  "problems": "# Problemas e Oportunidades\\n\\n...",
-  "briefing": "# Briefing Estratégico para Landing Page\\n\\n...",
-  "structuredStrategy": {
-    "nome": "string (Nome da Empresa)",
-    "nicho": "string",
-    "localizacao": "string (ex: São Paulo, SP ou 'Online')",
-    "publico": "string (Descreva a persona ideal detalhadamente)",
-    "objetivo": "string (Qual a ação principal esperada? ex: Agendar Consulta)",
-    "canal": "string (ex: WhatsApp, checkout, formulário, calendário)",
-    "oferta": "string (Qual é a grande oferta irrecusável?)",
-    "promessa": "string (Headline principal para a Hero section)",
-    "diferenciais": [ {"title": "...", "description": "..."} ],
-    "servicos": [ {"title": "...", "description": "..."} ],
-    "produtos": [ {"title": "...", "description": "..."} ],
-    "tom_marca": "string (Persuasivo, Clínico, Amigável, etc)",
-    "identidade_visual": "string (Ex: Minimalista e Elegante)",
-    "estilo_visual": "string (ex: Premium Editorial, Luxury Minimalism)",
-    "atmosfera": "string (ex: Clara, Elegante, Confortável)",
-    "fotografia": "string (ex: Usar imagens reais, dar destaque aos profissionais, foco em detalhes)",
-    "paleta": "string (ex: 60% claros, 30% neutros, 10% cor da marca. Evite fundos excessivamente escuros)",
-    "tipografia": "string (ex: Display sofisticada para títulos, Sans altamente legível para textos)",
-    "espacamento": "string (ex: Muito espaço em branco, ritmo visual rigoroso)",
-    "componentes": "string (ex: Glass apenas em destaque, cards grandes, bordas discretas, sombras suaves)",
-    "objetivo_emocional": "string (O que o visitante deve pensar ao abrir a página? Ex: 'Essa empresa parece extremamente profissional e premium.')",
-    "hero_layout": "string (Escolha UMA variação exata e descreva: 1. 'Cinematic Background Imersivo' | 2. 'Editorial Apple Minimalista' | 3. 'Split-Screen de Alta Conversão' | 4. 'Social-Proof First' | 5. 'Bento Grid Moderno'. Descreva como ela deve ser implementada para este nicho específico.)",
-    "cta": "string (Texto do botão principal)",
-    "redes_sociais": "string (Links ou arrobas encontrados)",
-    "provas_sociais": [ {"name": "...", "description": "Depoimento..."} ],
-    "objecoes": [ {"title": "Objeção X", "description": "Como quebrar..."} ],
-    "beneficios": [ {"title": "...", "description": "..."} ],
-    "faq": [ {"question": "...", "answer": "..."} ],
-    "regras_nicho": "string (Liste as regras e seções extras do UPLF referentes a este nicho. Ex: 'Ênfase extra em mapa. Seção adicional: Onde estamos')"
-  }
+  "nome": "string",
+  "nicho": "string",
+  "localizacao": "string",
+  "publico": "string",
+  "objetivo": "string",
+  "canal": "string",
+  "oferta": "string",
+  "promessa": "string",
+  "diferenciais": [ {"title": "...", "description": "..."} ],
+  "servicos": [ {"title": "...", "description": "..."} ],
+  "produtos": [ {"title": "...", "description": "..."} ],
+  "tom_marca": "string",
+  "identidade_visual": "string",
+  "estilo_visual": "string",
+  "atmosfera": "string",
+  "fotografia": "string",
+  "paleta": "string",
+  "tipografia": "string",
+  "espacamento": "string",
+  "componentes": "string",
+  "objetivo_emocional": "string",
+  "hero_layout": "string (Escolha UMA variação exata e descreva: 1. 'Cinematic Background Imersivo' | 2. 'Editorial Apple Minimalista' | 3. 'Split-Screen de Alta Conversão' | 4. 'Social-Proof First' | 5. 'Bento Grid Moderno')",
+  "cta": "string",
+  "redes_sociais": "string",
+  "provas_sociais": [ {"name": "...", "description": "..."} ],
+  "objecoes": [ {"title": "...", "description": "..."} ],
+  "beneficios": [ {"title": "...", "description": "..."} ],
+  "faq": [ {"question": "...", "answer": "..."} ],
+  "regras_nicho": "string"
 }
-
-DICAS PARA OS DOCUMENTOS:
-1. "audit": Analise o posicionamento, clareza da oferta, instagram, site atual.
-2. "problems": Liste os problemas críticos encontrados de forma priorizada e oportunidades.
-3. "briefing": Detalhe a estratégia macro da Landing Page.
-4. "structuredStrategy": Preencha com TODOS os dados estruturados de forma precisa, sem inventar informações factuais do cliente (mas deduzindo de forma inteligente o que for estratégico, como copy, dores, objeções e FAQ).
-5. DIREÇÃO DE ARTE (Campos estilo_visual até objetivo_emocional): Deduza essas instruções a partir da análise do Instagram e do nicho. Por exemplo, se for um estúdio de beleza premium com fotos da equipe, defina que o uso de fotos reais é obrigatório e que a atmosfera deve ser sofisticada. Transforme a análise em um briefing de design rigoroso e premium.
-6. HERO LAYOUT: Escolha a variação de Hero que mais converte para o nicho atual. Ex: 'Split-Screen' para clínicas, 'Cinematic Imersivo' para estúdios ou serviços de alto padrão, 'Editorial Apple' para luxo ou SaaS, 'Social-Proof First' para negócios com grande prova social, e 'Bento Grid' para um design super moderno. Preencha o campo hero_layout com a instrução exata de estrutura.`;
+`;
 
 const SEGMENT_FALLBACK_IMAGES = {
   estetica: [
@@ -232,6 +238,12 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       maxOutputTokens: 8192,
       ...(isJsonResponse && { responseMimeType: "application/json" }),
     },
+    safetySettings: [
+      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+      { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+    ]
   };
 
   for (let attempt = 1; attempt <= retries; attempt++) {
@@ -414,17 +426,46 @@ export async function generateStrategy(clientData, _customApiKey = '') {
 
     const prompt = GENERATE_STRATEGY_PROMPT.replace("{{clientDataJson}}", JSON.stringify(clientData, null, 2));
 
-    const raw = await callGemini(apiKey, prompt, { jsonMode: true });
-    const strategyData = parseJsonFromAI(raw);
+    const raw = await callGemini(apiKey, prompt, { jsonMode: false });
+    
+    const extractSection = (text, startMarker, endMarker) => {
+      const start = text.indexOf(startMarker);
+      if (start === -1) return "";
+      const contentStart = start + startMarker.length;
+      let end = text.length;
+      if (endMarker) {
+        const nextMarker = text.indexOf(endMarker, contentStart);
+        if (nextMarker !== -1) end = nextMarker;
+      }
+      return text.slice(contentStart, end).trim();
+    };
+
+    const audit = extractSection(raw, "===AUDITORIA===", "===PROBLEMAS===") || "Auditoria não gerada.";
+    const problems = extractSection(raw, "===PROBLEMAS===", "===BRIEFING===") || "Problemas não gerados.";
+    const briefing = extractSection(raw, "===BRIEFING===", "===JSON_ESTRATEGIA===") || "Briefing não gerado.";
+    const jsonString = extractSection(raw, "===JSON_ESTRATEGIA===", null);
+    
+    let structuredStrategy = {};
+    try {
+      structuredStrategy = parseJsonFromAI(jsonString || raw);
+    } catch (e) {
+      console.warn("Falha ao fazer parse do JSON_ESTRATEGIA, usando fallback vazio", e);
+    }
+
+    const strategyData = {
+      audit,
+      problems,
+      briefing,
+      structuredStrategy
+    };
 
     // Constrói o lovablePrompt usando o template mestre e os dados estruturados
-    if (strategyData && strategyData.structuredStrategy) {
+    if (strategyData && strategyData.structuredStrategy && Object.keys(strategyData.structuredStrategy).length > 0) {
       // Injeta as imagens extraídas para que o prompt builder as inclua no template
       if (clientData && clientData.instagramImages) {
         strategyData.structuredStrategy.imagens = clientData.instagramImages;
       }
       strategyData.lovablePrompt = buildLovablePrompt(strategyData.structuredStrategy);
-      // Remove o objeto estruturado para não confundir o front-end, ou pode deixar
     } else {
       console.warn("A IA não retornou o objeto structuredStrategy esperado. Usando prompt genérico.");
       strategyData.lovablePrompt = buildLovablePrompt({});

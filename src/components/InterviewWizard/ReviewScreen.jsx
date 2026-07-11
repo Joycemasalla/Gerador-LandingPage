@@ -62,6 +62,18 @@ export default function ReviewScreen({ clientJson, onUpdate, onGenerate }) {
     }
   };
 
+  const handleGenerateRandomImages = () => {
+    const keyword = identity.segment || 'business';
+    // Removemos acentos e espaços para a URL
+    const cleanKeyword = keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
+    const newImages = Array(6).fill(0).map(() => `https://loremflickr.com/800/800/${encodeURIComponent(cleanKeyword)}?lock=${Math.floor(Math.random() * 10000)}`);
+    
+    const updated = JSON.parse(JSON.stringify(clientJson));
+    updated.instagramImages = newImages;
+    onUpdate(updated);
+    setImagesList(newImages);
+  };
+
   // Verificar se há campos críticos vazios
   const isCriticalMissing = (path) => {
     if (path === 'identity.businessName') return !identity.businessName;
@@ -388,6 +400,19 @@ export default function ReviewScreen({ clientJson, onUpdate, onGenerate }) {
             </FormFields>
           ) : (
             <CardBody>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', gap: '16px' }}>
+                <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: 0, flex: 1, lineHeight: '1.4' }}>
+                  Use as imagens sugeridas ou faça <strong>upload das suas próprias</strong> clicando no botão "Editar" acima.
+                </p>
+                <button 
+                  onClick={handleGenerateRandomImages} 
+                  style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.15)', color: '#e2e8f0', padding: '8px 12px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s', whiteSpace: 'nowrap' }}
+                  onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)' }}
+                  onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)' }}
+                >
+                  <FaSearch /> Novas Genéricas
+                </button>
+              </div>
               <ImageGrid>
                 {(clientJson.instagramImages || []).length > 0 ? (
                   (clientJson.instagramImages || []).map((img, idx) => (
