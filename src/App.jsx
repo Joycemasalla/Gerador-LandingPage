@@ -111,21 +111,43 @@ export default function App() {
         images: extractedImages
       };
 
-      setSavedStrategies(prev => {
-        const updated = [newStrategy, ...prev];
-        localStorage.setItem('instapage_history', JSON.stringify(updated));
-        return updated;
-      });
+      // Salvar no servidor
+      let savedRow = null;
+      if (session?.user) {
+        const { data: inserted, error: insErr } = await supabase
+          .from('strategies')
+          .insert({
+            user_id: session.user.id,
+            business_name: richClientJson?.nomeDoNegocio || null,
+            client_info: richClientJson,
+            data: dataToSave,
+            images: extractedImages
+          })
+          .select()
+          .single();
+        if (insErr) console.error('Erro ao salvar histórico', insErr);
+        else savedRow = inserted;
+      }
+
+      const newStrategy = {
+        id: savedRow?.id || Date.now().toString(),
+        timestamp: savedRow?.created_at || new Date().toISOString(),
+        clientInfo: richClientJson,
+        data: dataToSave,
+        images: extractedImages
+      };
+      setSavedStrategies(prev => [newStrategy, ...prev]);
 
       await addLog('📦 Documentos recebidos da IA com sucesso!', 300);
       await addLog('🚀 Renderizando Dashboard Estratégico...', 200);
-      
+
       // Disparar confetes para comemoração
       confetti({
         particleCount: 150,
         spread: 80,
         origin: { y: 0.6 }
       });
+
 
     } catch (error) {
       console.error(error);
