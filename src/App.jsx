@@ -219,14 +219,18 @@ export default function App() {
           <ConfigToggleBtn onClick={() => setShowConfig(!showConfig)}>
             <FaKey /> Configurações de API
           </ConfigToggleBtn>
-          <a 
-            href="https://github.com/google/generative-ai-js" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href="https://github.com/google/generative-ai-js"
+            target="_blank"
+            rel="noopener noreferrer"
             className="doc-link"
           >
             <FaBookOpen /> Gemini Docs
           </a>
+          <ConfigToggleBtn onClick={handleSignOut} title={session.user?.email}>
+            <FaSignOutAlt /> Sair
+          </ConfigToggleBtn>
+
         </HeaderActions>
       </Header>
 
