@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft, FaHistory, FaTrash, FaTimes } from 'react-icons/fa';
+import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft, FaHistory, FaTrash, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
 import InterviewWizard from './components/InterviewWizard/InterviewWizard';
 import StrategyDashboard from './components/StrategyDashboard/StrategyDashboard';
+import AuthScreen from './components/Auth/AuthScreen';
 import { generateStrategy } from './services/aiService';
+import { supabase } from './integrations/supabase/client';
 
 export default function App() {
+  const [session, setSession] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthLoading(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_ev, sess) => {
+      setSession(sess);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationLogs, setGenerationLogs] = useState([]);
   const [generatedData, setGeneratedData] = useState(null);
@@ -16,17 +32,30 @@ export default function App() {
   const [savedStrategies, setSavedStrategies] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
 
-  // Carregar histórico inicial
+  // Carregar histórico do servidor sempre que houver sessão
   useEffect(() => {
-    const saved = localStorage.getItem('instapage_history');
-    if (saved) {
-      try {
-        setSavedStrategies(JSON.parse(saved));
-      } catch (e) {
-        console.error('Erro ao carregar histórico', e);
+    if (!session?.user) { setSavedStrategies([]); return; }
+    (async () => {
+      const { data, error } = await supabase
+        .from('strategies')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) {
+        console.error('Erro ao carregar histórico', error);
+        return;
       }
-    }
-  }, []);
+      setSavedStrategies(
+        (data || []).map(r => ({
+          id: r.id,
+          timestamp: r.created_at,
+          clientInfo: r.client_info,
+          data: r.data,
+          images: r.images || []
+        }))
+      );
+    })();
+  }, [session]);
+
 
   // Helper para adicionar logs com atraso para leitura (UX Premium)
   const addLog = (message, delay = 0) => {
@@ -73,30 +102,46 @@ export default function App() {
         dataToSave = data;
       }
 
-      // Salvar no histórico
+
+
+
+      // Salvar no servidor
+      let savedRow = null;
+      if (session?.user) {
+        const { data: inserted, error: insErr } = await supabase
+          .from('strategies')
+          .insert({
+            user_id: session.user.id,
+            business_name: richClientJson?.nomeDoNegocio || null,
+            client_info: richClientJson,
+            data: dataToSave,
+            images: extractedImages
+          })
+          .select()
+          .single();
+        if (insErr) console.error('Erro ao salvar histórico', insErr);
+        else savedRow = inserted;
+      }
+
       const newStrategy = {
-        id: Date.now().toString(),
-        timestamp: new Date().toISOString(),
+        id: savedRow?.id || Date.now().toString(),
+        timestamp: savedRow?.created_at || new Date().toISOString(),
         clientInfo: richClientJson,
         data: dataToSave,
         images: extractedImages
       };
-
-      setSavedStrategies(prev => {
-        const updated = [newStrategy, ...prev];
-        localStorage.setItem('instapage_history', JSON.stringify(updated));
-        return updated;
-      });
+      setSavedStrategies(prev => [newStrategy, ...prev]);
 
       await addLog('📦 Documentos recebidos da IA com sucesso!', 300);
       await addLog('🚀 Renderizando Dashboard Estratégico...', 200);
-      
+
       // Disparar confetes para comemoração
       confetti({
         particleCount: 150,
         spread: 80,
         origin: { y: 0.6 }
       });
+
 
     } catch (error) {
       console.error(error);
@@ -124,16 +169,29 @@ export default function App() {
     setShowHistory(false);
   };
 
-  const deleteStrategy = (e, id) => {
+  const deleteStrategy = async (e, id) => {
     e.stopPropagation();
     if (window.confirm('Excluir esta estratégia salva?')) {
-      setSavedStrategies(prev => {
-        const updated = prev.filter(s => s.id !== id);
-        localStorage.setItem('instapage_history', JSON.stringify(updated));
-        return updated;
-      });
+      const { error } = await supabase.from('strategies').delete().eq('id', id);
+      if (error) { alert('Erro ao excluir: ' + error.message); return; }
+      setSavedStrategies(prev => prev.filter(s => s.id !== id));
     }
   };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setGeneratedData(null);
+    setImages([]);
+    setGenerationLogs([]);
+  };
+
+  if (authLoading) {
+    return <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#020617',color:'#94a3b8'}}>Carregando...</div>;
+  }
+  if (!session) {
+    return <AuthScreen />;
+  }
+
 
   return (
     <DashboardLayout>
@@ -161,14 +219,18 @@ export default function App() {
           <ConfigToggleBtn onClick={() => setShowConfig(!showConfig)}>
             <FaKey /> Configurações de API
           </ConfigToggleBtn>
-          <a 
-            href="https://github.com/google/generative-ai-js" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href="https://github.com/google/generative-ai-js"
+            target="_blank"
+            rel="noopener noreferrer"
             className="doc-link"
           >
             <FaBookOpen /> Gemini Docs
           </a>
+          <ConfigToggleBtn onClick={handleSignOut} title={session.user?.email}>
+            <FaSignOutAlt /> Sair
+          </ConfigToggleBtn>
+
         </HeaderActions>
       </Header>
 
