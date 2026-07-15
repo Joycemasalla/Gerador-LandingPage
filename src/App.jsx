@@ -169,16 +169,29 @@ export default function App() {
     setShowHistory(false);
   };
 
-  const deleteStrategy = (e, id) => {
+  const deleteStrategy = async (e, id) => {
     e.stopPropagation();
     if (window.confirm('Excluir esta estratégia salva?')) {
-      setSavedStrategies(prev => {
-        const updated = prev.filter(s => s.id !== id);
-        localStorage.setItem('instapage_history', JSON.stringify(updated));
-        return updated;
-      });
+      const { error } = await supabase.from('strategies').delete().eq('id', id);
+      if (error) { alert('Erro ao excluir: ' + error.message); return; }
+      setSavedStrategies(prev => prev.filter(s => s.id !== id));
     }
   };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setGeneratedData(null);
+    setImages([]);
+    setGenerationLogs([]);
+  };
+
+  if (authLoading) {
+    return <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#020617',color:'#94a3b8'}}>Carregando...</div>;
+  }
+  if (!session) {
+    return <AuthScreen />;
+  }
+
 
   return (
     <DashboardLayout>
