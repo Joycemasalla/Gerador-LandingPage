@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft, FaHistory, FaTrash, FaTimes } from 'react-icons/fa';
+import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft, FaHistory, FaTrash, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
 import InterviewWizard from './components/InterviewWizard/InterviewWizard';
 import StrategyDashboard from './components/StrategyDashboard/StrategyDashboard';
+import AuthScreen from './components/Auth/AuthScreen';
 import { generateStrategy } from './services/aiService';
+import { supabase } from './integrations/supabase/client';
 
 export default function App() {
+  const [session, setSession] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthLoading(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_ev, sess) => {
+      setSession(sess);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationLogs, setGenerationLogs] = useState([]);
   const [generatedData, setGeneratedData] = useState(null);
