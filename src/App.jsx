@@ -102,14 +102,8 @@ export default function App() {
         dataToSave = data;
       }
 
-      // Salvar no histórico
-      const newStrategy = {
-        id: Date.now().toString(),
-        timestamp: new Date().toISOString(),
-        clientInfo: richClientJson,
-        data: dataToSave,
-        images: extractedImages
-      };
+
+
 
       // Salvar no servidor
       let savedRow = null;
