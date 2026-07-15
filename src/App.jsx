@@ -32,17 +32,30 @@ export default function App() {
   const [savedStrategies, setSavedStrategies] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
 
-  // Carregar histórico inicial
+  // Carregar histórico do servidor sempre que houver sessão
   useEffect(() => {
-    const saved = localStorage.getItem('instapage_history');
-    if (saved) {
-      try {
-        setSavedStrategies(JSON.parse(saved));
-      } catch (e) {
-        console.error('Erro ao carregar histórico', e);
+    if (!session?.user) { setSavedStrategies([]); return; }
+    (async () => {
+      const { data, error } = await supabase
+        .from('strategies')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) {
+        console.error('Erro ao carregar histórico', error);
+        return;
       }
-    }
-  }, []);
+      setSavedStrategies(
+        (data || []).map(r => ({
+          id: r.id,
+          timestamp: r.created_at,
+          clientInfo: r.client_info,
+          data: r.data,
+          images: r.images || []
+        }))
+      );
+    })();
+  }, [session]);
+
 
   // Helper para adicionar logs com atraso para leitura (UX Premium)
   const addLog = (message, delay = 0) => {
