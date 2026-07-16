@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft, FaHistory, FaTrash, FaTimes, FaSignOutAlt } from 'react-icons/fa';
+import { FaRobot, FaKey, FaBookOpen, FaPlus, FaChevronLeft, FaHistory, FaTrash, FaTimes, FaSignOutAlt, FaEdit } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
 import InterviewWizard from './components/InterviewWizard/InterviewWizard';
 import StrategyDashboard from './components/StrategyDashboard/StrategyDashboard';
@@ -185,14 +185,32 @@ export default function App() {
     setGenerationLogs([]);
   };
 
+  const renameStrategy = (e, id, currentName) => {
+    e.stopPropagation();
+    const newName = window.prompt('Digite o novo nome para esta estratégia:', currentName);
+    if (newName && newName.trim() !== '') {
+      setSavedStrategies(prev => {
+        const updated = prev.map(s => {
+          if (s.id === id) {
+            return {
+              ...s,
+              customName: newName.trim()
+            };
+          }
+          return s;
+        });
+        localStorage.setItem('instapage_history', JSON.stringify(updated));
+        return updated;
+      });
+    }
+  };
+
   if (authLoading) {
     return <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#020617',color:'#94a3b8'}}>Carregando...</div>;
   }
   if (!session) {
     return <AuthScreen />;
   }
-
-
   return (
     <DashboardLayout>
       {/* Header Administrativo */}
@@ -273,17 +291,24 @@ export default function App() {
               {savedStrategies.length === 0 ? (
                 <div className="empty-state">Nenhum histórico salvo.</div>
               ) : (
-                savedStrategies.map(strategy => (
+                savedStrategies.map(strategy => {
+                  const displayName = strategy.customName || strategy.clientInfo?.nomeDoNegocio || 'Estratégia Sem Nome';
+                  return (
                   <HistoryCard key={strategy.id} onClick={() => loadStrategy(strategy)}>
                     <div className="card-info">
-                      <h4>{strategy.clientInfo?.nomeDoNegocio || 'Estratégia Sem Nome'}</h4>
+                      <h4>{displayName}</h4>
                       <span>{new Date(strategy.timestamp).toLocaleString('pt-BR')}</span>
                     </div>
-                    <button className="delete-btn" onClick={(e) => deleteStrategy(e, strategy.id)} title="Excluir">
-                      <FaTrash />
-                    </button>
+                    <div className="card-actions">
+                      <button className="edit-btn" onClick={(e) => renameStrategy(e, strategy.id, displayName)} title="Renomear">
+                        <FaEdit />
+                      </button>
+                      <button className="delete-btn" onClick={(e) => deleteStrategy(e, strategy.id)} title="Excluir">
+                        <FaTrash />
+                      </button>
+                    </div>
                   </HistoryCard>
-                ))
+                )})
               )}
             </div>
           </HistoryDrawer>
@@ -644,19 +669,34 @@ const HistoryCard = styled.div`
     }
   }
 
-  .delete-btn {
+  .card-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .delete-btn, .edit-btn {
     background: none;
     border: none;
-    color: #ef4444;
     opacity: 0.6;
     cursor: pointer;
     padding: 8px;
     border-radius: 6px;
     transition: all 0.2s;
+  }
 
+  .delete-btn {
+    color: #ef4444;
     &:hover {
       opacity: 1;
       background: rgba(239, 68, 68, 0.1);
     }
   }
-`;
+
+  .edit-btn {
+    color: #3b82f6;
+    &:hover {
+      opacity: 1;
+      background: rgba(59, 130, 246, 0.1);
+    }
+  }
+}`;
