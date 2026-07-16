@@ -1,6 +1,6 @@
 import { buildLovablePrompt } from '../utils/promptBuilder';
 
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-1.5-flash";
 
 const ANALYZE_PROMPT = `Você é um especialista em pesquisa de negócios locais, análise de concorrência e extração de perfis do Instagram com foco em CRO (Otimização de Conversão).
 Sua missão é analisar TODAS as informações disponíveis sobre o perfil do Instagram fornecido abaixo (incluindo dados de scrape reais que você recebeu) e estruturá-las em um JSON rico e preciso de 10 blocos.
@@ -227,7 +227,7 @@ export function parseJsonFromAI(text) {
 
 export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
   const apiKey = apiKeyParam || getApiKey();
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
   const isJsonResponse = opts.jsonMode === true;
 
