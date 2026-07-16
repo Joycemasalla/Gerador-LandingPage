@@ -40,9 +40,33 @@ export default function StrategyDashboard({ strategyData, isGenerating, generati
     const file = new Blob([text], {type: 'text/markdown'});
     element.href = URL.createObjectURL(file);
     element.download = filename;
-    document.body.appendChild(element); // Required for this to work in FireFox
+    document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+  };
+
+  const handleDownloadImage = async (url, idx) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const ext = (blob.type.split('/')[1] || 'jpg').split(';')[0];
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `imagem-${idx + 1}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    } catch (e) {
+      window.open(url, '_blank');
+    }
+  };
+
+  const handleDownloadAllImages = async () => {
+    for (let i = 0; i < images.length; i++) {
+      await handleDownloadImage(images[i], i);
+      await new Promise(r => setTimeout(r, 300));
+    }
   };
 
   const handleDownloadAll = () => {
