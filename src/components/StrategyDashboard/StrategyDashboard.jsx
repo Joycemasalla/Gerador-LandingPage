@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FaCopy, FaDownload, FaCheck, FaClipboardList, FaExclamationTriangle, FaLightbulb, FaRobot } from 'react-icons/fa';
+import { FaCopy, FaDownload, FaCheck, FaClipboardList, FaExclamationTriangle, FaLightbulb, FaRobot, FaImages } from 'react-icons/fa';
 
-export default function StrategyDashboard({ strategyData, isGenerating, generationLogs }) {
+export default function StrategyDashboard({ strategyData, isGenerating, generationLogs, images = [] }) {
   const [activeTab, setActiveTab] = useState('audit');
   const [copied, setCopied] = useState(null);
 
@@ -40,9 +40,33 @@ export default function StrategyDashboard({ strategyData, isGenerating, generati
     const file = new Blob([text], {type: 'text/markdown'});
     element.href = URL.createObjectURL(file);
     element.download = filename;
-    document.body.appendChild(element); // Required for this to work in FireFox
+    document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+  };
+
+  const handleDownloadImage = async (url, idx) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const ext = (blob.type.split('/')[1] || 'jpg').split(';')[0];
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `imagem-${idx + 1}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    } catch (e) {
+      window.open(url, '_blank');
+    }
+  };
+
+  const handleDownloadAllImages = async () => {
+    for (let i = 0; i < images.length; i++) {
+      await handleDownloadImage(images[i], i);
+      await new Promise(r => setTimeout(r, 300));
+    }
   };
 
   const handleDownloadAll = () => {
@@ -113,9 +137,106 @@ ${strategyData.lovablePrompt}
       {strategyData && strategyData[activeTab] ? renderContent() : (
         <EmptyState>Nenhum dado encontrado para esta aba.</EmptyState>
       )}
+
+      {images && images.length > 0 && (
+        <GallerySection>
+          <GalleryHeader>
+            <h3><FaImages /> Imagens Extraídas ({images.length})</h3>
+            <PrimaryActionBtn onClick={handleDownloadAllImages}>
+              <FaDownload /> Baixar Todas
+            </PrimaryActionBtn>
+          </GalleryHeader>
+          <GalleryGrid>
+            {images.map((url, idx) => (
+              <GalleryItem key={idx}>
+                <img src={url} alt={`Imagem ${idx + 1}`} loading="lazy" />
+                <button onClick={() => handleDownloadImage(url, idx)} title="Baixar imagem">
+                  <FaDownload />
+                </button>
+              </GalleryItem>
+            ))}
+          </GalleryGrid>
+        </GallerySection>
+      )}
     </DashboardContainer>
   );
 }
+
+const GallerySection = styled.div`
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const GalleryHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+`;
+
+const GalleryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+`;
+
+const GalleryItem = styled.div`
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  button {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #a78bfa;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s;
+  }
+
+  &:hover button {
+    opacity: 1;
+  }
+
+  &:hover button:hover {
+    background: #8b5cf6;
+    color: white;
+  }
+`;
 
 // Styled Components
 const LoadingContainer = styled.div`
