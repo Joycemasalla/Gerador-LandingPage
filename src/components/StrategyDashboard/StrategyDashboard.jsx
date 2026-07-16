@@ -137,9 +137,106 @@ ${strategyData.lovablePrompt}
       {strategyData && strategyData[activeTab] ? renderContent() : (
         <EmptyState>Nenhum dado encontrado para esta aba.</EmptyState>
       )}
+
+      {images && images.length > 0 && (
+        <GallerySection>
+          <GalleryHeader>
+            <h3><FaImages /> Imagens Extraídas ({images.length})</h3>
+            <PrimaryActionBtn onClick={handleDownloadAllImages}>
+              <FaDownload /> Baixar Todas
+            </PrimaryActionBtn>
+          </GalleryHeader>
+          <GalleryGrid>
+            {images.map((url, idx) => (
+              <GalleryItem key={idx}>
+                <img src={url} alt={`Imagem ${idx + 1}`} loading="lazy" />
+                <button onClick={() => handleDownloadImage(url, idx)} title="Baixar imagem">
+                  <FaDownload />
+                </button>
+              </GalleryItem>
+            ))}
+          </GalleryGrid>
+        </GallerySection>
+      )}
     </DashboardContainer>
   );
 }
+
+const GallerySection = styled.div`
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const GalleryHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+`;
+
+const GalleryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+`;
+
+const GalleryItem = styled.div`
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0f172a;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  button {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #a78bfa;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s;
+  }
+
+  &:hover button {
+    opacity: 1;
+  }
+
+  &:hover button:hover {
+    background: #8b5cf6;
+    color: white;
+  }
+`;
 
 // Styled Components
 const LoadingContainer = styled.div`
