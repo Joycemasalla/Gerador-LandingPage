@@ -365,14 +365,14 @@ export async function analyzeInstagramProfile(instagramHandle, _customApiKey = '
         Seguidores: ${apifyData.followersCount || 0}
         Site: ${apifyData.externalUrl || ""}
         Posts Recentes:
-        ${(apifyData.latestPosts || []).slice(0, 10).map((p) => `- Legenda: ${p.caption || ""}`).join('\n')}
+        ${(apifyData.latestPosts || []).slice(0, 15).map((p) => `- Legenda: ${p.caption || ""}`).join('\n')}
       `;
       
       const proxify = (url) => `https://wsrv.nl/?url=${encodeURIComponent(url)}`;
       
       if (apifyData.profilePicUrlHD) extractedImages.push(proxify(apifyData.profilePicUrlHD));
       const postImages = (apifyData.latestPosts || []).map((p) => p.displayUrl ? proxify(p.displayUrl) : null).filter(Boolean);
-      extractedImages = [...extractedImages, ...postImages].slice(0, 6);
+      extractedImages = [...extractedImages, ...postImages].slice(0, 10);
     } catch (e) {
       console.warn("Apify falhou:", e.message);
       scrapedText = "(Scraping público indisponível — use apenas conhecimento web sobre o perfil.)";
@@ -386,9 +386,9 @@ export async function analyzeInstagramProfile(instagramHandle, _customApiKey = '
     const profile = parseJsonFromAI(raw);
 
     const segment = profile?.identity?.segment || "";
-    if (extractedImages.length < 3) {
+    if (extractedImages.length < 8) {
       const fallback = SEGMENT_FALLBACK_IMAGES[pickFallbackKey(segment)] || SEGMENT_FALLBACK_IMAGES.geral;
-      extractedImages = [...extractedImages, ...fallback].slice(0, 6);
+      extractedImages = [...extractedImages, ...fallback].slice(0, 10);
     }
     profile.instagramImages = extractedImages;
 
@@ -405,14 +405,14 @@ export async function fetchInstagramImagesOnly(instagramHandle, segment) {
       const proxify = (url) => `https://wsrv.nl/?url=${encodeURIComponent(url)}`;
       if (apifyData.profilePicUrlHD) extractedImages.push(proxify(apifyData.profilePicUrlHD));
       const postImages = (apifyData.latestPosts || []).map((p) => p.displayUrl ? proxify(p.displayUrl) : null).filter(Boolean);
-      extractedImages = [...extractedImages, ...postImages].slice(0, 6);
+      extractedImages = [...extractedImages, ...postImages].slice(0, 10);
     } catch (e) {
       console.warn("Apify falhou:", e.message);
     }
 
-    if (extractedImages.length < 3) {
+    if (extractedImages.length < 8) {
       const fallback = SEGMENT_FALLBACK_IMAGES[pickFallbackKey(segment)] || SEGMENT_FALLBACK_IMAGES.geral;
-      extractedImages = [...extractedImages, ...fallback].slice(0, 6);
+      extractedImages = [...extractedImages, ...fallback].slice(0, 10);
     }
     return extractedImages;
 }
