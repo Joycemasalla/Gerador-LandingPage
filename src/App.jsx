@@ -321,7 +321,8 @@ export default function App() {
           <StrategyDashboard 
             strategyData={generatedData} 
             isGenerating={isGenerating} 
-            generationLogs={generationLogs} 
+            generationLogs={generationLogs}
+            images={images}
           />
         ) : (
           <InterviewWizard customApiKey={customApiKey} onComplete={handleGenerate} />

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FaCopy, FaDownload, FaCheck, FaClipboardList, FaExclamationTriangle, FaLightbulb, FaRobot } from 'react-icons/fa';
+import { FaCopy, FaDownload, FaCheck, FaClipboardList, FaExclamationTriangle, FaLightbulb, FaRobot, FaImages } from 'react-icons/fa';
 
-export default function StrategyDashboard({ strategyData, isGenerating, generationLogs }) {
+export default function StrategyDashboard({ strategyData, isGenerating, generationLogs, images = [] }) {
   const [activeTab, setActiveTab] = useState('audit');
   const [copied, setCopied] = useState(null);
 
