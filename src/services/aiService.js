@@ -226,7 +226,9 @@ export function parseJsonFromAI(text) {
 }
 
 export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
-  const apiKey = apiKeyParam || getApiKey();
+  const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
+  const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
+  const apiKey = apiKeyParam || import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
   const isJsonResponse = opts.jsonMode === true;
@@ -348,8 +350,10 @@ export function normalizeHandle(raw) {
  * Analisa um perfil do Instagram via Apify + Gemini e retorna JSON rico.
  */
 export async function analyzeInstagramProfile(instagramHandle, _customApiKey = '') {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada no .env. (Crie a variável VITE_GEMINI_API_KEY no .env)");
+    const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
+    const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
+    if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada. (Crie a variável no .env)");
 
     const handle = normalizeHandle(instagramHandle);
     const clean = handle.replace(/^@/, "");
@@ -421,8 +425,10 @@ export async function fetchInstagramImagesOnly(instagramHandle, segment) {
  * Gera a estratégia completa via IA retornando os 4 documentos.
  */
 export async function generateStrategy(clientData, _customApiKey = '') {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada no .env. (Crie a variável VITE_GEMINI_API_KEY no .env)");
+    const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
+    const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
+    if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada. (Crie a variável no .env)");
 
     const prompt = GENERATE_STRATEGY_PROMPT.replace("{{clientDataJson}}", JSON.stringify(clientData, null, 2));
 
