@@ -3,8 +3,10 @@ import styled from 'styled-components';
 import { FaCheck, FaPlus, FaTrash, FaPalette, FaMicrophone, FaClock } from 'react-icons/fa';
 
 export default function QuestionCard({ question, segment, onAnswer, onSkip, onBack, showBack }) {
-  const { id, type, question: title, hint, skipLabel } = question;
+  const { id, type, question: title, hint, skipLabel, allowCustom, customPlaceholder } = question;
   const optionsList = question.optionsList || [];
+  const [customMode, setCustomMode] = useState(false);
+  const [customText, setCustomText] = useState('');
 
   // Estado local para a resposta
   const [value, setValue] = useState(type === 'multi_choice' ? [] : '');
