@@ -188,18 +188,16 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
         question: "Qual o segmento de atuação do seu negócio?",
         hint: "Isso define a personalidade do design e carrega sugestões específicas no questionário.",
         skipLabel: null,
-        options: {
-          default: [
-            "Barbearia",
-            "Salão de Beleza",
-            "Clínica de Estética",
-            "Hamburgueria",
-            "Pet Shop",
-            "Clínica de Saúde / Consultório",
-            "Academia / Studio Fitness",
-            "Restaurante / Cafeteria"
-          ]
-        }
+        optionsList: [
+          "Barbearia",
+          "Salão de Beleza",
+          "Clínica de Estética",
+          "Hamburgueria",
+          "Pet Shop",
+          "Clínica de Saúde / Consultório",
+          "Academia / Studio Fitness",
+          "Restaurante / Cafeteria"
+        ]
       },
       ...buildQuestionQueue(baseJson, '')
     ];
