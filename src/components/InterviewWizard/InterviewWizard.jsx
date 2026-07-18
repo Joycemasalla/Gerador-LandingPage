@@ -7,6 +7,31 @@ import ExtractionScreen from './ExtractionScreen';
 import QuestionCard from './QuestionCard';
 import ReviewScreen from './ReviewScreen';
 
+const SEGMENT_OPTIONS = [
+  "Barbearia",
+  "Salão de Beleza",
+  "Clínica de Estética",
+  "Hamburgueria",
+  "Restaurante / Cafeteria",
+  "Pet Shop",
+  "Clínica de Saúde / Consultório",
+  "Academia / Studio Fitness",
+  "Revendedora de Produtos (Natura, Avon, Boticário)",
+  "E-commerce / Loja Online",
+  "Loja de Roupas / Moda",
+  "Consultoria / Coaching",
+  "Curso / Infoproduto",
+  "Prestador de Serviços (Eletricista, Encanador, etc.)",
+  "Advocacia / Escritório Jurídico",
+  "Imobiliária / Corretor de Imóveis",
+  "Fotografia / Audiovisual",
+  "Evento / Buffet / Casamento",
+  "Agência (Marketing, Design, Dev)",
+  "Assistência Técnica",
+  "Escola / Educação",
+  "Turismo / Viagens"
+];
+
 const EMPTY_RICH_JSON = {
   identity: {
     businessName: null,
