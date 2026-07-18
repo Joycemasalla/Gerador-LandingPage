@@ -13,6 +13,8 @@ export default function QuestionCard({ question, segment, onAnswer, onSkip, onBa
 
   // Sincronizar o estado local ao trocar de pergunta (somente quando id/type mudam)
   useEffect(() => {
+    setCustomMode(false);
+    setCustomText('');
     if (type === 'multi_choice') {
       setValue([]);
     } else if (type === 'color_picker') {
@@ -38,6 +40,7 @@ export default function QuestionCard({ question, segment, onAnswer, onSkip, onBa
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, type]);
+
 
   // Handler para single_choice
   const handleSingleChoice = (option) => {
