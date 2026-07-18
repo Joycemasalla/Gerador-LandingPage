@@ -3,14 +3,18 @@ import styled from 'styled-components';
 import { FaCheck, FaPlus, FaTrash, FaPalette, FaMicrophone, FaClock } from 'react-icons/fa';
 
 export default function QuestionCard({ question, segment, onAnswer, onSkip, onBack, showBack }) {
-  const { id, type, question: title, hint, skipLabel } = question;
+  const { id, type, question: title, hint, skipLabel, allowCustom, customPlaceholder } = question;
   const optionsList = question.optionsList || [];
+  const [customMode, setCustomMode] = useState(false);
+  const [customText, setCustomText] = useState('');
 
   // Estado local para a resposta
   const [value, setValue] = useState(type === 'multi_choice' ? [] : '');
 
   // Sincronizar o estado local ao trocar de pergunta (somente quando id/type mudam)
   useEffect(() => {
+    setCustomMode(false);
+    setCustomText('');
     if (type === 'multi_choice') {
       setValue([]);
     } else if (type === 'color_picker') {
@@ -36,6 +40,7 @@ export default function QuestionCard({ question, segment, onAnswer, onSkip, onBa
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, type]);
+
 
   // Handler para single_choice
   const handleSingleChoice = (option) => {
@@ -147,17 +152,55 @@ export default function QuestionCard({ question, segment, onAnswer, onSkip, onBa
               <ChoiceCard 
                 type="button" 
                 key={idx} 
-                $selected={value === opt} 
-                onClick={() => handleSingleChoice(opt)}
+                $selected={value === opt && !customMode} 
+                onClick={() => { setCustomMode(false); handleSingleChoice(opt); }}
               >
                 <div className="radio-circle">
-                  {value === opt && <FaCheck />}
+                  {value === opt && !customMode && <FaCheck />}
                 </div>
                 <span>{opt}</span>
               </ChoiceCard>
             ))}
+            {allowCustom && (
+              <>
+                <ChoiceCard
+                  type="button"
+                  $selected={customMode}
+                  onClick={() => { setCustomMode(true); setValue(''); }}
+                >
+                  <div className="radio-circle">
+                    {customMode && <FaCheck />}
+                  </div>
+                  <span>✏️ Outro (digitar meu segmento)</span>
+                </ChoiceCard>
+                {customMode && (
+                  <InputGroup>
+                    <input
+                      type="text"
+                      placeholder={customPlaceholder || 'Descreva seu segmento...'}
+                      value={customText}
+                      onChange={(e) => setCustomText(e.target.value)}
+                      autoFocus
+                    />
+                    <ActionBtn
+                      type="button"
+                      className="btn-submit"
+                      style={{ alignSelf: 'flex-end' }}
+                      onClick={() => {
+                        const v = customText.trim();
+                        if (!v) { alert('Digite o seu segmento.'); return; }
+                        onAnswer(v);
+                      }}
+                    >
+                      Confirmar segmento
+                    </ActionBtn>
+                  </InputGroup>
+                )}
+              </>
+            )}
           </ChoiceGrid>
         )}
+
 
         {/* INPUT: multi_choice */}
         {type === 'multi_choice' && (
