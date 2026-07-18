@@ -3,12 +3,13 @@ import styled from 'styled-components';
 import { FaCheck, FaPlus, FaTrash, FaPalette, FaMicrophone, FaClock } from 'react-icons/fa';
 
 export default function QuestionCard({ question, segment, onAnswer, onSkip, onBack, showBack }) {
-  const { id, type, question: title, hint, skipLabel, optionsList = [] } = question;
-  
+  const { id, type, question: title, hint, skipLabel } = question;
+  const optionsList = question.optionsList || [];
+
   // Estado local para a resposta
   const [value, setValue] = useState(type === 'multi_choice' ? [] : '');
 
-  // Sincronizar o estado local ao trocar de pergunta
+  // Sincronizar o estado local ao trocar de pergunta (somente quando id/type mudam)
   useEffect(() => {
     if (type === 'multi_choice') {
       setValue([]);
@@ -17,7 +18,6 @@ export default function QuestionCard({ question, segment, onAnswer, onSkip, onBa
     } else if (type === 'scale') {
       setValue(50);
     } else if (type === 'list_builder') {
-      // Começa com uma lista vazia ou padrão
       if (id === 'testimonials') {
         setValue([{ name: '', role: '', rating: 5, text: '', isPlaceholder: false }]);
       } else if (id === 'faq') {
@@ -34,7 +34,8 @@ export default function QuestionCard({ question, segment, onAnswer, onSkip, onBa
     } else {
       setValue('');
     }
-  }, [id, type, optionsList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, type]);
 
   // Handler para single_choice
   const handleSingleChoice = (option) => {
