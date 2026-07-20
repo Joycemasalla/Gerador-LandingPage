@@ -6,6 +6,7 @@ import InterviewWizard from './components/InterviewWizard/InterviewWizard';
 import StrategyDashboard from './components/StrategyDashboard/StrategyDashboard';
 import AuthScreen from './components/Auth/AuthScreen';
 import SalesAgent from './components/SalesAgent/SalesAgent';
+import CaptureFlow from './components/CaptureFlow/CaptureFlow';
 import { generateStrategy } from './services/aiService';
 import { supabase } from './integrations/supabase/client';
 
@@ -241,6 +242,15 @@ export default function App() {
                 <p>O seu playbook de vendas interativo. Abordagens, tratamentos de objeções e conversão.</p>
               </div>
             </HubCard>
+            <HubCard onClick={() => setCurrentApp('fluxo')}>
+              <div className="card-icon" style={{ background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' }}>
+                📋
+              </div>
+              <div className="card-content">
+                <h3>Fluxo de Captação</h3>
+                <p>Consulte o processo padrão de due diligence, auditoria e abordagem.</p>
+              </div>
+            </HubCard>
           </div>
           <button className="logout-btn" onClick={handleSignOut}><FaSignOutAlt /> Sair da conta</button>
         </div>
@@ -250,6 +260,10 @@ export default function App() {
 
   if (currentApp === 'agente') {
     return <SalesAgent onBack={() => setCurrentApp('hub')} apiKey={customApiKey} />;
+  }
+
+  if (currentApp === 'fluxo') {
+    return <CaptureFlow onBack={() => setCurrentApp('hub')} />;
   }
 
   return (
@@ -773,7 +787,7 @@ const HubLayout = styled.div`
 
   .hub-cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
     width: 100%;
     @media (max-width: 600px) {
