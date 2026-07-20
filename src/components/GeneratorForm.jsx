@@ -266,7 +266,7 @@ export default function GeneratorForm({ onSubmit, isGenerating, customApiKey }) 
         </StyledInstagramInput>
 
         {analyzeError && <ErrorMessage><span>⚠️ {analyzeError}</span></ErrorMessage>}
-        {analyzeSuccess && <SuccessMessage><FaCheckCircle /> Dados do perfil encontrados! Revise abaixo e gere sua landing page.</SuccessMessage>}
+        {analyzeSuccess && <SuccessMessage><FaCheckCircle /> <span>Dados do perfil encontrados! Revise abaixo e gere sua landing page.</span></SuccessMessage>}
 
         {/* Botões de ação principais */}
         <ActionButtons>
@@ -275,7 +275,7 @@ export default function GeneratorForm({ onSubmit, isGenerating, customApiKey }) 
             onClick={handleAnalyzeProfile}
             disabled={isGenerating || isAnalyzing || !instagramHandle.trim()}
           >
-            {isAnalyzing ? <><FaSpinner className="spin" /> Analisando...</> : <><FaSearch /> Analisar Perfil</>}
+            {isAnalyzing ? <><FaSpinner className="spin" /> <span>Analisando...</span></> : <><FaSearch /> <span>Analisar Perfil</span></>}
           </AnalyzeBtn>
 
           <InstantBtn
@@ -283,7 +283,7 @@ export default function GeneratorForm({ onSubmit, isGenerating, customApiKey }) 
             onClick={handleInstantGenerate}
             disabled={isGenerating || isAnalyzing || !instagramHandle.trim()}
           >
-            {isGenerating ? <><FaSpinner className="spin" /> Gerando...</> : <><FaRocket /> Gerar em 1 Clique</>}
+            {isGenerating ? <><FaSpinner className="spin" /> <span>Gerando...</span></> : <><FaRocket /> <span>Gerar em 1 Clique</span></>}
           </InstantBtn>
         </ActionButtons>
 
@@ -539,7 +539,7 @@ export default function GeneratorForm({ onSubmit, isGenerating, customApiKey }) 
           </TestimonialsAccordion>
 
           <SubmitBtn type="submit" disabled={isGenerating || isAnalyzing}>
-            {isGenerating ? 'Enviando ao Cérebro de IA...' : 'Gerar Landing Page com Dados Revisados'}
+            <span>{isGenerating ? 'Enviando ao Cérebro de IA...' : 'Gerar Landing Page com Dados Revisados'}</span>
           </SubmitBtn>
         </AdvancedForm>
       )}

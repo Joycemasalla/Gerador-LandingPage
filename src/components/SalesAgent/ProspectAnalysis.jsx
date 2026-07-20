@@ -263,7 +263,7 @@ export default function ProspectAnalysis({ apiKey }) {
           />
           <Button onClick={handleAnalyze} disabled={loading || !handle}>
             {loading ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
-            {loading ? 'Analisando...' : 'Analisar'}
+            <span>{loading ? 'Analisando...' : 'Analisar'}</span>
           </Button>
         </InputGroup>
         
@@ -278,6 +278,7 @@ export default function ProspectAnalysis({ apiKey }) {
       <AnimatePresence>
         {result && !showGenerator && (
           <ResultCard
+            key="result-card"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
@@ -321,6 +322,7 @@ export default function ProspectAnalysis({ apiKey }) {
 
         {showGenerator && result && (
           <motion.div
+            key="generator-card"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >

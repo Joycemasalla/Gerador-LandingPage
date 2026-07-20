@@ -108,12 +108,14 @@ export default function ExtractionScreen({ handle, onFinishLogs, isExtractionDon
           {!hasError && <Spinner />}
         </InstagramLogoWrapper>
         <Title>
+          <span>
           {hasError 
             ? "Falha na Extração Automática" 
             : showSummary 
               ? "Resultados da Extração" 
               : "Análise Inteligente de Perfil"
           }
+          </span>
         </Title>
         <Subtitle>
           {hasError 
