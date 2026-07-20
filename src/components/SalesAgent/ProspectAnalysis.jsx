@@ -1,339 +1,407 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Search, Loader2, AlertCircle, CheckCircle2, ChevronRight, Zap } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { analyzeInstagramProfile } from '../../services/aiService';
+import { FaInstagram, FaGlobe, FaSearch, FaSpinner, FaExclamationTriangle, FaCheckCircle, FaMagic } from 'react-icons/fa';
+import { analyzeInstagramProfile, analyzeWebsite } from '../../services/aiService';
 import ApproachGenerator from './ApproachGenerator';
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  max-width: 900px;
-  margin: 0 auto;
-`;
-
-const SearchBox = styled.div`
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 2rem;
-  text-align: center;
-`;
-
-const InputGroup = styled.div`
-  display: flex;
-  gap: 1rem;
-  max-width: 500px;
-  margin: 1.5rem auto 0;
-`;
-
-const Input = styled.input`
-  flex: 1;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid #475569;
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  color: #f8fafc;
-  font-size: 1rem;
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #10b981;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-  }
-`;
-
-const Button = styled.button`
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-`;
-
-const ResultCard = styled(motion.div)`
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid #334155;
-  border-radius: 12px;
-  padding: 2rem;
-  position: relative;
-  overflow: hidden;
-`;
-
-const ScoreBadge = styled.div`
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid ${props => props.$color};
-  padding: 1rem;
-  border-radius: 12px;
-  text-align: center;
-  min-width: 120px;
-  
-  .score {
-    font-size: 2rem;
-    font-weight: 700;
-    color: ${props => props.$color};
-    line-height: 1;
-    margin-bottom: 0.25rem;
-  }
-  
-  .label {
-    font-size: 0.7rem;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-`;
-
-const SituationList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 1.5rem 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-
-  li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    font-size: 0.95rem;
-    color: #cbd5e1;
-  }
-`;
-
-const StrategyBox = styled.div`
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-top: 2rem;
-
-  h4 {
-    color: #a78bfa;
-    margin: 0 0 0.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  p {
-    margin: 0;
-    color: #e2e8f0;
-    line-height: 1.5;
-  }
-`;
-
-const GenerateBtn = styled(Button)`
-  width: 100%;
-  justify-content: center;
-  margin-top: 2rem;
-  padding: 1rem;
-  font-size: 1.1rem;
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-  
-  &:hover:not(:disabled) {
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-  }
-`;
-
-export default function ProspectAnalysis({ apiKey }) {
-  const [handle, setHandle] = useState('');
+export default function ProspectAnalysis({ apiKey, freelancerProfile }) {
+  const [mode, setMode] = useState('instagram'); // 'instagram', 'site', 'both'
+  const [instagramUrl, setInstagramUrl] = useState('');
+  const [siteUrl, setSiteUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null);
   const [showGenerator, setShowGenerator] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
 
-  const calculateScore = (profile) => {
-    let score = 0;
-    let problems = [];
-    let goodPoints = [];
-
-    const hasWebsite = !!profile?.contacts?.website;
-    const isLinkTree = hasWebsite && (profile.contacts.website.includes('linktr.ee') || profile.contacts.website.includes('beacons'));
-    const hasWhatsapp = !!profile?.contacts?.whatsapp;
+  const calculateScore = (problems) => {
+    let score = 100;
+    const str = problems.join(' ').toLowerCase();
     
-    if (!hasWebsite) {
-      score += 45;
-      problems.push("Sem site próprio (nenhum link na bio)");
-    } else if (isLinkTree) {
-      score += 25;
-      problems.push("Usa Linktree ou agregador (baixa conversão, sem rastreamento)");
-    } else {
-      goodPoints.push("Possui site próprio");
-      score -= 10;
-    }
-
-    if (!hasWhatsapp) {
-      score += 15;
-      problems.push("WhatsApp não está claro ou visível");
-    } else {
-      score += 10;
-      goodPoints.push("WhatsApp disponível");
-    }
-
-    if (profile?.aiContext?.dataCompleteness === 'low') {
-      score += 20;
-      problems.push("Perfil desorganizado ou com poucas informações claras");
-    } else {
-      score += 15;
-      goodPoints.push("Perfil ativo e com informações razoáveis");
-    }
-
-    // Cap at 98 for realism
-    score = Math.min(score, 98);
-    score = Math.max(score, 12);
-
-    let strategy = '';
-    let strategyDesc = '';
+    if (str.includes('sem site') || str.includes('não possui site')) score -= 30;
+    if (str.includes('lento') || str.includes('performance')) score -= 20;
+    if (str.includes('mobile') || str.includes('responsivo')) score -= 25;
+    if (str.includes('desatualizado') || str.includes('ruim')) score -= 20;
+    if (str.includes('whatsapp') && (str.includes('sem') || str.includes('não tem'))) score -= 25;
+    if (str.includes('link') && str.includes('quebrado')) score -= 15;
     
-    if (score >= 70 && !hasWebsite) {
-      strategy = "Criação de Landing Page do Zero";
-      strategyDesc = "O cliente precisa de uma página de alta conversão urgente. Foque em mostrar como ele está perdendo clientes por não centralizar as ofertas e o contato.";
-    } else if (score >= 40 && isLinkTree) {
-      strategy = "Modernização / Substituição de Linktree";
-      strategyDesc = "Ofereça um 'Link na Bio Premium' ou Landing Page que passe mais credibilidade e permita rastrear os cliques (Pixel/Analytics).";
-    } else {
-      strategy = "Landing Page de Campanha";
-      strategyDesc = "Eles já têm uma base. Foque em oferecer uma página específica para um serviço de alto ticket ou para campanhas de anúncios.";
-    }
+    return Math.max(0, score);
+  };
 
-    return {
-      score,
-      problems,
-      goodPoints,
-      strategy,
-      strategyDesc,
-      color: score >= 70 ? '#10b981' : score >= 40 ? '#f59e0b' : '#3b82f6'
-    };
+  const determineStrategy = (score, problemsStr) => {
+    if (score >= 70 && problemsStr.includes('sem site')) return 'Criação do zero (Landing Page)';
+    if (score < 70 && (problemsStr.includes('ruim') || problemsStr.includes('desatualizado'))) return 'Redesign / Modernização';
+    return 'Landing Page de Campanha Específica';
   };
 
   const handleAnalyze = async () => {
-    if (!handle) return;
+    if (mode === 'instagram' && !instagramUrl) return alert("Insira o @ do Instagram");
+    if (mode === 'site' && !siteUrl) return alert("Insira a URL do Site");
+    if (mode === 'both' && (!instagramUrl || !siteUrl)) return alert("Insira ambos os links");
+
     setLoading(true);
-    setError('');
-    setResult(null);
+    setError(null);
+    setAnalysisResult(null);
     setShowGenerator(false);
-    
+
     try {
-      const data = await analyzeInstagramProfile(handle, apiKey);
-      const analysis = calculateScore(data);
-      setResult({ profile: data, analysis });
-    } catch (err) {
-      setError(err.message || 'Erro ao analisar o perfil. Tente novamente.');
+      let combinedProblems = [];
+      let combinedScore = 100;
+      let identity = {};
+
+      if (mode === 'instagram' || mode === 'both') {
+        const profile = await analyzeInstagramProfile(instagramUrl, apiKey);
+        identity = profile.identity || {};
+        
+        // Simular alguns problemas baseados no AI Context ou dados faltando
+        if (!identity.website) combinedProblems.push("Sem site próprio");
+        if (!profile.contacts?.whatsapp) combinedProblems.push("Sem botão de WhatsApp visível");
+        if (profile.aiContext?.missingCriticalData?.length > 0) {
+           combinedProblems.push("Falta de clareza na oferta/serviços");
+        }
+      }
+
+      if (mode === 'site' || mode === 'both') {
+        const siteData = await analyzeWebsite(siteUrl, apiKey);
+        if (siteData && siteData.problems) {
+          combinedProblems = [...combinedProblems, ...siteData.problems];
+        }
+        if (mode === 'site') {
+          // Quando é apenas site, pegamos uma identidade básica
+          identity = { businessName: siteUrl.replace(/^https?:\/\/(www\.)?/, '').split('/')[0], segment: 'Geral', city: 'Online' };
+        }
+      }
+
+      if (combinedProblems.length === 0) {
+        combinedProblems.push("Não foram encontrados problemas graves aparentes, mas há espaço para otimização de conversão.");
+      }
+
+      combinedScore = calculateScore(combinedProblems);
+      const strategy = determineStrategy(combinedScore, combinedProblems.join(' ').toLowerCase());
+
+      setAnalysisResult({
+        profile: { identity },
+        analysis: {
+          problems: combinedProblems,
+          score: combinedScore,
+          strategy
+        }
+      });
+
+    } catch (e) {
+      setError(e.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleAddLead = (prospect, messages) => {
+    const leads = JSON.parse(localStorage.getItem('salesagent_leads') || '[]');
+    const newLead = {
+      id: Date.now().toString(),
+      name: prospect.profile.identity?.businessName || 'Desconhecido',
+      handle: instagramUrl || siteUrl,
+      score: prospect.analysis.score,
+      status: 'Identificado',
+      lastContact: new Date().toISOString(),
+      messages: messages
+    };
+    leads.push(newLead);
+    localStorage.setItem('salesagent_leads', JSON.stringify(leads));
+    alert("Lead adicionado ao Pipeline com sucesso!");
+  };
+
   return (
-    <Container>
-      <SearchBox>
-        <h2 style={{ margin: '0 0 0.5rem', color: '#f8fafc' }}>Analisar Prospect</h2>
-        <p style={{ margin: 0, color: '#94a3b8' }}>
-          Cole o @ do Instagram do cliente. A IA fará uma varredura para encontrar falhas de conversão.
-        </p>
-        
-        <InputGroup>
-          <Input 
-            placeholder="@hamburgueria_doze" 
-            value={handle}
-            onChange={(e) => setHandle(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
-          />
-          <Button onClick={handleAnalyze} disabled={loading || !handle}>
-            {loading ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
-            <span>{loading ? 'Analisando...' : 'Analisar'}</span>
-          </Button>
-        </InputGroup>
-        
-        {error && (
-          <p style={{ color: '#ef4444', marginTop: '1rem', fontSize: '0.9rem' }}>
-            <AlertCircle size={14} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} /> 
-            {error}
-          </p>
-        )}
-      </SearchBox>
+    <Container className="animate-fade-in">
+      <Header>
+        <h2>Analisar Prospect</h2>
+        <p>Insira os dados do negócio para gerar uma auditoria rápida e abordagens cirúrgicas.</p>
+      </Header>
 
-      <AnimatePresence>
-        {result && !showGenerator && (
-          <ResultCard
-            key="result-card"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-          >
-            <h3 style={{ margin: '0 0 0.25rem', color: '#f8fafc', fontSize: '1.25rem' }}>
-              Análise: {result.profile.identity?.businessName || handle}
-            </h3>
-            <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.9rem' }}>
-              {result.profile.identity?.segment || 'Segmento não identificado'}
-            </p>
+      <InputSection>
+        <ModeSelector>
+          <ModeBtn active={mode === 'instagram'} onClick={() => setMode('instagram')}>
+            <FaInstagram /> Só Instagram
+          </ModeBtn>
+          <ModeBtn active={mode === 'site'} onClick={() => setMode('site')}>
+            <FaGlobe /> Só Site
+          </ModeBtn>
+          <ModeBtn active={mode === 'both'} onClick={() => setMode('both')}>
+            <FaInstagram /> + <FaGlobe /> Ambos
+          </ModeBtn>
+        </ModeSelector>
 
-            <ScoreBadge $color={result.analysis.color}>
-              <div className="score">{result.analysis.score}</div>
-              <div className="label">Oportunidade</div>
-            </ScoreBadge>
+        <FormRow>
+          {(mode === 'instagram' || mode === 'both') && (
+            <InputGroup>
+              <label>@ Instagram ou URL do perfil</label>
+              <input 
+                type="text" 
+                value={instagramUrl} 
+                onChange={(e) => setInstagramUrl(e.target.value)} 
+                placeholder="@hamburgueria_doze" 
+              />
+            </InputGroup>
+          )}
+          
+          {(mode === 'site' || mode === 'both') && (
+            <InputGroup>
+              <label>URL do Site</label>
+              <input 
+                type="text" 
+                value={siteUrl} 
+                onChange={(e) => setSiteUrl(e.target.value)} 
+                placeholder="www.hamburgueriadoze.com.br" 
+              />
+            </InputGroup>
+          )}
+        </FormRow>
 
-            <h4 style={{ marginTop: '2rem', color: '#cbd5e1', marginBottom: '0.5rem' }}>Situação Digital</h4>
-            <SituationList>
-              {result.analysis.problems.map((p, i) => (
-                <li key={i}>
-                  <AlertCircle size={18} color="#ef4444" style={{ flexShrink: 0 }} /> {p}
-                </li>
-              ))}
-              {result.analysis.goodPoints.map((p, i) => (
-                <li key={i}>
-                  <CheckCircle2 size={18} color="#10b981" style={{ flexShrink: 0 }} /> {p}
-                </li>
-              ))}
-            </SituationList>
+        <AnalyzeBtn onClick={handleAnalyze} disabled={loading}>
+          {loading ? <FaSpinner className="spin" /> : <FaSearch />} 
+          {loading ? 'Analisando...' : 'Analisar Prospect'}
+        </AnalyzeBtn>
+      </InputSection>
 
-            <StrategyBox>
-              <h4><Zap size={18} /> Estratégia Recomendada: {result.analysis.strategy}</h4>
-              <p>{result.analysis.strategyDesc}</p>
-            </StrategyBox>
+      {error && (
+        <ErrorMsg>
+          <FaExclamationTriangle /> {error}
+        </ErrorMsg>
+      )}
 
-            <GenerateBtn onClick={() => setShowGenerator(true)}>
-              Gerar Mensagens de Abordagem <ChevronRight size={18} />
-            </GenerateBtn>
-          </ResultCard>
-        )}
+      {analysisResult && (
+        <ResultSection className="animate-fade-in">
+          <ScoreBoard>
+            <div className="title">
+              <h3>📊 Análise de Oportunidade</h3>
+              <span>{analysisResult.profile.identity?.businessName}</span>
+            </div>
+            <div className="score">
+              Score: <span className={analysisResult.analysis.score > 70 ? 'high' : 'low'}>{analysisResult.analysis.score}/100</span> 🔥
+            </div>
+          </ScoreBoard>
 
-        {showGenerator && result && (
-          <motion.div
-            key="generator-card"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
+          <ProblemsList>
+            {analysisResult.analysis.problems.map((prob, i) => (
+              <div key={i} className="problem-item">
+                <FaExclamationTriangle className="icon-warn" /> {prob}
+              </div>
+            ))}
+          </ProblemsList>
+
+          <StrategyBox>
+            <strong>Estratégia Recomendada:</strong> {analysisResult.analysis.strategy}
+          </StrategyBox>
+
+          {!showGenerator ? (
+            <GenerateApproachBtn onClick={() => setShowGenerator(true)}>
+              <FaMagic /> Gerar Mensagens de Abordagem
+            </GenerateApproachBtn>
+          ) : (
             <ApproachGenerator 
-              prospectData={result} 
-              onBack={() => setShowGenerator(false)} 
-              apiKey={apiKey}
+              prospectData={analysisResult} 
+              freelancerProfile={freelancerProfile} 
+              apiKey={apiKey} 
+              onAddLead={handleAddLead}
             />
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </ResultSection>
+      )}
     </Container>
   );
 }
+
+const Container = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+`;
+
+const Header = styled.div`
+  margin-bottom: 24px;
+  h2 { margin: 0 0 8px 0; font-size: 1.5rem; }
+  p { color: #94a3b8; margin: 0; }
+`;
+
+const InputSection = styled.div`
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+`;
+
+const ModeSelector = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+`;
+
+const ModeBtn = styled.button`
+  background: ${props => props.active ? 'rgba(59, 130, 246, 0.2)' : 'rgba(15, 23, 42, 0.5)'};
+  border: 1px solid ${props => props.active ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)'};
+  color: ${props => props.active ? '#60a5fa' : '#94a3b8'};
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+  }
+`;
+
+const FormRow = styled.div`
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  @media (max-width: 600px) { flex-direction: column; }
+`;
+
+const InputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+
+  input {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: white;
+    font-size: 0.95rem;
+    outline: none;
+    
+    &:focus { border-color: #3b82f6; }
+  }
+`;
+
+const AnalyzeBtn = styled.button`
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  font-size: 1rem;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #2563eb;
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .spin { animation: spin 1s linear infinite; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+`;
+
+const ErrorMsg = styled.div`
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const ResultSection = styled.div`
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+`;
+
+const ScoreBoard = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+
+  .title h3 { margin: 0 0 4px 0; }
+  .title span { color: #94a3b8; font-size: 0.9rem; }
+
+  .score {
+    font-size: 1.2rem;
+    font-weight: 600;
+    
+    .high { color: #34d399; font-size: 1.5rem; }
+    .low { color: #fbbf24; font-size: 1.5rem; }
+  }
+`;
+
+const ProblemsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  .problem-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(15, 23, 42, 0.4);
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #e2e8f0;
+
+    .icon-warn { color: #ef4444; }
+  }
+`;
+
+const StrategyBox = styled.div`
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+  border-left: 4px solid #8b5cf6;
+  padding: 16px;
+  border-radius: 4px 8px 8px 4px;
+  color: #e2e8f0;
+  margin-bottom: 24px;
+  
+  strong { color: #a78bfa; }
+`;
+
+const GenerateApproachBtn = styled.button`
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+`;

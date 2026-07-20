@@ -1,169 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Calendar, TrendingUp } from 'lucide-react';
+import { FaTrash, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  height: calc(100vh - 160px);
-  min-height: 500px;
-`;
-
-const Board = styled.div`
-  display: flex;
-  gap: 1.5rem;
-  overflow-x: auto;
-  flex: 1;
-  padding-bottom: 1rem;
-  
-  /* Custom scrollbar */
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-  &::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.5);
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 4px;
-  }
-`;
-
-const Column = styled.div`
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid #334155;
-  border-radius: 12px;
-  min-width: 280px;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-`;
-
-const ColumnHeader = styled.div`
-  padding: 1rem;
-  border-bottom: 1px solid #334155;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h3 {
-    margin: 0;
-    font-size: 1rem;
-    color: #f8fafc;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .count {
-    background: rgba(15, 23, 42, 0.6);
-    color: #94a3b8;
-    padding: 0.2rem 0.6rem;
-    border-radius: 99px;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-`;
-
-const ColumnList = styled.div`
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const LeadCard = styled(motion.div)`
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid #475569;
-  border-radius: 8px;
-  padding: 1rem;
-  cursor: grab;
-  position: relative;
-
-  &:active {
-    cursor: grabbing;
-  }
-
-  &:hover {
-    border-color: #64748b;
-  }
-`;
-
-const CardTitle = styled.h4`
-  margin: 0 0 0.25rem;
-  color: #f8fafc;
-  font-size: 1rem;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const CardSubtitle = styled.p`
-  margin: 0 0 1rem;
-  color: #94a3b8;
-  font-size: 0.85rem;
-`;
-
-const CardFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid #334155;
-`;
-
-const ScoreBadge = styled.div`
-  background: ${props => props.$color}20;
-  color: ${props => props.$color};
-  border: 1px solid ${props => props.$color}40;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-`;
-
-const DateText = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  color: #64748b;
-  font-size: 0.75rem;
-`;
-
-const DeleteBtn = styled.button`
-  background: transparent;
-  border: none;
-  color: #64748b;
-  cursor: pointer;
-  padding: 0;
-  opacity: 0;
-  transition: opacity 0.2s, color 0.2s;
-
-  ${LeadCard}:hover & {
-    opacity: 1;
-  }
-
-  &:hover {
-    color: #ef4444;
-  }
-`;
-
-const EmptyState = styled.div`
-  text-align: center;
-  color: #64748b;
-  font-size: 0.9rem;
-  padding: 1rem 0;
-`;
-
-const COLUMNS = [
+const STAGES = [
   'Identificado',
   'Abordado',
   'Respondeu',
@@ -175,134 +14,100 @@ export default function LeadPipeline() {
   const [leads, setLeads] = useState([]);
 
   useEffect(() => {
+    loadLeads();
+  }, []);
+
+  const loadLeads = () => {
     const saved = localStorage.getItem('salesagent_leads');
     if (saved) {
-      setLeads(JSON.parse(saved));
+      try {
+        setLeads(JSON.parse(saved));
+      } catch (e) {
+        console.error("Erro ao ler leads", e);
+      }
     }
-  }, []);
+  };
 
   const saveLeads = (newLeads) => {
     setLeads(newLeads);
     localStorage.setItem('salesagent_leads', JSON.stringify(newLeads));
   };
 
-  const handleDragStart = (e, leadId) => {
-    e.dataTransfer.setData('leadId', leadId);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e, status) => {
-    const leadId = e.dataTransfer.getData('leadId');
-    if (!leadId) return;
-
-    const newLeads = leads.map(lead => {
-      if (lead.id === leadId) {
-        return { ...lead, status };
+  const moveLead = (id, direction) => {
+    const updated = leads.map(lead => {
+      if (lead.id === id) {
+        const currentIndex = STAGES.indexOf(lead.status);
+        let newIndex = currentIndex + direction;
+        if (newIndex >= 0 && newIndex < STAGES.length) {
+          return { ...lead, status: STAGES[newIndex], lastContact: new Date().toISOString() };
+        }
       }
       return lead;
     });
-
-    saveLeads(newLeads);
+    saveLeads(updated);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Remover este lead do pipeline?')) {
-      const newLeads = leads.filter(l => l.id !== id);
-      saveLeads(newLeads);
+  const deleteLead = (id) => {
+    if (window.confirm("Remover este lead do funil?")) {
+      const updated = leads.filter(l => l.id !== id);
+      saveLeads(updated);
     }
   };
 
-  const getScoreColor = (score) => {
-    if (score >= 70) return '#10b981'; // green
-    if (score >= 40) return '#f59e0b'; // yellow
-    return '#3b82f6'; // blue
-  };
-
-  const formatDate = (isoString) => {
-    if (!isoString) return '';
-    const d = new Date(isoString);
-    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-  };
-
-  // Add dummy lead for demo if empty
-  const addDummyLead = () => {
-    const dummy = {
-      id: Date.now().toString(),
-      name: 'Hamburgueria Exemplo',
-      handle: '@hamburgueria_exemplo',
-      score: 85,
-      status: 'Identificado',
-      date: new Date().toISOString()
-    };
-    saveLeads([...leads, dummy]);
-  };
-
   return (
-    <Container>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ margin: 0, color: '#f8fafc' }}>Pipeline de Vendas</h2>
-        {leads.length === 0 && (
-          <button 
-            onClick={addDummyLead}
-            style={{ background: '#334155', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer' }}
-          >
-            Adicionar Lead Exemplo
-          </button>
-        )}
-      </div>
-      
+    <Container className="animate-fade-in">
+      <Header>
+        <h2>Pipeline de Leads</h2>
+        <p>Acompanhe seus contatos e evolução das negociações.</p>
+      </Header>
+
       <Board>
-        {COLUMNS.map(col => {
-          const colLeads = leads.filter(l => l.status === col);
+        {STAGES.map(stage => {
+          const stageLeads = leads.filter(l => l.status === stage);
           return (
-            <Column 
-              key={col}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, col)}
-            >
-              <ColumnHeader>
-                <h3>{col}</h3>
-                <span className="count">{colLeads.length}</span>
-              </ColumnHeader>
-              <ColumnList>
-                <AnimatePresence>
-                  {colLeads.length === 0 && (
-                    <EmptyState>Solte os cards aqui</EmptyState>
-                  )}
-                  {colLeads.map(lead => (
-                    <LeadCard
-                      key={lead.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, lead.id)}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.2 }}
-                      layout
-                    >
-                      <CardTitle>
-                        {lead.name}
-                        <DeleteBtn onClick={() => handleDelete(lead.id)}>
-                          <Trash2 size={14} />
-                        </DeleteBtn>
-                      </CardTitle>
-                      <CardSubtitle>{lead.handle}</CardSubtitle>
+            <Column key={stage}>
+              <div className="col-header">
+                <h3>{stage}</h3>
+                <span className="count">{stageLeads.length}</span>
+              </div>
+              <div className="col-content">
+                {stageLeads.length === 0 ? (
+                  <div className="empty">Vazio</div>
+                ) : (
+                  stageLeads.map(lead => (
+                    <LeadCard key={lead.id}>
+                      <div className="card-top">
+                        <h4>{lead.name}</h4>
+                        <button className="del-btn" onClick={() => deleteLead(lead.id)}><FaTrash /></button>
+                      </div>
+                      <div className="handle">{lead.handle}</div>
+                      <div className="meta">
+                        <span className={`score ${lead.score > 70 ? 'high' : 'low'}`}>
+                          Score: {lead.score}
+                        </span>
+                        <span className="date">
+                          {new Date(lead.lastContact).toLocaleDateString()}
+                        </span>
+                      </div>
                       
-                      <CardFooter>
-                        <ScoreBadge $color={getScoreColor(lead.score)}>
-                          <TrendingUp size={12} /> Score: {lead.score}
-                        </ScoreBadge>
-                        <DateText>
-                          <Calendar size={12} /> {formatDate(lead.date)}
-                        </DateText>
-                      </CardFooter>
+                      <div className="actions">
+                        <button 
+                          disabled={STAGES.indexOf(stage) === 0} 
+                          onClick={() => moveLead(lead.id, -1)}
+                        >
+                          <FaArrowLeft />
+                        </button>
+                        <button 
+                          disabled={STAGES.indexOf(stage) === STAGES.length - 1} 
+                          onClick={() => moveLead(lead.id, 1)}
+                        >
+                          <FaArrowRight />
+                        </button>
+                      </div>
                     </LeadCard>
-                  ))}
-                </AnimatePresence>
-              </ColumnList>
+                  ))
+                )}
+              </div>
             </Column>
           );
         })}
@@ -310,3 +115,153 @@ export default function LeadPipeline() {
     </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const Header = styled.div`
+  margin-bottom: 24px;
+  h2 { margin: 0 0 8px 0; font-size: 1.5rem; color: #f8fafc; }
+  p { margin: 0; color: #94a3b8; font-size: 0.95rem; }
+`;
+
+const Board = styled.div`
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  min-height: 400px;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+`;
+
+const Column = styled.div`
+  flex: 1;
+  min-width: 260px;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+
+  .col-header {
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 { margin: 0; font-size: 1rem; color: #cbd5e1; }
+    .count { 
+      background: rgba(255, 255, 255, 0.1); 
+      padding: 2px 8px; 
+      border-radius: 12px; 
+      font-size: 0.8rem; 
+    }
+  }
+
+  .col-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    overflow-y: auto;
+
+    .empty {
+      text-align: center;
+      color: #475569;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      font-style: italic;
+    }
+  }
+`;
+
+const LeadCard = styled.div`
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+
+    h4 { margin: 0; color: #f1f5f9; font-size: 0.95rem; }
+    
+    .del-btn {
+      background: none;
+      border: none;
+      color: #475569;
+      cursor: pointer;
+      font-size: 0.8rem;
+      &:hover { color: #ef4444; }
+    }
+  }
+
+  .handle {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.8rem;
+
+    .score {
+      font-weight: 600;
+      &.high { color: #34d399; }
+      &.low { color: #fbbf24; }
+    }
+
+    .date { color: #64748b; }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+
+    button {
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: #94a3b8;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:hover:not(:disabled) { background: rgba(59, 130, 246, 0.2); color: white; }
+      &:disabled { opacity: 0.3; cursor: not-allowed; }
+    }
+  }
+`;

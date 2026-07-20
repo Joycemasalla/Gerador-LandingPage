@@ -1,56 +1,174 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, Copy, Sparkles, Loader2, Calendar } from 'lucide-react';
+import { FaCopy, FaCheck, FaMagic, FaSpinner, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { generateApproachMessages } from '../../services/aiService';
 
+export default function ApproachGenerator({ prospectData, freelancerProfile, apiKey, onAddLead }) {
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState(null);
+  const [hasPrototype, setHasPrototype] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState(null);
+  const [showFollowUp, setShowFollowUp] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!freelancerProfile) {
+      alert("Por favor, preencha o seu perfil na aba 'Meu Perfil' primeiro.");
+      return;
+    }
+    setLoading(true);
+    setMessages(null);
+    try {
+      const result = await generateApproachMessages(prospectData, freelancerProfile, hasPrototype, apiKey);
+      setMessages(result);
+    } catch (e) {
+      alert("Erro ao gerar mensagens: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyToClipboard = (text, index) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
+  return (
+    <Container>
+      <Header>
+        <h3>Gerador de Abordagem Personalizada</h3>
+        <p>Criando mensagens baseadas nos problemas identificados do prospect.</p>
+      </Header>
+
+      <Controls>
+        <label className="checkbox-label">
+          <input 
+            type="checkbox" 
+            checked={hasPrototype} 
+            onChange={(e) => setHasPrototype(e.target.checked)} 
+          />
+          Já tenho um protótipo/layout pronto para apresentar
+        </label>
+        
+        <GenerateBtn onClick={handleGenerate} disabled={loading}>
+          {loading ? <FaSpinner className="spin" /> : <FaMagic />} 
+          {loading ? 'Gerando mensagens...' : 'Gerar Abordagens'}
+        </GenerateBtn>
+      </Controls>
+
+      {messages && (
+        <Results className="animate-fade-in">
+          <Card>
+            <div className="card-header">
+              <span className="icon">🎯</span>
+              <h4>Ângulo da Dor</h4>
+            </div>
+            <p className="message-text">"{messages.anguloDor}"</p>
+            <CopyBtn onClick={() => copyToClipboard(messages.anguloDor, 'dor')}>
+              {copiedIndex === 'dor' ? <><FaCheck /> Copiado</> : <><FaCopy /> Copiar</>}
+            </CopyBtn>
+          </Card>
+
+          <Card>
+            <div className="card-header">
+              <span className="icon">🏆</span>
+              <h4>Ângulo do Resultado</h4>
+            </div>
+            <p className="message-text">"{messages.anguloResultado}"</p>
+            <CopyBtn onClick={() => copyToClipboard(messages.anguloResultado, 'resultado')}>
+              {copiedIndex === 'resultado' ? <><FaCheck /> Copiado</> : <><FaCopy /> Copiar</>}
+            </CopyBtn>
+          </Card>
+
+          <Card>
+            <div className="card-header">
+              <span className="icon">⚡</span>
+              <h4>Ângulo da Curiosidade</h4>
+            </div>
+            <p className="message-text">"{messages.anguloCuriosidade}"</p>
+            <CopyBtn onClick={() => copyToClipboard(messages.anguloCuriosidade, 'curiosidade')}>
+              {copiedIndex === 'curiosidade' ? <><FaCheck /> Copiado</> : <><FaCopy /> Copiar</>}
+            </CopyBtn>
+          </Card>
+
+          <FollowUpSection>
+            <button className="toggle-btn" onClick={() => setShowFollowUp(!showFollowUp)}>
+              {showFollowUp ? <FaChevronUp /> : <FaChevronDown />} Ver sequência de Follow-up sugerida
+            </button>
+            
+            {showFollowUp && messages.followUp && (
+              <div className="followup-list animate-fade-in">
+                <div className="followup-item">
+                  <strong>Dia 1:</strong>
+                  <p>"{messages.followUp.dia1}"</p>
+                  <CopyBtn onClick={() => copyToClipboard(messages.followUp.dia1, 'dia1')}>
+                    {copiedIndex === 'dia1' ? <FaCheck /> : <FaCopy />}
+                  </CopyBtn>
+                </div>
+                <div className="followup-item">
+                  <strong>Dia 3:</strong>
+                  <p>"{messages.followUp.dia3}"</p>
+                  <CopyBtn onClick={() => copyToClipboard(messages.followUp.dia3, 'dia3')}>
+                    {copiedIndex === 'dia3' ? <FaCheck /> : <FaCopy />}
+                  </CopyBtn>
+                </div>
+                <div className="followup-item">
+                  <strong>Dia 7:</strong>
+                  <p>"{messages.followUp.dia7}"</p>
+                  <CopyBtn onClick={() => copyToClipboard(messages.followUp.dia7, 'dia7')}>
+                    {copiedIndex === 'dia7' ? <FaCheck /> : <FaCopy />}
+                  </CopyBtn>
+                </div>
+              </div>
+            )}
+          </FollowUpSection>
+
+          <ActionRow>
+             <button className="btn-secondary" onClick={() => onAddLead(prospectData, messages)}>
+               Adicionar ao Pipeline de Leads
+             </button>
+          </ActionRow>
+        </Results>
+      )}
+    </Container>
+  );
+}
+
 const Container = styled.div`
-  background: rgba(30, 41, 59, 0.5);
-  border: 1px solid #334155;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  padding: 2rem;
+  padding: 24px;
+  margin-top: 24px;
 `;
 
 const Header = styled.div`
+  margin-bottom: 20px;
+  h3 { margin: 0 0 8px 0; font-size: 1.2rem; color: #f8fafc; }
+  p { margin: 0; color: #94a3b8; font-size: 0.9rem; }
+`;
+
+const Controls = styled.div`
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 2rem;
-`;
-
-const BackBtn = styled.button`
-  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 6px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 
-  &:hover {
-    color: #f8fafc;
-    background: rgba(255, 255, 255, 0.05);
-  }
-`;
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #e2e8f0;
+    font-size: 0.95rem;
 
-const CheckboxLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #cbd5e1;
-  font-size: 0.9rem;
-  cursor: pointer;
-  background: rgba(15, 23, 42, 0.5);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: 1px solid #475569;
-
-  input {
-    accent-color: #10b981;
-    width: 16px;
-    height: 16px;
+    input {
+      accent-color: #10b981;
+      width: 18px;
+      height: 18px;
+    }
   }
 `;
 
@@ -58,20 +176,17 @@ const GenerateBtn = styled.button`
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
   border: none;
+  padding: 12px 24px;
   border-radius: 8px;
-  padding: 0.75rem 1.5rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
   transition: all 0.2s;
-  width: 100%;
-  justify-content: center;
-  margin-bottom: 2rem;
 
   &:hover:not(:disabled) {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   }
 
@@ -79,228 +194,133 @@ const GenerateBtn = styled.button`
     opacity: 0.7;
     cursor: not-allowed;
   }
+
+  .spin {
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
 `;
 
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-`;
-
-const MessageCard = styled(motion.div)`
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid ${props => props.$color || '#475569'};
-  border-radius: 12px;
-  padding: 1.5rem;
-  position: relative;
+const Results = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 16px;
 `;
 
-const CardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: ${props => props.$color};
-  font-weight: 600;
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-`;
+const Card = styled.div`
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
 
-const MessageText = styled.div`
-  color: #e2e8f0;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  flex: 1;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 1rem;
-  border-radius: 8px;
-  font-style: italic;
-  white-space: pre-wrap;
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    .icon { font-size: 1.2rem; }
+    h4 { margin: 0; color: #f1f5f9; font-size: 1.05rem; }
+  }
+
+  .message-text {
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+    padding-right: 100px;
+  }
 `;
 
 const CopyBtn = styled.button`
-  margin-top: 1rem;
-  background: transparent;
-  border: 1px solid #475569;
-  color: #cbd5e1;
-  padding: 0.5rem;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  padding: 6px 12px;
   border-radius: 6px;
+  font-size: 0.85rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  transition: all 0.2s;
+  gap: 6px;
+  transition: background 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: rgba(255, 255, 255, 0.2);
   }
 `;
 
 const FollowUpSection = styled.div`
-  margin-top: 3rem;
-  border-top: 1px solid #334155;
-  padding-top: 2rem;
-`;
+  margin-top: 16px;
 
-const AddToPipelineBtn = styled.button`
-  background: #10b981;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  &:hover { background: #059669; }
-`;
+  .toggle-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 8px 0;
+    
+    &:hover { color: #f8fafc; }
+  }
 
-export default function ApproachGenerator({ prospectData, onBack, apiKey }) {
-  const [hasPrototype, setHasPrototype] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState(null);
-  const [copiedIndex, setCopiedIndex] = useState(null);
-  const [pipelineAdded, setPipelineAdded] = useState(false);
+  .followup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+  }
 
-  const freelancerProfile = JSON.parse(localStorage.getItem('salesagent_profile') || '{}');
+  .followup-item {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
 
-  const handleGenerate = async () => {
-    setLoading(true);
-    setMessages(null);
-    try {
-      const data = await generateApproachMessages(prospectData, freelancerProfile, hasPrototype, apiKey);
-      setMessages(data);
-    } catch (err) {
-      alert("Erro ao gerar mensagens: " + err.message);
-    } finally {
-      setLoading(false);
+    strong { color: #f1f5f9; white-space: nowrap; }
+    p { margin: 0; color: #cbd5e1; font-style: italic; padding-right: 40px; }
+    
+    button {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      &:hover { color: white; }
     }
-  };
+  }
+`;
 
-  const handleCopy = (text, idx) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(idx);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  };
+const ActionRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
 
-  const addToPipeline = () => {
-    const leads = JSON.parse(localStorage.getItem('salesagent_leads') || '[]');
-    const newLead = {
-      id: Date.now().toString(),
-      name: prospectData.profile.identity?.businessName || prospectData.profile.identity?.handle || 'Desconhecido',
-      handle: prospectData.profile.identity?.handle || '',
-      score: prospectData.analysis.score,
-      status: 'Abordado',
-      date: new Date().toISOString()
-    };
-    localStorage.setItem('salesagent_leads', JSON.stringify([...leads, newLead]));
-    setPipelineAdded(true);
-  };
+  .btn-secondary {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 
-  return (
-    <Container>
-      <Header>
-        <BackBtn onClick={onBack}>
-          <ArrowLeft size={16} /> Voltar para Análise
-        </BackBtn>
-        <CheckboxLabel>
-          <input 
-            type="checkbox" 
-            checked={hasPrototype} 
-            onChange={(e) => setHasPrototype(e.target.checked)} 
-          />
-          Já tenho um protótipo pronto para eles
-        </CheckboxLabel>
-      </Header>
-
-      {!messages && (
-        <GenerateBtn onClick={handleGenerate} disabled={loading}>
-          {loading ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-          {loading ? 'Criando a melhor abordagem...' : 'Gerar Mensagens com IA'}
-        </GenerateBtn>
-      )}
-
-      {messages && (
-        <AnimatePresence>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h3 style={{ margin: 0, color: '#f8fafc' }}>Escolha o seu ângulo:</h3>
-              <AddToPipelineBtn onClick={addToPipeline} disabled={pipelineAdded} style={{ opacity: pipelineAdded ? 0.5 : 1 }}>
-                <CheckCircle2 size={16} />
-                {pipelineAdded ? 'Salvo no Pipeline' : 'Salvar no Pipeline'}
-              </AddToPipelineBtn>
-            </div>
-            <Grid>
-              <MessageCard $color="#ef4444" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
-                <CardHeader $color="#ef4444">🎯 Foco na Dor</CardHeader>
-                <MessageText>{messages.anguloDor}</MessageText>
-                <CopyBtn onClick={() => handleCopy(messages.anguloDor, 'dor')}>
-                  {copiedIndex === 'dor' ? <CheckCircle2 size={16} color="#10b981" /> : <Copy size={16} />} 
-                  {copiedIndex === 'dor' ? 'Copiado!' : 'Copiar'}
-                </CopyBtn>
-              </MessageCard>
-
-              <MessageCard $color="#10b981" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-                <CardHeader $color="#10b981">🏆 Foco no Resultado</CardHeader>
-                <MessageText>{messages.anguloResultado}</MessageText>
-                <CopyBtn onClick={() => handleCopy(messages.anguloResultado, 'resultado')}>
-                  {copiedIndex === 'resultado' ? <CheckCircle2 size={16} color="#10b981" /> : <Copy size={16} />} 
-                  {copiedIndex === 'resultado' ? 'Copiado!' : 'Copiar'}
-                </CopyBtn>
-              </MessageCard>
-
-              <MessageCard $color="#3b82f6" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}>
-                <CardHeader $color="#3b82f6">⚡ Curiosidade</CardHeader>
-                <MessageText>{messages.anguloCuriosidade}</MessageText>
-                <CopyBtn onClick={() => handleCopy(messages.anguloCuriosidade, 'curiosidade')}>
-                  {copiedIndex === 'curiosidade' ? <CheckCircle2 size={16} color="#10b981" /> : <Copy size={16} />} 
-                  {copiedIndex === 'curiosidade' ? 'Copiado!' : 'Copiar'}
-                </CopyBtn>
-              </MessageCard>
-            </Grid>
-
-            {messages.followUp && (
-              <FollowUpSection>
-                <h3 style={{ margin: '0 0 1.5rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Calendar size={20} color="#8b5cf6" />
-                  Sequência de Follow-up Sugerida
-                </h3>
-                <Grid>
-                  <MessageCard initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-                    <CardHeader $color="#a78bfa">Dia 1 (Acompanhamento)</CardHeader>
-                    <MessageText>{messages.followUp.dia1}</MessageText>
-                    <CopyBtn onClick={() => handleCopy(messages.followUp.dia1, 'dia1')}>
-                      {copiedIndex === 'dia1' ? <CheckCircle2 size={16} /> : <Copy size={16} />} Copiar
-                    </CopyBtn>
-                  </MessageCard>
-                  
-                  <MessageCard initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
-                    <CardHeader $color="#a78bfa">Dia 3 (Novo Ângulo)</CardHeader>
-                    <MessageText>{messages.followUp.dia3}</MessageText>
-                    <CopyBtn onClick={() => handleCopy(messages.followUp.dia3, 'dia3')}>
-                      {copiedIndex === 'dia3' ? <CheckCircle2 size={16} /> : <Copy size={16} />} Copiar
-                    </CopyBtn>
-                  </MessageCard>
-
-                  <MessageCard initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }}>
-                    <CardHeader $color="#a78bfa">Dia 7 (Encerramento)</CardHeader>
-                    <MessageText>{messages.followUp.dia7}</MessageText>
-                    <CopyBtn onClick={() => handleCopy(messages.followUp.dia7, 'dia7')}>
-                      {copiedIndex === 'dia7' ? <CheckCircle2 size={16} /> : <Copy size={16} />} Copiar
-                    </CopyBtn>
-                  </MessageCard>
-                </Grid>
-              </FollowUpSection>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      )}
-    </Container>
-  );
-}
+    &:hover {
+      background: rgba(16, 185, 129, 0.2);
+    }
+  }
+`;

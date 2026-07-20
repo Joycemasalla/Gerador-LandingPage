@@ -635,3 +635,35 @@ Apenas retorne o texto da resposta. NÃO inclua aspas no começo ou no fim, reto
   const raw = await callGemini(apiKey, prompt, { jsonMode: false });
   return raw.replace(/^["']|["']$/g, '').trim();
 }
+
+/**
+ * Analisa um site pelo URL — consome menos tokens que Instagram e foca em UX/Conversão.
+ */
+export async function analyzeWebsite(siteUrl, _customApiKey = '') {
+  const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
+  const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
+  const apiKey = _customApiKey || import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
+  if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada. (Crie a variável no .env)");
+
+  const prompt = `Você é um especialista em CRO e design de conversão.
+Sua missão é analisar o site fornecido, ou se não puder acessá-lo diretamente, inferir os problemas mais comuns para este tipo de site.
+Seja criativo e aponte problemas plausíveis.
+
+SITE: ${siteUrl}
+
+INSTRUÇÕES:
+Retorne um JSON EXATAMENTE neste formato, contendo uma análise de problemas focada em conversão, lentidão, design, mobile, etc.
+
+FORMATO DE SAÍDA — EXCLUSIVAMENTE JSON:
+{
+  "score": "número de 0 a 100",
+  "problems": [
+    "lista de 3 a 5 problemas críticos encontrados ou plausíveis"
+  ],
+  "strategy": "Criação do zero | Redesign / Modernização | Landing page de campanha",
+  "details": "Breve justificativa"
+}`;
+
+  const raw = await callGemini(apiKey, prompt, { jsonMode: true });
+  return parseJsonFromAI(raw);
+}
