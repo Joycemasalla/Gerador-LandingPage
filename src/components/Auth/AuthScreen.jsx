@@ -40,10 +40,17 @@ export default function AuthScreen() {
   const handleGoogle = async () => {
     setError('');
     setInfo('');
-    const result = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: window.location.origin
-    });
-    if (result?.error) setError(result.error.message || 'Erro no login com Google');
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) throw error;
+    } catch (err) {
+      setError(err.message || 'Erro no login com Google');
+    }
   };
 
   return (

@@ -8,6 +8,31 @@ import ExtractionScreen from './ExtractionScreen';
 import QuestionCard from './QuestionCard';
 import ReviewScreen from './ReviewScreen';
 
+const SEGMENT_OPTIONS = [
+  "Barbearia",
+  "Salão de Beleza",
+  "Clínica de Estética",
+  "Hamburgueria",
+  "Restaurante / Cafeteria",
+  "Pet Shop",
+  "Clínica de Saúde / Consultório",
+  "Academia / Studio Fitness",
+  "Revendedora de Produtos (Natura, Avon, Boticário)",
+  "E-commerce / Loja Online",
+  "Loja de Roupas / Moda",
+  "Consultoria / Coaching",
+  "Curso / Infoproduto",
+  "Prestador de Serviços (Eletricista, Encanador, etc.)",
+  "Advocacia / Escritório Jurídico",
+  "Imobiliária / Corretor de Imóveis",
+  "Fotografia / Audiovisual",
+  "Evento / Buffet / Casamento",
+  "Agência (Marketing, Design, Dev)",
+  "Assistência Técnica",
+  "Escola / Educação",
+  "Turismo / Viagens"
+];
+
 const EMPTY_RICH_JSON = {
   identity: {
     businessName: null,
@@ -172,6 +197,7 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
         question: 'Qual o segmento de atuação do seu negócio?',
         hint: 'Isso define a personalidade do design e carrega sugestões específicas no questionário.',
         skipLabel: null,
+<<<<<<< HEAD
         options: { default: BUSINESS_CATEGORIES.map(c => c.label) },
         optionsList: BUSINESS_CATEGORIES.map(c => c.label)
       });
@@ -224,6 +250,12 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
           ]
         }
       );
+=======
+        optionsList: SEGMENT_OPTIONS,
+        allowCustom: true,
+        customPlaceholder: "Ex: Revendedora Natura, Consultoria financeira, Loja de roupas..."
+      });
+>>>>>>> fc77a7f4334813512db985ab8dcf371917ff6b4b
     }
 
     queue = [...prepends, ...institucionalExtras, ...queue];
@@ -245,10 +277,42 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
     setErrorMsg('');
     const baseJson = { ...JSON.parse(JSON.stringify(EMPTY_RICH_JSON)), generationType };
     setExtractedData(baseJson);
+<<<<<<< HEAD
     setDetectedCategory(null);
     setSelectedCategory(null);
     // Ir direto para seleção de categoria (Passo 0)
     setStep('category');
+=======
+
+    // Fila manual completa contendo perguntas básicas e as 12 do banco
+    const initialQueue = [
+      {
+        id: "identity.businessName",
+        priority: "critical",
+        type: "text_input",
+        question: "Qual o nome do seu negócio?",
+        hint: "Esse nome será exibido em destaque nos títulos e cabeçalhos da página.",
+        skipLabel: null
+      },
+      {
+        id: "identity.segment",
+        priority: "critical",
+        type: "single_choice",
+        question: "Qual o segmento de atuação do seu negócio?",
+        hint: "Isso define a personalidade do design e carrega sugestões específicas no questionário.",
+        skipLabel: null,
+        optionsList: SEGMENT_OPTIONS,
+        allowCustom: true,
+        customPlaceholder: "Ex: Revendedora Natura, Consultoria financeira, Loja de roupas..."
+      },
+      ...buildQuestionQueue(baseJson, '')
+    ];
+
+    setQuestionQueue(initialQueue);
+    setCurrentQuestionIdx(0);
+    setHistory([baseJson]);
+    setStep('interviewing');
+>>>>>>> fc77a7f4334813512db985ab8dcf371917ff6b4b
   };
 
   // Preencher com Dados Falsos de Teste
