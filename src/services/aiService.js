@@ -333,8 +333,8 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       if (!response.ok) {
         const errorText = await response.text();
         if (response.status === 503) {
-          // Se o servidor principal falhar, troca para o modelo 1.5-flash mais estável
-          currentModel = "gemini-1.5-flash";
+          // Se o servidor principal falhar, troca para o modelo 3.5-pro como fallback
+          currentModel = "gemini-3.5-pro";
           throw new Error(`Gemini API 503: Model overloaded. Attempt ${attempt}`);
         }
         throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
