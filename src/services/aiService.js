@@ -562,3 +562,72 @@ export async function generateStrategy(clientData, _customApiKey = '') {
 
     return strategyData;
 }
+
+export async function generateApproachMessages(prospectData, freelancerProfile, hasPrototype, _customApiKey = '') {
+  const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
+  const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
+  const apiKey = _customApiKey || import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
+  if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada. (Crie a variável no .env)");
+
+  const prompt = `Você é um especialista em vendas de serviços digitais para pequenas empresas.
+
+MEU PERFIL (freelancer):
+- Nome: ${freelancerProfile.name || 'Especialista'}
+- Serviço: ${freelancerProfile.service || 'Soluções Web'}
+- Diferenciais: ${(freelancerProfile.differentials || []).join(', ')}
+- Tom de voz: ${freelancerProfile.tone || 'Profissional'}
+- Cases: ${freelancerProfile.cases || 'Nenhum informado'}
+
+PROSPECT ANALISADO:
+- Negócio: ${prospectData.profile.identity?.businessName || prospectData.profile.identity?.handle || 'Desconhecido'} (${prospectData.profile.identity?.segment || 'Geral'})
+- Localização: ${prospectData.profile.identity?.city || 'Não informada'}
+- Problemas encontrados: ${prospectData.analysis.problems.join(', ')}
+- Estratégia: ${prospectData.analysis.strategy}
+- Já tem protótipo pronto: ${hasPrototype ? 'Sim, mencionar que já desenhei algo para eles' : 'Não'}
+
+TAREFA:
+Gere 3 mensagens de abordagem via WhatsApp/DM para este prospect.
+Cada mensagem deve mencionar um problema ESPECÍFICO encontrado no perfil.
+Use o tom de voz do freelancer.
+Seja direto, empático e focado no benefício para o cliente — não em "eu faço sites".
+
+FORMATO DE SAÍDA — EXCLUSIVAMENTE JSON:
+{
+  "anguloDor": "mensagem focada no problema específico encontrado",
+  "anguloResultado": "mensagem focada no que o cliente vai ganhar",
+  "anguloCuriosidade": "mensagem curta que desperta interesse sem revelar tudo",
+  "followUp": {
+    "dia1": "mensagem de acompanhamento leve para enviar no dia seguinte",
+    "dia3": "mensagem com ângulo diferente para enviar no terceiro dia",
+    "dia7": "mensagem de encerramento provocando resposta para o sétimo dia"
+  }
+}`;
+
+  const raw = await callGemini(apiKey, prompt, { jsonMode: true });
+  return parseJsonFromAI(raw);
+}
+
+export async function generateObjectionResponse(clientMessage, freelancerProfile, _customApiKey = '') {
+  const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
+  const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
+  const apiKey = _customApiKey || import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
+  if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada. (Crie a variável no .env)");
+
+  const prompt = `Você é um especialista em vendas B2B e tratamento de objeções.
+Um cliente (prospect) respondeu à nossa abordagem de vendas de Landing Pages/Sites com a seguinte mensagem/objeção:
+
+MENSAGEM DO CLIENTE:
+"${clientMessage}"
+
+MEU PERFIL (freelancer):
+- Diferenciais: ${(freelancerProfile.differentials || []).join(', ')}
+- Tom de voz: ${freelancerProfile.tone || 'Profissional'}
+
+TAREFA:
+Gere UMA resposta de WhatsApp curta, empática e persuasiva para lidar com essa objeção e manter a conversa viva.
+Não pareça um robô. Pareça um parceiro de negócios estratégico.
+Apenas retorne o texto da resposta. NÃO inclua aspas no começo ou no fim, retorne o texto limpo e direto ao ponto.`;
+
+  const raw = await callGemini(apiKey, prompt, { jsonMode: false });
+  return raw.replace(/^["']|["']$/g, '').trim();
+}

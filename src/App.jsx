@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 import InterviewWizard from './components/InterviewWizard/InterviewWizard';
 import StrategyDashboard from './components/StrategyDashboard/StrategyDashboard';
 import AuthScreen from './components/Auth/AuthScreen';
+import SalesAgent from './components/SalesAgent/SalesAgent';
 import { generateStrategy } from './services/aiService';
 import { supabase } from './integrations/supabase/client';
 
@@ -231,7 +232,7 @@ export default function App() {
                 <p>Crie estruturas, copies e prompts de alta conversão para Landing Pages em minutos.</p>
               </div>
             </HubCard>
-            <HubCard onClick={() => window.location.href = '/agente-vendas/index.html'}>
+            <HubCard onClick={() => setCurrentApp('agente')}>
               <div className="card-icon" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
                 💬
               </div>
@@ -245,6 +246,10 @@ export default function App() {
         </div>
       </HubLayout>
     );
+  }
+
+  if (currentApp === 'agente') {
+    return <SalesAgent onBack={() => setCurrentApp('hub')} apiKey={customApiKey} />;
   }
 
   return (

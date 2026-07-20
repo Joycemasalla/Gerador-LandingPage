@@ -303,6 +303,70 @@ document.addEventListener('DOMContentLoaded', () => {
         els.gerarMensagemBtn.click();
     });
 
+    // --- ASSISTENTE DE IA (GEMINI) ---
+    const geminiKeyInput = document.getElementById('geminiKey');
+    const clienteMensagemInput = document.getElementById('clienteMensagem');
+    const gerarRespostaIaBtn = document.getElementById('gerarRespostaIa');
+    const iaRespostaContainer = document.getElementById('iaRespostaContainer');
+    const iaMensagemGerada = document.getElementById('iaMensagemGerada');
+    const copiarIaMsgBtn = document.getElementById('copiarIaMsg');
+
+    if (geminiKeyInput && localStorage.getItem('agente_gemini_key')) {
+        geminiKeyInput.value = localStorage.getItem('agente_gemini_key');
+    }
+
+    if (gerarRespostaIaBtn) {
+        gerarRespostaIaBtn.addEventListener('click', async () => {
+            const key = geminiKeyInput.value.trim();
+            const msgCliente = clienteMensagemInput.value.trim();
+            
+            if (!key) {
+                alert('Por favor, insira sua chave da API do Gemini.');
+                return;
+            }
+            if (!msgCliente) {
+                alert('Por favor, cole a mensagem do cliente.');
+                return;
+            }
+
+            localStorage.setItem('agente_gemini_key', key);
+            gerarRespostaIaBtn.textContent = '⏳ Pensando...';
+            gerarRespostaIaBtn.disabled = true;
+            iaRespostaContainer.style.display = 'none';
+
+            try {
+                const prompt = `Você é um Consultor Digital experiente especializado em vender Landing Pages e Sites para negócios locais e empresas.\nO seu nome é ${state.perfil.pNome || 'Consultor'} e o seu diferencial principal é: ${state.perfil.pDiferencial || 'Atendimento super personalizado'}.\n\nO cliente enviou a seguinte mensagem de resposta no seu WhatsApp:\n"${msgCliente}"\n\nSua tarefa: Escreva a melhor resposta possível (no máximo 2 parágrafos). Use um tom natural e amigável (sem parecer robô), não tente vender de cara, mas responda à objeção ou pergunta dele e tente guiar a conversa para uma ligação de 10 minutos (call de alinhamento) ou para manter o interesse.\nImportante: Forneça apenas a mensagem final pronta para enviar, sem introduções.`;
+
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+
+                const respostaIa = data.candidates[0].content.parts[0].text;
+                
+                iaMensagemGerada.innerHTML = respostaIa.replace(/\n/g, '<br>');
+                iaRespostaContainer.style.display = 'block';
+            } catch (error) {
+                alert('Erro na IA: ' + error.message);
+            } finally {
+                gerarRespostaIaBtn.textContent = '✨ Gerar Resposta com IA';
+                gerarRespostaIaBtn.disabled = false;
+            }
+        });
+    }
+
+    if (copiarIaMsgBtn) {
+        copiarIaMsgBtn.addEventListener('click', () => {
+            window.copyText(copiarIaMsgBtn, iaMensagemGerada.innerText);
+        });
+    }
+
     // --- FUNÇÕES DO FLUXO ---
     function renderFluxoOpcoes(etapaKey) {
         const opcoes = playbook.fluxos[etapaKey] || [];
