@@ -197,9 +197,10 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
         question: 'Qual o segmento de atuação do seu negócio?',
         hint: 'Isso define a personalidade do design e carrega sugestões específicas no questionário.',
         skipLabel: null,
-<<<<<<< HEAD
         options: { default: BUSINESS_CATEGORIES.map(c => c.label) },
-        optionsList: BUSINESS_CATEGORIES.map(c => c.label)
+        optionsList: BUSINESS_CATEGORIES.map(c => c.label),
+        allowCustom: true,
+        customPlaceholder: "Ex: Revendedora Natura, Consultoria financeira, Loja de roupas..."
       });
     }
 
@@ -250,12 +251,6 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
           ]
         }
       );
-=======
-        optionsList: SEGMENT_OPTIONS,
-        allowCustom: true,
-        customPlaceholder: "Ex: Revendedora Natura, Consultoria financeira, Loja de roupas..."
-      });
->>>>>>> fc77a7f4334813512db985ab8dcf371917ff6b4b
     }
 
     queue = [...prepends, ...institucionalExtras, ...queue];
