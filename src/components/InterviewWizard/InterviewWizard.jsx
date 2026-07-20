@@ -272,42 +272,10 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
     setErrorMsg('');
     const baseJson = { ...JSON.parse(JSON.stringify(EMPTY_RICH_JSON)), generationType };
     setExtractedData(baseJson);
-<<<<<<< HEAD
     setDetectedCategory(null);
     setSelectedCategory(null);
     // Ir direto para seleção de categoria (Passo 0)
     setStep('category');
-=======
-
-    // Fila manual completa contendo perguntas básicas e as 12 do banco
-    const initialQueue = [
-      {
-        id: "identity.businessName",
-        priority: "critical",
-        type: "text_input",
-        question: "Qual o nome do seu negócio?",
-        hint: "Esse nome será exibido em destaque nos títulos e cabeçalhos da página.",
-        skipLabel: null
-      },
-      {
-        id: "identity.segment",
-        priority: "critical",
-        type: "single_choice",
-        question: "Qual o segmento de atuação do seu negócio?",
-        hint: "Isso define a personalidade do design e carrega sugestões específicas no questionário.",
-        skipLabel: null,
-        optionsList: SEGMENT_OPTIONS,
-        allowCustom: true,
-        customPlaceholder: "Ex: Revendedora Natura, Consultoria financeira, Loja de roupas..."
-      },
-      ...buildQuestionQueue(baseJson, '')
-    ];
-
-    setQuestionQueue(initialQueue);
-    setCurrentQuestionIdx(0);
-    setHistory([baseJson]);
-    setStep('interviewing');
->>>>>>> fc77a7f4334813512db985ab8dcf371917ff6b4b
   };
 
   // Preencher com Dados Falsos de Teste
