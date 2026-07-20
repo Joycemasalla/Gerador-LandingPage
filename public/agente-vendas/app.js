@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FUNÇÕES DO LEAD (GERADOR) ---
+    // --- FUNÇÕES DO LEAD (GERADOR APRIMORADO - PLAYBOOK) ---
     els.gerarMensagemBtn.addEventListener('click', () => {
         const lead = {
             nome: els.lNome.value.trim() || 'Responsável',
@@ -226,35 +226,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const meuNome = state.perfil.pNome || 'Consultor';
         
-        let msg = '';
-        let dica = '';
+        let dicaEstrategia = '';
+        let msgOpcao1 = ''; // Amigável
+        let msgOpcao2 = ''; // Profissional
+        let msgOpcao3 = ''; // Extremamente Curta
 
-        // Lógica simples de montagem
+        // 1. DICA DE ESTRATÉGIA
+        if (lead.situacao === 'premium') {
+            dicaEstrategia = 'Estratégia: Esta empresa é premium. Focar que a marca é excelente, mas a estrutura digital (site/link) atual não acompanha o alto nível do serviço deles.';
+        } else if (lead.situacao === 'pequena') {
+            dicaEstrategia = 'Estratégia: Empresa pequena/familiar. Focar em trazer mais profissionalismo e confiança para ajudar o negócio a crescer e receber contatos diretos no WhatsApp.';
+        } else if (lead.situacao === 'semsite' || lead.situacao === 'siteruim') {
+            dicaEstrategia = 'Estratégia: Mostrar sutilmente que estão deixando clientes na mesa porque a falta de estrutura perde a confiança do público.';
+        } else {
+            dicaEstrategia = 'Estratégia: Elogiar o trabalho deles no Instagram e gerar curiosidade sobre uma nova estrutura focada em conversão.';
+        }
+
+        if (lead.obs) {
+            dicaEstrategia += `<br><strong>Atenção:</strong> Você citou um detalhe ("${lead.obs}"). Use isso a seu favor para mostrar que a análise não foi automática.`;
+        }
+
+        // 2. CONSTRUÇÃO DAS MENSAGENS (COM GATILHOS DO PLAYBOOK)
+        const temProto = (state.perfil.pProto === 'sim');
+        let hookCurto = '';
+        
         if (lead.canal === 'whatsapp') {
-            msg = `Oi ${lead.nome}! Tudo bem?\n\nAcompanho o trabalho da ${lead.empresa} e acho o serviço de vocês excelente.\n\n`;
+            hookCurto = `Oi ${lead.nome}! Tudo bem?`;
         } else {
-            msg = `Olá ${lead.nome}, tudo bem? Acompanho a ${lead.empresa} por aqui.\n\n`;
+            hookCurto = `Olá ${lead.nome}, tudo bem?`;
         }
 
-        if (lead.situacao === 'semsite' || lead.situacao === 'siteruim') {
-            msg += `Como atuo com posicionamento digital, fiz uma análise rápida e notei que vocês estão deixando clientes na mesa porque a presença atual no Google não reflete a qualidade do serviço de vocês.\n\n`;
-        } else {
-            msg += `Como atuo com atração de clientes, notei uma grande oportunidade de aumentar as captações de vocês no digital.\n\n`;
+        // OPÇÃO 1: AMIGÁVEL
+        msgOpcao1 = `${hookCurto} Acompanhei alguns posts do ${lead.empresa} e achei incrível o trabalho que vocês fazem${lead.obs ? ' com ' + lead.obs : ''}. Percebi que o link da bio de vocês ${lead.situacao === 'siteruim' ? 'está com um site um pouco antigo' : 'está indo direto pro WhatsApp'}. Como eu trabalho criando estruturas digitais para empresas, resolvi montar um desenho de como ficaria uma nova presença para vocês. Quando tiver um tempinho, me avisa que te mando o link aqui sem compromisso!`;
+
+        // OPÇÃO 2: PROFISSIONAL
+        msgOpcao2 = `Olá, ${lead.nome}. Parabéns pelo trabalho na ${lead.empresa}, a qualidade dos serviços de vocês é notável. Sou especialista em conversão digital e notei que a estrutura atual ${lead.situacao === 'siteruim' ? 'do site de vocês' : 'do link de vocês'} pode não estar refletindo todo esse profissionalismo que vocês têm no presencial. Eu tomei a liberdade de desenhar um protótipo de Landing Page exclusivo para a marca de vocês. Gostaria de dar uma olhada rápida?`;
+
+        // OPÇÃO 3: EXTREMAMENTE CURTA
+        msgOpcao3 = `${hookCurto} Adorei o perfil de vocês! Eu acabei de criar um desenho de um site focado em trazer mais clientes pro ${lead.empresa} e queria te mostrar, totalmente sem compromisso. Posso mandar o link para você avaliar?`;
+
+        // Se NÃO usa protótipos prontos, a chamada para ação muda para reunião:
+        if (!temProto) {
+            msgOpcao1 = `${hookCurto} Acompanhei o ${lead.empresa} e achei incrível o trabalho de vocês. Percebi uma oportunidade de melhorar muito a captação de clientes que chegam pelo seu perfil. Você teria 10 minutinhos amanhã para eu te mostrar como isso funciona, sem compromisso?`;
+            msgOpcao2 = `Olá, ${lead.nome}. Parabéns pela qualidade dos serviços na ${lead.empresa}. Atuo com conversão digital e notei pontos de melhoria na sua estrutura atual que estão te fazendo perder contatos. Podemos bater um papo rápido de 10 min amanhã para eu te apresentar uma solução?`;
+            msgOpcao3 = `${hookCurto} Adorei o perfil! Percebi um detalhe na sua captação que pode ser otimizado para gerar mais orçamentos. Posso te enviar um áudio de 1 min explicando?`;
         }
 
-        if (state.perfil.pProto === 'sim' && state.perfil.pDiferencial === 'prototipo') {
-            msg += `Tomei a liberdade e montei um protótipo de uma página de vendas para vocês. Ficou muito profissional.\n\nVocê teria 5 minutinhos amanhã para eu te mostrar a tela? Sem custo nenhum, só pra você ver o potencial.`;
-            dica = 'Dica: Envie esta mensagem e NÃO mande o link ainda. Gere a curiosidade para ele aceitar a reunião/call.';
-        } else if (lead.obs) {
-            msg += `Inclusive, notei que ${lead.obs.toLowerCase()}.\n\nPosso te mostrar como resolver isso e atrair mais clientes em uma chamada de 10 minutos amanhã?`;
-            dica = 'Dica: Você usou uma observação real. Isso aumenta muito a taxa de resposta.';
-        } else {
-            msg += `Você teria 10 minutinhos amanhã, pela manhã ou tarde, para eu te mostrar como resolver isso de forma prática?`;
-            dica = 'Dica: O objetivo do primeiro contato é VENDER A REUNIÃO, não vender o serviço.';
-        }
-
-        els.mensagemGerada.textContent = msg;
-        els.dicaSegmento.innerHTML = `<strong>💡 ${dica}</strong>`;
+        // Renderizar na tela usando HTML para formatar as 3 opções
+        els.mensagemGerada.innerHTML = `
+            <div style="margin-bottom: 15px;">
+                <span style="font-size: 0.75rem; color: #a78bfa; font-weight: bold; text-transform: uppercase;">Opção 1 — Amigável e Descontraída</span>
+                <p style="margin: 5px 0 0; font-size: 0.95rem; color: #fff;">${msgOpcao1}</p>
+            </div>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+            <div style="margin-bottom: 15px;">
+                <span style="font-size: 0.75rem; color: #a78bfa; font-weight: bold; text-transform: uppercase;">Opção 2 — Profissional e Autoridade</span>
+                <p style="margin: 5px 0 0; font-size: 0.95rem; color: #fff;">${msgOpcao2}</p>
+            </div>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+            <div style="margin-bottom: 5px;">
+                <span style="font-size: 0.75rem; color: #a78bfa; font-weight: bold; text-transform: uppercase;">Opção 3 — Direta e Curta</span>
+                <p style="margin: 5px 0 0; font-size: 0.95rem; color: #fff;">${msgOpcao3}</p>
+            </div>
+        `;
+        
+        els.dicaSegmento.innerHTML = `<strong>💡 ${dicaEstrategia}</strong>`;
         els.mensagemGeradaCard.style.display = 'block';
         els.mensagemGeradaCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
