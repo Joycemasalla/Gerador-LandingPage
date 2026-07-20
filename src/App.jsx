@@ -11,6 +11,7 @@ import { supabase } from './integrations/supabase/client';
 export default function App() {
   const [session, setSession] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [currentApp, setCurrentApp] = useState('hub');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -211,6 +212,41 @@ export default function App() {
   if (!session) {
     return <AuthScreen />;
   }
+
+  if (currentApp === 'hub') {
+    return (
+      <HubLayout>
+        <div className="hub-container animate-fade-in">
+          <div className="hub-header">
+            <h1>Central de Assistentes AI</h1>
+            <p>Escolha qual ferramenta estratégica você precisa usar agora.</p>
+          </div>
+          <div className="hub-cards">
+            <HubCard onClick={() => setCurrentApp('gerador')}>
+              <div className="card-icon" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)' }}>
+                <FaRobot />
+              </div>
+              <div className="card-content">
+                <h3>Gerador de Briefing LP</h3>
+                <p>Crie estruturas, copies e prompts de alta conversão para Landing Pages em minutos.</p>
+              </div>
+            </HubCard>
+            <HubCard onClick={() => window.location.href = '/agente-vendas/index.html'}>
+              <div className="card-icon" style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}>
+                💬
+              </div>
+              <div className="card-content">
+                <h3>Agente Comercial</h3>
+                <p>O seu playbook de vendas interativo. Abordagens, tratamentos de objeções e conversão.</p>
+              </div>
+            </HubCard>
+          </div>
+          <button className="logout-btn" onClick={handleSignOut}><FaSignOutAlt /> Sair da conta</button>
+        </div>
+      </HubLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       {/* Header Administrativo */}
@@ -226,6 +262,9 @@ export default function App() {
         </div>
 
         <HeaderActions>
+          <HistoryBtn onClick={() => setCurrentApp('hub')} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', borderColor: 'rgba(255,255,255,0.1)' }}>
+            <FaChevronLeft /> Voltar ao Início
+          </HistoryBtn>
           <HistoryBtn onClick={() => setShowHistory(true)}>
             <FaHistory /> Histórico
           </HistoryBtn>
@@ -701,3 +740,86 @@ const HistoryCard = styled.div`
     }
   }
 }`;
+
+const HubLayout = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, #0f172a, #020617);
+  padding: 24px;
+  color: #f1f5f9;
+  font-family: 'Inter', sans-serif;
+
+  .hub-container {
+    max-width: 800px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .hub-header {
+    text-align: center;
+    h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; color: transparent; }
+    p { color: #94a3b8; font-size: 1.1rem; max-width: 500px; margin: 0 auto; }
+  }
+
+  .hub-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .logout-btn {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+    &:hover { color: #ef4444; }
+  }
+`;
+
+const HubCard = styled.div`
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 32px 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+
+  &:hover {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .card-icon {
+    width: 64px; height: 64px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: white;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+
+  .card-content {
+    h3 { margin: 0 0 10px 0; font-size: 1.3rem; color: #f8fafc; font-weight: 700; }
+    p { margin: 0; color: #94a3b8; font-size: 0.95rem; line-height: 1.5; }
+  }
+`;

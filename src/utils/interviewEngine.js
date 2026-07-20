@@ -1,7 +1,15 @@
 import { questions } from './questionBank';
+import {
+  BUSINESS_CATEGORIES,
+  getCategoryById,
+  detectCategoryFromSegment,
+  getCategorySpecificQuestions,
+  getActiveSections,
+} from './businessCategories';
 
 /**
- * Normaliza a string do segmento para mapear com o banco de perguntas
+ * Normaliza a string do segmento para mapear com o banco de perguntas (legado)
+ * Mantido para backward compatibility com código que usa variantes do questionBank
  */
 export function normalizeSegment(segment) {
   if (!segment) return 'default';
@@ -14,7 +22,51 @@ export function normalizeSegment(segment) {
   if (s.includes('saúde') || s.includes('saude') || s.includes('médico') || s.includes('medico') || s.includes('clínica') || s.includes('clinica') || s.includes('dentista') || s.includes('psicolog')) return 'saude';
   if (s.includes('academia') || s.includes('fitness') || s.includes('treino') || s.includes('crossfit') || s.includes('musculação')) return 'academia';
   if (s.includes('restaurante') || s.includes('comida') || s.includes('gourmet') || s.includes('bistrô') || s.includes('bistro') || s.includes('gastronomia') || s.includes('jantar') || s.includes('almoço')) return 'restaurante';
+  // Novas categorias
+  if (s.includes('revenda') || s.includes('loja') || s.includes('roupas') || s.includes('moda') || s.includes('eletrônico') || s.includes('cosmético')) return 'revenda';
+  if (s.includes('advogado') || s.includes('contador') || s.includes('consultor') || s.includes('arquiteto')) return 'profissional';
+  if (s.includes('curso') || s.includes('escola') || s.includes('professor') || s.includes('educação')) return 'educacao';
+  if (s.includes('mecânico') || s.includes('eletricista') || s.includes('encanador') || s.includes('técnico')) return 'tecnico';
   return 'default';
+}
+
+/**
+ * Normaliza o segmento/categoria para o ID de uma das 8 categorias de negócio.
+ * Usa detecção inteligente via keywords do businessCategories.js.
+ * Retorna null se não conseguir detectar.
+ * @param {string} segment - Segmento ou categoria (string livre)
+ * @returns {string|null} - ID da categoria (ex: 'agendamento') ou null
+ */
+export function normalizeCategory(segment) {
+  if (!segment) return null;
+
+  // Verificar se já é um ID direto de categoria
+  const directMatch = BUSINESS_CATEGORIES.find(c => c.id === segment.toLowerCase());
+  if (directMatch) return directMatch.id;
+
+  // Usar a detecção por keywords do businessCategories
+  const detected = detectCategoryFromSegment(segment);
+  return detected ? detected.id : null;
+}
+
+/**
+ * Retorna as seções ativas para uma categoria, com fallback para seções padrão.
+ * @param {string} categoryId - ID da categoria
+ * @returns {Array} - Array de seções ativas ordenadas por weight
+ */
+export function getSectionsForCategory(categoryId) {
+  if (!categoryId) {
+    return [
+      { id: 'hero', label: 'Hero', enabled: true, weight: 10 },
+      { id: 'differentials', label: 'Diferenciais', enabled: true, weight: 8 },
+      { id: 'services', label: 'Serviços', enabled: true, weight: 8 },
+      { id: 'testimonials', label: 'Depoimentos', enabled: true, weight: 7 },
+      { id: 'faq', label: 'FAQ', enabled: true, weight: 6 },
+      { id: 'cta_final', label: 'CTA Final', enabled: true, weight: 10 },
+      { id: 'footer', label: 'Footer', enabled: true, weight: 5 },
+    ];
+  }
+  return getActiveSections(categoryId);
 }
 
 /**
@@ -76,33 +128,82 @@ export function isFieldMissing(json, fieldPath) {
 }
 
 /**
- * Analisa o JSON extraído e retorna a fila de perguntas pendentes (ordenada por prioridade)
+ * Analisa o JSON extraído e retorna a fila de perguntas pendentes (ordenada por prioridade).
+ * 
+ * Quando um categoryId é fornecido (via extractedJson.businessCategory), filtra as perguntas
+ * para incluir apenas os IDs definidos em category.questionIds, e prefixa as perguntas
+ * específicas da categoria (categorySpecificQuestions).
+ * 
+ * @param {Object} extractedJson - JSON rico do negócio
+ * @param {string} segment - Segmento/categoria (string livre ou ID de categoria)
+ * @returns {Array} - Fila de perguntas ordenada por prioridade
  */
 export function buildQuestionQueue(extractedJson, segment) {
   const queue = [];
   const normalizedSeg = normalizeSegment(segment);
 
-  // Filtrar as perguntas do banco cujos campos correspondentes estão ausentes ou baixos
+  // Detectar categoria: priorizar businessCategory do JSON, depois tentar via segment
+  const categoryId = extractedJson?.businessCategory || normalizeCategory(segment);
+  const category = categoryId ? BUSINESS_CATEGORIES.find(c => c.id === categoryId) : null;
+
+  // Determinar quais IDs de perguntas incluir
+  // Se há categoria definida, usar apenas os questionIds dela. Caso contrário, usar todas.
+  const allowedQuestionIds = category ? new Set(category.questionIds) : null;
+
+  const businessName = getNestedValue(extractedJson, 'identity.businessName') || 'seu negócio';
+
+  // ── Perguntas específicas da categoria (sempre no início, prioridade critical) ──
+  if (category && category.categorySpecificQuestions.length > 0) {
+    for (const cq of category.categorySpecificQuestions) {
+      if (isFieldMissing(extractedJson, cq.id)) {
+        queue.push({
+          ...cq,
+          question: cq.question.replace(/{{businessName}}/g, businessName),
+          optionsList: cq.options?.default || [],
+          _isCategorySpecific: true,
+        });
+      }
+    }
+  }
+
+  // ── Perguntas do banco de perguntas (questionBank.js) ──
   for (const q of questions) {
+    // Se há categoria definida, incluir apenas IDs permitidos
+    if (allowedQuestionIds && !allowedQuestionIds.has(q.id)) {
+      continue;
+    }
+
     if (isFieldMissing(extractedJson, q.id)) {
-      // Personalizar o texto da pergunta com o nome do negócio, se disponível
-      const businessName = getNestedValue(extractedJson, 'identity.businessName') || 'seu negócio';
       const customizedQuestion = q.question.replace(/{{businessName}}/g, businessName);
-      
-      // Obter as opções específicas do segmento ou o padrão
-      const optionsForSegment = q.options[normalizedSeg] || q.options.default || [];
+
+      // Obter as opções específicas do segmento/categoria ou o padrão
+      // Tenta pela categoria primeiro (id da categoria), depois pelo segment normalizado
+      const optionsForSegment =
+        q.options[categoryId] ||
+        q.options[normalizedSeg] ||
+        q.options.default ||
+        [];
 
       queue.push({
         ...q,
         question: customizedQuestion,
-        optionsList: optionsForSegment
+        optionsList: optionsForSegment,
       });
     }
   }
 
   // Ordena a fila: critical primeiro, depois important, depois enrichment
+  // As perguntas específicas da categoria (_isCategorySpecific) já são critical e vão primeiro
   const priorityOrder = { critical: 1, important: 2, enrichment: 3 };
-  queue.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+  queue.sort((a, b) => {
+    const pa = priorityOrder[a.priority] || 99;
+    const pb = priorityOrder[b.priority] || 99;
+    // Dentro de critical, perguntas de categoria ficam antes das do banco
+    if (pa === pb && pa === 1) {
+      return (b._isCategorySpecific ? -1 : 1) - (a._isCategorySpecific ? -1 : 1);
+    }
+    return pa - pb;
+  });
 
   return queue;
 }

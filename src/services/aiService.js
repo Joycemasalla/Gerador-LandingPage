@@ -89,33 +89,74 @@ ATENÇÃO CRÍTICA PARA A FORMATAÇÃO JSON:
   }
 }`;
 
-const GENERATE_STRATEGY_PROMPT = `Você é um Consultor Estratégico de Conversão (CRO) Sênior e Copywriter Especialista.
-Sua missão é analisar TODAS as informações fornecidas sobre um negócio local e criar um briefing estruturado extremamente completo para que possamos alimentar um construtor de Landing Pages.
+/**
+ * Gera o prompt de estratégia dinamicamente baseado no tipo de projeto.
+ * - landing_page:     foco em CRO, conversão, neuromarketing, CTA único.
+ * - site_institucional: foco em branding, posicionamento, história, equipe, conquistas.
+ */
+function buildGenerateStrategyPrompt(generationType = 'landing_page') {
+  const isSite = generationType === 'site_institucional';
 
-INPUT (JSON Rico do Cliente):
-{{clientDataJson}}
+  const intro = isSite
+    ? `Você é um Consultor Estratégico de Branding e Posicionamento Institucional Sênior.
+Sua missão é analisar TODAS as informações fornecidas sobre a empresa e criar um briefing institucional extremamente completo para que possamos alimentar um construtor de Sites Institucionais Premium (nível Awwwards / Apple).`
+    : `Você é um Consultor Estratégico de Conversão (CRO) Sênior e Copywriter Especialista.
+Sua missão é analisar TODAS as informações fornecidas sobre um negócio local e criar um briefing estruturado extremamente completo para que possamos alimentar um construtor de Landing Pages.`;
 
-INSTRUÇÕES DE SAÍDA:
-Você DEVE retornar a resposta EXATAMENTE no formato abaixo, separando as seções pelos marcadores exatos (===NOME===).
-Use linguagem em Português do Brasil.
-Seja detalhista, focado em neuromarketing, persuasão e conversão.
+  const auditTitle = isSite
+    ? '# Auditoria de Branding e Posicionamento Institucional'
+    : '# Auditoria Completa do Negócio';
 
-RETORNE EXATAMENTE NESTA ESTRUTURA:
+  const auditHint = isSite
+    ? '(analise identidade visual, posicionamento de marca, autoridade percebida, presença digital, diferenciais institucionais, pontos de melhoria na comunicação)'
+    : '(escreva a auditoria em markdown aqui, detalhando posicionamento, clareza da oferta, instagram, etc)';
 
-===AUDITORIA===
-# Auditoria Completa do Negócio
-(escreva a auditoria em markdown aqui, detalhando posicionamento, clareza da oferta, instagram, etc)
+  const briefingTitle = isSite
+    ? '# Briefing Institucional Premium'
+    : '# Briefing Estratégico';
 
-===PROBLEMAS===
-# Problemas e Oportunidades
-(escreva os problemas críticos priorizados e oportunidades em markdown aqui)
+  const briefingHint = isSite
+    ? '(escreva o briefing macro do site institucional: narrativa da marca, pilares de comunicação, arquitetura de conteúdo, direção criativa, elementos de storytelling)'
+    : '(escreva o briefing macro da Landing Page em markdown aqui)';
 
-===BRIEFING===
-# Briefing Estratégico
-(escreva o briefing macro da Landing Page em markdown aqui)
-
-===JSON_ESTRATEGIA===
-{
+  const jsonSchema = isSite
+    ? `{
+  "nome": "string",
+  "nicho": "string",
+  "localizacao": "string",
+  "publico": "string",
+  "objetivo": "string — posicionamento institucional e objetivo de comunicação da marca",
+  "canal": "string — WhatsApp, e-mail, formulário de contato, telefone",
+  "oferta": "string — principais serviços/soluções da empresa",
+  "promessa": "string — headline institucional que comunica o posicionamento da marca",
+  "historia": "string — história e fundação da empresa (storytelling institucional)",
+  "missao": "string — missão da empresa",
+  "visao": "string — visão da empresa",
+  "valores": [ "string" ],
+  "equipe": [ {"name": "string", "role": "string", "description": "string | null"} ],
+  "conquistas": [ {"numero": "string", "label": "string"} ],
+  "paginas": [ "string" ],
+  "diferenciais": [ {"title": "...", "description": "..."} ],
+  "servicos": [ {"title": "...", "description": "..."} ],
+  "tom_marca": "string",
+  "identidade_visual": "string — descrição detalhada da identidade visual desejada",
+  "estilo_visual": "string — escolha entre: Minimalismo Luxo | Dark Premium | Moderno Tech | Editorial Clássico | Vibrante Contemporâneo",
+  "atmosfera": "string",
+  "fotografia": "string",
+  "paleta": "string — paleta de cores com hex codes se disponível",
+  "tipografia": "string — sugestão de par tipográfico editorial premium",
+  "espacamento": "string",
+  "componentes": "string",
+  "objetivo_emocional": "string — emoção que o site deve despertar no visitante",
+  "hero_layout": "string — escolha: 1. 'Fullscreen Vídeo Imersivo' | 2. 'Parallax Editorial' | 3. 'Split-Screen Institucional' | 4. 'Bento Grid Premium' | 5. 'Reveal Tipográfico'",
+  "cta": "string — CTA principal do site (contato, proposta, agendamento)",
+  "redes_sociais": "string",
+  "provas_sociais": [ {"name": "...", "description": "..."} ],
+  "beneficios": [ {"title": "...", "description": "..."} ],
+  "faq": [ {"question": "...", "answer": "..."} ],
+  "regras_nicho": "string"
+}`
+    : `{
   "nome": "string",
   "nicho": "string",
   "localizacao": "string",
@@ -145,8 +186,39 @@ RETORNE EXATAMENTE NESTA ESTRUTURA:
   "beneficios": [ {"title": "...", "description": "..."} ],
   "faq": [ {"question": "...", "answer": "..."} ],
   "regras_nicho": "string"
+}`;
+
+  return `${intro}
+
+INPUT (JSON Rico do Cliente):
+{{clientDataJson}}
+
+INSTRUÇÕES DE SAÍDA:
+Você DEVE retornar a resposta EXATAMENTE no formato abaixo, separando as seções pelos marcadores exatos (===NOME===).
+Use linguagem em Português do Brasil.
+${isSite
+  ? 'Seja detalhista, focado em posicionamento de marca, storytelling institucional, identidade visual e arquitetura de conteúdo.'
+  : 'Seja detalhista, focado em neuromarketing, persuasão e conversão.'
 }
+
+RETORNE EXATAMENTE NESTA ESTRUTURA:
+
+===AUDITORIA===
+${auditTitle}
+${auditHint}
+
+===PROBLEMAS===
+# Problemas e Oportunidades
+(escreva os problemas críticos priorizados e oportunidades de melhoria em markdown aqui)
+
+===BRIEFING===
+${briefingTitle}
+${briefingHint}
+
+===JSON_ESTRATEGIA===
+${jsonSchema}
 `;
+}
 
 const SEGMENT_FALLBACK_IMAGES = {
   estetica: [
@@ -423,6 +495,7 @@ export async function fetchInstagramImagesOnly(instagramHandle, segment) {
 
 /**
  * Gera a estratégia completa via IA retornando os 4 documentos.
+ * O tipo de projeto (landing_page | site_institucional) é lido de clientData.generationType.
  */
 export async function generateStrategy(clientData, _customApiKey = '') {
     const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
@@ -430,7 +503,12 @@ export async function generateStrategy(clientData, _customApiKey = '') {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
     if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada. (Crie a variável no .env)");
 
-    const prompt = GENERATE_STRATEGY_PROMPT.replace("{{clientDataJson}}", JSON.stringify(clientData, null, 2));
+    // Determinar tipo de projeto
+    const generationType = clientData?.generationType || 'landing_page';
+
+    // Construir prompt de estratégia de acordo com o tipo de projeto
+    const strategyPromptTemplate = buildGenerateStrategyPrompt(generationType);
+    const prompt = strategyPromptTemplate.replace("{{clientDataJson}}", JSON.stringify(clientData, null, 2));
 
     const raw = await callGemini(apiKey, prompt, { jsonMode: false });
     
@@ -459,22 +537,27 @@ export async function generateStrategy(clientData, _customApiKey = '') {
     }
 
     const strategyData = {
+      generationType,
       audit,
       problems,
       briefing,
       structuredStrategy
     };
 
-    // Constrói o lovablePrompt usando o template mestre e os dados estruturados
+    // Constrói o prompt usando o template correto (LP ou Site Institucional)
     if (strategyData && strategyData.structuredStrategy && Object.keys(strategyData.structuredStrategy).length > 0) {
       // Injeta as imagens extraídas para que o prompt builder as inclua no template
       if (clientData && clientData.instagramImages) {
         strategyData.structuredStrategy.imagens = clientData.instagramImages;
       }
-      strategyData.lovablePrompt = buildLovablePrompt(strategyData.structuredStrategy);
+      // Injetar CATEGORIA_ID a partir do clientData para que o promptBuilder possa buscar as seções da categoria
+      if (clientData?.businessCategory && !strategyData.structuredStrategy.CATEGORIA_ID) {
+        strategyData.structuredStrategy.CATEGORIA_ID = clientData.businessCategory;
+      }
+      strategyData.lovablePrompt = buildLovablePrompt(strategyData.structuredStrategy, generationType);
     } else {
       console.warn("A IA não retornou o objeto structuredStrategy esperado. Usando prompt genérico.");
-      strategyData.lovablePrompt = buildLovablePrompt({});
+      strategyData.lovablePrompt = buildLovablePrompt({}, generationType);
     }
 
     return strategyData;

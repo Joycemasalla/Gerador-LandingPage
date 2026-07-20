@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agente de Vendas — Assistente Comercial Inteligente</title>
+  <meta name="description" content="Seu assistente pessoal de vendas. Mensagens personalizadas, fluxo de conversa guiado e estratégias para fechar mais clientes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">🤖</span>
+        <span class="logo-text">Agente<br/><strong>de Vendas</strong></span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Fechar menu">✕</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-module="perfil" id="nav-perfil">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Meu Perfil</span>
+      </button>
+      <button class="nav-item" data-module="lead" id="nav-lead">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-label">Novo Lead</span>
+      </button>
+      <button class="nav-item" data-module="fluxo" id="nav-fluxo">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Fluxo da Conversa</span>
+      </button>
+      <button class="nav-item" data-module="situacoes" id="nav-situacoes">
+        <span class="nav-icon">💬</span>
+        <span class="nav-label">Situações & Respostas</span>
+      </button>
+      <button class="nav-item highlight" data-module="iniciante" id="nav-iniciante">
+        <span class="nav-icon">🛡️</span>
+        <span class="nav-label">Modo Iniciante</span>
+        <span class="badge">VOCÊ</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="profile-mini" id="profileMini">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <div class="profile-info">
+          <span class="profile-name" id="profileName">Configure seu perfil</span>
+          <span class="profile-role">Consultor de Presença Digital</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- OVERLAY MOBILE -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-title" id="topbarTitle">Meu Perfil</div>
+      <div class="topbar-actions">
+        <span class="status-dot" title="Pronto para usar"></span>
+      </div>
+    </header>
+
+    <!-- ===============================
+         MÓDULO 1: MEU PERFIL
+    ================================ -->
+    <section class="module active" id="module-perfil">
+      <div class="module-header">
+        <h1>👤 Meu Perfil</h1>
+        <p class="module-subtitle">Configure seus dados uma vez — o agente personaliza tudo automaticamente para você.</p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card full-width">
+          <h3 class="card-title">📝 Seus Dados</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="pNome">Seu nome (como quer ser chamado)</label>
+              <input type="text" id="pNome" placeholder="Ex: João" />
+            </div>
+            <div class="form-group">
+              <label for="pServico">Serviço principal que você oferece</label>
+              <input type="text" id="pServico" placeholder="Ex: Landing Pages e Sites para empresas" />
+            </div>
+            <div class="form-group">
+              <label for="pSegmento">Segmento-alvo (tipo de empresa que você quer atender)</label>
+              <input type="text" id="pSegmento" placeholder="Ex: Clínicas, restaurantes, oficinas mecânicas..." />
+            </div>
+            <div class="form-group">
+              <label for="pDiferencial">Seu maior diferencial (seja honesto!)</label>
+              <select id="pDiferencial">
+                <option value="">Selecione...</option>
+                <option value="dedicacao">Dedicação total — sou iniciante e me dedico 100% ao cliente</option>
+                <option value="entrega">Entrega rápida — em 10 dias úteis</option>
+                <option value="preco">Investimento acessível sem perder qualidade</option>
+                <option value="prototipo">Mostro o protótipo antes de cobrar qualquer coisa</option>
+                <option value="garantia">Garantia de revisão até você aprovar</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="pProto">Você tem protótipos prontos para mostrar?</label>
+              <select id="pProto">
+                <option value="sim">Sim — tenho páginas que criei para demonstrar</option>
+                <option value="nao">Ainda não — estou montando meu portfólio</option>
+              </select>
+            </div>
+            <div class="form-group full" id="protoLinkGroup">
+              <label for="pProtoLink">Link do(s) protótipo(s) (opcional)</label>
+              <input type="url" id="pProtoLink" placeholder="https://..." />
+            </div>
+            <div class="form-group full">
+              <label for="pWhatsapp">Seu número de WhatsApp (com DDD)</label>
+              <input type="tel" id="pWhatsapp" placeholder="Ex: 11999998888" />
+            </div>
+          </div>
+          <button class="btn-primary" id="salvarPerfil">💾 Salvar Perfil</button>
+          <div class="save-feedback" id="saveFeedback" style="display:none">✅ Perfil salvo! Agora o agente está personalizado para você.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===============================
+         MÓDULO 2: NOVO LEAD
+    ================================ -->
+    <section class="module" id="module-lead">
+      <div class="module-header">
+        <h1>🎯 Novo Lead</h1>
+        <p class="module-subtitle">Preencha os dados do cliente e o agente gera a mensagem perfeita de abordagem.</p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3 class="card-title">📋 Dados do Lead</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="lNome">Nome do responsável</label>
+              <input type="text" id="lNome" placeholder="Ex: Carlos" />
+            </div>
+            <div class="form-group">
+              <label for="lEmpresa">Nome da empresa</label>
+              <input type="text" id="lEmpresa" placeholder="Ex: Oficina do Carlos" />
+            </div>
+            <div class="form-group">
+              <label for="lSegmento">Segmento</label>
+              <select id="lSegmento">
+                <option value="">Selecione...</option>
+                <option value="clinica">Clínica / Consultório</option>
+                <option value="restaurante">Restaurante / Lanchonete</option>
+                <option value="oficina">Oficina Mecânica</option>
+                <option value="salao">Salão de Beleza / Barbearia</option>
+                <option value="loja">Loja / Comércio</option>
+                <option value="servicos">Prestador de Serviços</option>
+                <option value="educacao">Escola / Curso / Educação</option>
+                <option value="imoveis">Imobiliária / Corretor</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="lCanal">Canal de contato</label>
+              <select id="lCanal">
+                <option value="whatsapp">WhatsApp</option>
+                <option value="instagram">Instagram (Direct)</option>
+                <option value="email">E-mail</option>
+                <option value="presencial">Presencial</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="lSituacao">Situação digital atual</label>
+              <select id="lSituacao">
+                <option value="semsite">Sem site — só Instagram ou nada</option>
+                <option value="siteruim">Tem site, mas está desatualizado / ruim no celular</option>
+                <option value="semdigital">Não tem nenhuma presença digital</option>
+                <option value="concorrente">Tem concorrentes com presença melhor</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label for="lObservacao">Algo que você notou sobre o negócio (opcional)</label>
+              <textarea id="lObservacao" rows="2" placeholder="Ex: Vi que o Instagram deles tem ótimas avaliações mas não tem botão de contato..."></textarea>
+            </div>
+          </div>
+          <button class="btn-primary" id="gerarMensagem">✨ Gerar Mensagem de Abordagem</button>
+        </div>
+
+        <div class="card" id="mensagemGeradaCard" style="display:none">
+          <h3 class="card-title">📩 Mensagem Gerada</h3>
+          <div class="mensagem-preview" id="mensagemGerada"></div>
+          <div class="msg-actions">
+            <button class="btn-copy" id="copiarMensagem">📋 Copiar Mensagem</button>
+            <button class="btn-secondary" id="gerarNovamente">🔄 Gerar Outra Versão</button>
+          </div>
+          <div class="tip-box" id="dicaSegmento"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===============================
+         MÓDULO 3: FLUXO DA CONVERSA
+    ================================ -->
+    <section class="module" id="module-fluxo">
+      <div class="module-header">
+        <h1>🗺️ Fluxo da Conversa</h1>
+        <p class="module-subtitle">Clique na resposta que o cliente deu — o agente te mostra o que fazer agora.</p>
+      </div>
+
+      <div class="card-grid">
+        <div class="card full-width">
+          <h3 class="card-title">📍 Em que etapa você está?</h3>
+          <div class="etapa-selector">
+            <button class="etapa-btn active" data-etapa="primeiro">1º Contato</button>
+            <button class="etapa-btn" data-etapa="descoberta">Descoberta</button>
+            <button class="etapa-btn" data-etapa="apresentacao">Apresentação</button>
+            <button class="etapa-btn" data-etapa="fechamento">Fechamento</button>
+            <button class="etapa-btn" data-etapa="followup">Follow-up</button>
+          </div>
+        </div>
+
+        <div class="card full-width" id="fluxoContent">
+          <h3 class="card-title" id="fluxoTitulo">O que o cliente fez?</h3>
+          <div class="opcoes-grid" id="opcoesFluxo"></div>
+        </div>
+
+        <div class="card full-width resultado-card" id="fluxoResultado" style="display:none">
+          <div class="resultado-header">
+            <span class="resultado-badge" id="resultadoBadge">Estratégia</span>
+            <button class="btn-back" id="voltarFluxo">← Voltar</button>
+          </div>
+          <h3 id="resultadoTitulo"></h3>
+          <div class="resultado-section">
+            <span class="result-label">🎯 Objetivo</span>
+            <p id="resultadoObjetivo"></p>
+          </div>
+          <div class="resultado-section">
+            <span class="result-label">🧠 Estratégia</span>
+            <p id="resultadoEstrategia"></p>
+          </div>
+          <div class="resultado-section">
+            <span class="result-label">💬 Mensagem Pronta</span>
+            <div class="mensagem-preview" id="resultadoMensagem"></div>
+            <button class="btn-copy" id="copiarResultado">📋 Copiar</button>
+          </div>
+          <div class="resultado-section">
+            <span class="result-label">⏭️ Próximo Passo</span>
+            <p id="resultadoProximo"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===============================
+         MÓDULO 4: SITUAÇÕES & RESPOSTAS
+    ================================ -->
+    <section class="module" id="module-situacoes">
+      <div class="module-header">
+        <h1>💬 Situações & Respostas</h1>
+        <p class="module-subtitle">Acesso rápido a todas as situações. Clique em qualquer cenário para ver a resposta pronta.</p>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" id="searchSituacao" placeholder="🔍 Buscar situação... (ex: caro, pensar, desconto)" />
+      </div>
+
+      <div class="situacoes-grid" id="situacoesGrid"></div>
+    </section>
+
+    <!-- ===============================
+         MÓDULO 5: MODO INICIANTE
+    ================================ -->
+    <section class="module" id="module-iniciante">
+      <div class="module-header">
+        <h1>🛡️ Modo Iniciante</h1>
+        <p class="module-subtitle">Estratégias criadas especialmente para quem está começando e ainda não tem portfólio ou histórico.</p>
+      </div>
+
+      <div class="card-grid">
+
+        <div class="card full-width highlight-card">
+          <div class="highlight-icon">💡</div>
+          <h3 class="card-title">A verdade sobre ser iniciante</h3>
+          <p class="card-text">Ser iniciante não é uma fraqueza — é um argumento de venda poderoso quando usado com inteligência. Você tem algo que agências grandes não têm: <strong>fome, atenção total e sem burocracia</strong>. Aprenda a transformar isso em diferencial.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">🎤 Script de Autoridade Honesta</h3>
+          <p class="card-text">Como se apresentar sendo transparente e ainda assim gerar confiança:</p>
+          <div class="script-box">
+            <p>"Estou no início da minha trajetória como consultor de presença digital, e justamente por isso dou atenção total a cada projeto. Numa agência grande, você seria mais um número. Comigo, o seu projeto vai ser meu portfólio — e eu preciso que ele seja um grande sucesso."</p>
+          </div>
+          <button class="btn-copy" onclick="copyText(this, 'Estou no início da minha trajetória como consultor de presença digital, e justamente por isso dou atenção total a cada projeto. Numa agência grande, você seria mais um número. Comigo, o seu projeto vai ser meu portfólio — e eu preciso que ele seja um grande sucesso.')">📋 Copiar</button>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">🏆 Kit de Credibilidade Alternativa</h3>
+          <p class="card-text">Você pode construir confiança SEM ter portfólio:</p>
+          <ul class="checklist">
+            <li>✅ Mostre o protótipo que você criou para ele <em>antes de cobrar</em></li>
+            <li>✅ Ofereça garantia de revisão ilimitada até aprovação</li>
+            <li>✅ Compartilhe referências de estudos ou cursos que fez</li>
+            <li>✅ Mostre sites/páginas de referência de alta qualidade</li>
+            <li>✅ Proponha um projeto piloto com condição especial</li>
+            <li>✅ Seja transparente sobre o processo passo a passo</li>
+          </ul>
+        </div>
+
+        <div class="card full-width">
+          <h3 class="card-title">🗺️ Plano das 3 Primeiras Vendas</h3>
+          <p class="card-text">Estratégia para fechar rapidamente e construir portfólio real:</p>
+          <div class="etapas-plan">
+            <div class="etapa-plan">
+              <span class="etapa-num">1ª</span>
+              <div class="etapa-content">
+                <strong>Venda com desconto + depoimento</strong>
+                <p>Ofereça um valor especial de "lançamento" em troca de um depoimento em vídeo ou foto. Seja honesto sobre o motivo.</p>
+                <div class="script-box small">
+                  <p>"Estou montando meu portfólio e por isso faço essa primeira venda com um investimento especial. Em troca, peço apenas um depoimento honesto sobre o resultado."</p>
+                </div>
+                <button class="btn-copy small" onclick="copyText(this, 'Estou montando meu portfólio e por isso faço essa primeira venda com um investimento especial. Em troca, peço apenas um depoimento honesto sobre o resultado.')">📋 Copiar</button>
+              </div>
+            </div>
+            <div class="etapa-plan">
+              <span class="etapa-num">2ª</span>
+              <div class="etapa-content">
+                <strong>Venda com indicação</strong>
+                <p>Peça para o 1º cliente indicar alguém. Mostre o resultado do primeiro como prova social.</p>
+                <div class="script-box small">
+                  <p>"Ficou orgulhoso do resultado? Me indica alguém do seu círculo que também poderia se beneficiar disso. Cada indicação que fechar, você ganha [benefício]."</p>
+                </div>
+                <button class="btn-copy small" onclick="copyText(this, 'Ficou orgulhoso do resultado? Me indica alguém do seu círculo que também poderia se beneficiar disso. Cada indicação que fechar, você ganha um benefício especial.')">📋 Copiar</button>
+              </div>
+            </div>
+            <div class="etapa-plan">
+              <span class="etapa-num">3ª</span>
+              <div class="etapa-content">
+                <strong>Venda com preço cheio + portfólio</strong>
+                <p>Agora você tem 2 cases reais. Pode cobrar o valor completo com confiança e mostrar resultados concretos.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card full-width">
+          <h3 class="card-title">💬 Frases para Quebrar a Desconfiança</h3>
+          <p class="card-text">Mensagens prontas para quando o cliente diz que não te conhece:</p>
+          <div class="frases-list" id="frasesIniciante"></div>
+        </div>
+
+        <div class="card full-width">
+          <h3 class="card-title">⚠️ Objeções Específicas de Iniciante</h3>
+          <div class="objecoes-iniciante" id="objecoesIniciante"></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DE SITUAÇÃO EXPANDIDA -->
+  <div class="modal-overlay" id="modalOverlay" style="display:none">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">✅ Copiado para a área de transferência!</div>
+
+  <script src="app.js"></script>
+</body>
+</html>

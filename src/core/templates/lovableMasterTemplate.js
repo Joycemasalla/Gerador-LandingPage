@@ -13,11 +13,14 @@ CONTEXTO DO PROJETO E BRANDING
 ────────────────────────────────────────
 • Nome do negócio: {NOME}
 • Nicho / categoria: {NICHO}
+• Categoria de negócio: {CATEGORIA}
 • Localização (se local): {LOCALIZACAO}
 • Público-alvo primário: {PUBLICO}
 • Objetivo de conversão principal: {OBJETIVO}
 • Canal de conversão: {CANAL}
+• CTA Principal: {CTA_PRINCIPAL}
 • Tom de marca: {TOM_MARCA}
+• Tom recomendado para a categoria: {TOM_CATEGORIA}
 • Identidade Visual e Restrições: {IDENTIDADE_VISUAL}
 
 ────────────────────────────────────────
@@ -94,20 +97,16 @@ REGRAS INEGOCIÁVEIS DO UPLF
     nem outro, corte.
 
 ────────────────────────────────────────
-ARQUITETURA OBRIGATÓRIA DE SEÇÕES
+ARQUITETURA DE SEÇÕES PARA ESTA CATEGORIA
 ────────────────────────────────────────
-1. Navbar fixa translúcida com CTA sempre visível
-2. Hero Section: {HERO_LAYOUT}
-3. Benefits / Diferenciais (3–4 cards com ícone)
-4. Oferta principal (serviços, produtos, planos) com item "Recomendado" destacado
-5. Sobre / História / Autoridade (constrói confiança)
-6. Galeria / Prova visual de resultado
-7. Como funciona (3 passos, remove atrito)
-8. Depoimentos (mínimo 3, com nome/foto/contexto)
-9. FAQ (5–8 objeções reais respondidas)
-10. CTA final imersivo (imagem de fundo + repetição da promessa)
-11. Footer com contato, endereço, horários, redes, mapa
-12. Botão flutuante do canal de conversão principal
+A arquitetura abaixo é ESPECÍFICA para a categoria "{CATEGORIA}". Gere APENAS as seções listadas como ativas e NÃO gere as marcadas como excluídas:
+
+{ARQUITETURA_SECOES}
+
+Além das seções acima, inclua SEMPRE:
+- Navbar fixa translucida com CTA sempre visível: {CTA_PRINCIPAL}
+- Botão flutuante do canal de conversão principal
+- Footer com contato, endereço, horários, redes, mapa
 
 ────────────────────────────────────────
 STACK TÉCNICA PADRÃO
@@ -136,7 +135,7 @@ Atenção especial para as seguintes regras do nicho deste projeto. Siga a arqui
 ────────────────────────────────────────
 NÍVEL DE MOTION E INTERAÇÕES CINEMÁTICAS
 ────────────────────────────────────────
-Aplique o Nível Cinemático na landing do {NICHO} agora (vídeo de fundo no hero, count-up de clientes, marquee de depoimentos, sticky no "Como funciona").
+Aplique o Nível Cinemático na landing do {NICHO} agora (vídeo de fundo no hero, count-up de clientes, marquee de depoimentos, sticky no "Como funciona" quando aplicável para a categoria {CATEGORIA}).
 
 REGRAS DE MOTION APLICADAS:
 - Hero: OBRIGATÓRIO ter um vídeo de fundo mudo (com fallback em imagem <video muted autoplay loop playsInline poster="...">), parallax no headline.

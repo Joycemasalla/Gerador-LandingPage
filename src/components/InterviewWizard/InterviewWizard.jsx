@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
-import { FaInstagram, FaArrowRight, FaMagic, FaExclamationTriangle, FaListAlt } from 'react-icons/fa';
+import styled, { keyframes, css } from 'styled-components';
+import { FaInstagram, FaArrowRight, FaMagic, FaExclamationTriangle, FaListAlt, FaCheck } from 'react-icons/fa';
 import { analyzeInstagramProfile } from '../../services/aiService';
-import { buildQuestionQueue, mergeAnswerIntoJson, finalizeClientJson, normalizeSegment } from '../../utils/interviewEngine';
+import { buildQuestionQueue, mergeAnswerIntoJson, finalizeClientJson, normalizeSegment, normalizeCategory } from '../../utils/interviewEngine';
+import { BUSINESS_CATEGORIES, detectCategoryFromSegment } from '../../utils/businessCategories';
 import ExtractionScreen from './ExtractionScreen';
 import QuestionCard from './QuestionCard';
 import ReviewScreen from './ReviewScreen';
@@ -24,6 +25,7 @@ const EMPTY_RICH_JSON = {
     certifications: [],
     awards: []
   },
+  businessCategory: null, // ID da categoria de negócio (uma das 8)
   targetAudience: {
     idealClient: null,
     primaryPain: null,
@@ -61,16 +63,26 @@ const EMPTY_RICH_JSON = {
 };
 
 export default function InterviewWizard({ customApiKey, onComplete }) {
-  const [step, setStep] = useState('idle'); // idle | extracting | interviewing | reviewing | generating
+  const [step, setStep] = useState('type_selection'); // idle | type_selection | extracting | category | interviewing | reviewing | generating
+  const [generationType, setGenerationType] = useState('landing_page'); // 'landing_page' | 'site_institucional'
   const [instaHandle, setInstaHandle] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [extractedData, setExtractedData] = useState(null);
+  const [detectedCategory, setDetectedCategory] = useState(null); // categoria auto-detectada
+  const [selectedCategory, setSelectedCategory] = useState(null); // categoria confirmada pelo usuário
   
   // Fila de perguntas do Wizard
   const [questionQueue, setQuestionQueue] = useState([]);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [history, setHistory] = useState([]); // Histórico de JSONs para permitir "Voltar"
+
+  // Handler: usuário escolheu o tipo de projeto
+  const handleTypeSelected = (type) => {
+    setGenerationType(type);
+    // Avançar para a tela de entrada/extração
+    setStep('idle');
+  };
 
   // Iniciar extração do Instagram
   const handleStartExtraction = async (e) => {
@@ -116,53 +128,114 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
 
   // Callback de término de animação da extração
   const handleFinishExtractionLogs = () => {
-    // Construir a fila baseada no JSON extraído
-    const segmentName = extractedData.identity?.segment || '';
-    let queue = buildQuestionQueue(extractedData, segmentName);
+    // Tentar detectar a categoria via segmento do Instagram
+    const segmentName = sanitizedData?.identity?.segment || extractedData?.identity?.segment || '';
+    const detected = detectCategoryFromSegment(segmentName) || 
+                     (normalizeCategory(segmentName) ? BUSINESS_CATEGORIES.find(c => c.id === normalizeCategory(segmentName)) : null);
+    setDetectedCategory(detected || null);
 
-    // Se o nome do negócio ou segmento não foram identificados, inseri-los no começo da fila
+    // Ir para o Passo 0 (seleção de categoria)
+    setStep('category');
+  };
+
+  // Passo 0: usuário confirmou/selecionou a categoria
+  const handleCategorySelected = (category) => {
+    setSelectedCategory(category);
+
+    // Salvar businessCategory e generationType no JSON
+    const currentData = extractedData || JSON.parse(JSON.stringify(EMPTY_RICH_JSON));
+    const updatedJson = { ...currentData, businessCategory: category.id, generationType };
+    setExtractedData(updatedJson);
+
+    // Construir fila de perguntas com a categoria definida
+    const segmentName = updatedJson.identity?.segment || '';
+    let queue = buildQuestionQueue(updatedJson, segmentName);
+
+    // Inserir perguntas de identidade se estiverem faltando
     const prepends = [];
-    if (!extractedData.identity?.businessName) {
+    if (!updatedJson.identity?.businessName) {
       prepends.push({
-        id: "identity.businessName",
-        priority: "critical",
-        type: "text_input",
-        question: "Qual o nome do seu negócio?",
-        hint: "Esse nome será exibido em destaque nos títulos e cabeçalhos da página.",
-        skipLabel: null
+        id: 'identity.businessName',
+        priority: 'critical',
+        type: 'text_input',
+        question: 'Qual o nome do seu negócio?',
+        hint: 'Esse nome será exibido em destaque nos títulos e cabeçalhos da página.',
+        skipLabel: null,
+        optionsList: []
       });
     }
-    if (!extractedData.identity?.segment) {
+    if (!updatedJson.identity?.segment) {
       prepends.push({
-        id: "identity.segment",
-        priority: "critical",
-        type: "single_choice",
-        question: "Qual o segmento de atuação do seu negócio?",
-        hint: "Isso define a personalidade do design e carrega sugestões específicas no questionário.",
+        id: 'identity.segment',
+        priority: 'critical',
+        type: 'single_choice',
+        question: 'Qual o segmento de atuação do seu negócio?',
+        hint: 'Isso define a personalidade do design e carrega sugestões específicas no questionário.',
         skipLabel: null,
-        options: {
-          default: [
-            "Barbearia",
-            "Salão de Beleza",
-            "Clínica de Estética",
-            "Hamburgueria",
-            "Pet Shop",
-            "Clínica de Saúde / Consultório",
-            "Academia / Studio Fitness",
-            "Restaurante / Cafeteria"
+        options: { default: BUSINESS_CATEGORIES.map(c => c.label) },
+        optionsList: BUSINESS_CATEGORIES.map(c => c.label)
+      });
+    }
+
+    // ── Perguntas extras exclusivas do Site Institucional ──
+    const institucionalExtras = [];
+    if (generationType === 'site_institucional') {
+      institucionalExtras.push(
+        {
+          id: 'identity.foundingStory',
+          priority: 'critical',
+          type: 'text_input',
+          question: 'Conte a história da empresa: quando foi fundada, por quem e qual a missão?',
+          hint: 'Essa narrativa será usada na seção "Sobre a Empresa" com efeito de scroll storytelling.',
+          skipLabel: 'Pular',
+          optionsList: []
+        },
+        {
+          id: 'identity.teamSize',
+          priority: 'important',
+          type: 'text_input',
+          question: 'Quantas pessoas fazem parte da equipe? Quais são os principais cargos/nomes?',
+          hint: 'A seção de equipe terá efeito de reveal visual com hover premium em cada membro.',
+          skipLabel: 'Pular',
+          optionsList: []
+        },
+        {
+          id: 'aiContext.conquistas',
+          priority: 'important',
+          type: 'text_input',
+          question: 'Quais são os números de conquistas da empresa? (ex: "500 clientes", "8 anos", "98% satisfação")',
+          hint: 'Esses números serão exibidos com animação de count-up ao rolar a página.',
+          skipLabel: 'Pular',
+          optionsList: []
+        },
+        {
+          id: 'branding.preferredDesignStyle',
+          priority: 'important',
+          type: 'single_choice',
+          question: 'Qual estilo visual melhor representa a sua empresa?',
+          hint: 'Isso define a direção criativa completa: tipografia, paleta, atmosfera e motion do site.',
+          skipLabel: 'Deixar a IA decidir',
+          optionsList: [
+            'Minimalismo Luxo — Espaços em branco, tipografia editorial, sofisticação silenciosa',
+            'Dark Premium — Fundo escuro, detalhes dourados/neon, impacto visual forte',
+            'Moderno Tech — Clean, azul/violeta, ícones lineares, sensação de inovação',
+            'Editorial Clássico — Serif elegante, paleta neutra, presença de autoridade',
+            'Vibrante Contemporâneo — Cores vivas, gradientes bold, energia e movimento'
           ]
         }
-      });
+      );
     }
 
-    queue = [...prepends, ...queue];
+    queue = [...prepends, ...institucionalExtras, ...queue];
 
     if (queue.length > 0) {
       setQuestionQueue(queue);
       setCurrentQuestionIdx(0);
-      setHistory([extractedData]);
+      setHistory([updatedJson]);
       setStep('interviewing');
     } else {
+      const finalized = finalizeClientJson(updatedJson);
+      setExtractedData(finalized);
       setStep('reviewing');
     }
   };
@@ -170,46 +243,12 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
   // Iniciar modo manual do zero
   const handleStartManual = () => {
     setErrorMsg('');
-    const baseJson = JSON.parse(JSON.stringify(EMPTY_RICH_JSON));
+    const baseJson = { ...JSON.parse(JSON.stringify(EMPTY_RICH_JSON)), generationType };
     setExtractedData(baseJson);
-
-    // Fila manual completa contendo perguntas básicas e as 12 do banco
-    const initialQueue = [
-      {
-        id: "identity.businessName",
-        priority: "critical",
-        type: "text_input",
-        question: "Qual o nome do seu negócio?",
-        hint: "Esse nome será exibido em destaque nos títulos e cabeçalhos da página.",
-        skipLabel: null
-      },
-      {
-        id: "identity.segment",
-        priority: "critical",
-        type: "single_choice",
-        question: "Qual o segmento de atuação do seu negócio?",
-        hint: "Isso define a personalidade do design e carrega sugestões específicas no questionário.",
-        skipLabel: null,
-        options: {
-          default: [
-            "Barbearia",
-            "Salão de Beleza",
-            "Clínica de Estética",
-            "Hamburgueria",
-            "Pet Shop",
-            "Clínica de Saúde / Consultório",
-            "Academia / Studio Fitness",
-            "Restaurante / Cafeteria"
-          ]
-        }
-      },
-      ...buildQuestionQueue(baseJson, '')
-    ];
-
-    setQuestionQueue(initialQueue);
-    setCurrentQuestionIdx(0);
-    setHistory([baseJson]);
-    setStep('interviewing');
+    setDetectedCategory(null);
+    setSelectedCategory(null);
+    // Ir direto para seleção de categoria (Passo 0)
+    setStep('category');
   };
 
   // Preencher com Dados Falsos de Teste
@@ -342,10 +381,12 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
     setExtractedData(finalized);
   };
 
-  // Submissão final para geração da Landing Page
+  // Submissão final para geração (Landing Page ou Site Institucional)
   const handleGenerateLandingPage = () => {
     setStep('generating');
-    onComplete(extractedData, extractedData.instagramImages || []);
+    // Garantir que generationType está salvo no JSON final
+    const finalData = { ...extractedData, generationType };
+    onComplete(finalData, finalData.instagramImages || []);
   };
 
   const progressPercentage = questionQueue.length > 0 
@@ -354,16 +395,67 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
 
   return (
     <WizardLayout>
+      {/* TELA: Seleção do Tipo de Projeto */}
+      {step === 'type_selection' && (
+        <TypeSelectionScreen className="animate-fade-in">
+          <TypeSelectionHeader>
+            <h2>O que você quer criar?</h2>
+            <p>Escolha o tipo de projeto para personalizar toda a experiência de geração.</p>
+          </TypeSelectionHeader>
+          <TypeCardsGrid>
+            <TypeCard
+              onClick={() => handleTypeSelected('landing_page')}
+              $active={generationType === 'landing_page'}
+            >
+              <TypeCardIcon>🎯</TypeCardIcon>
+              <TypeCardTitle>Landing Page</TypeCardTitle>
+              <TypeCardSubtitle>Alta Conversão</TypeCardSubtitle>
+              <TypeCardList>
+                <li>Página única focada em 1 ação</li>
+                <li>CTA agressivo (WhatsApp / Agendamento)</li>
+                <li>Copywriting de neuromarketing</li>
+                <li>Ideal para tráfego pago</li>
+                <li>Motion Cinemático</li>
+              </TypeCardList>
+              <TypeCardBadge $color="#8b5cf6">Modo CRO</TypeCardBadge>
+            </TypeCard>
+
+            <TypeCard
+              onClick={() => handleTypeSelected('site_institucional')}
+              $active={generationType === 'site_institucional'}
+            >
+              <TypeCardIcon>🏢</TypeCardIcon>
+              <TypeCardTitle>Site Institucional</TypeCardTitle>
+              <TypeCardSubtitle>Presença Digital Premium</TypeCardSubtitle>
+              <TypeCardList>
+                <li>Multi-seções com navegação completa</li>
+                <li>Sobre, Equipe, Portfólio, Conquistas</li>
+                <li>Storytelling visual da marca</li>
+                <li>Cursor custom + Motion Imersivo</li>
+                <li>Padrão Awwwards / Apple / Linear</li>
+              </TypeCardList>
+              <TypeCardBadge $color="#06b6d4">Modo Premium</TypeCardBadge>
+            </TypeCard>
+          </TypeCardsGrid>
+        </TypeSelectionScreen>
+      )}
+
       {/* TELA: Entrada / Configuração Inicial (idle) */}
       {step === 'idle' && (
         <WelcomeCard className="animate-fade-in">
           <IconWrapper>
             <FaInstagram />
           </IconWrapper>
-          <h2>Construa sua Landing Page CRO</h2>
+          <TypeBadgeInline $type={generationType}>
+            {generationType === 'site_institucional' ? '🏢 Site Institucional' : '🎯 Landing Page'}
+            <button onClick={() => setStep('type_selection')} title="Trocar tipo de projeto">✕ trocar</button>
+          </TypeBadgeInline>
+          <h2>{generationType === 'site_institucional' ? 'Crie seu Site Institucional Premium' : 'Construa sua Landing Page CRO'}</h2>
           <p>
-            Analisamos seu perfil público do Instagram para extrair dados visuais, cores e serviços.
-            Depois, o motor de entrevista ajusta as lacunas para criar uma página ultra comercial de alta conversão.
+            {generationType === 'site_institucional'
+              ? 'Analisamos seu Instagram e conduzimos uma entrevista guiada para criar um briefing institucional premium com motion imersivo nível Awwwards.'
+              : 'Analisamos seu perfil público do Instagram para extrair dados visuais, cores e serviços. Depois, o motor de entrevista ajusta as lacunas para criar uma página ultra comercial de alta conversão.'
+            }
           </p>
 
           <Form onSubmit={handleStartExtraction}>
@@ -404,6 +496,63 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
           onFallback={handleStartManual}
           onFinishLogs={handleFinishExtractionLogs}
         />
+      )}
+
+      {/* TELA: Passo 0 — Seleção de Categoria (category) */}
+      {step === 'category' && (
+        <CategoryScreen className="animate-fade-in">
+          <CategoryHeader>
+            <CategoryTitle>
+              {detectedCategory ? (
+                <>
+                  <span className="step-badge">Passo 0 de X</span>
+                  <h2>Confirme a categoria do negócio</h2>
+                  <p>Detectamos automaticamente a categoria abaixo. Confirme ou escolha outra.</p>
+                </>
+              ) : (
+                <>
+                  <span className="step-badge">Passo 0</span>
+                  <h2>Qual é a categoria do negócio?</h2>
+                  <p>Isso define a estrutura, o CTA e as perguntas certas para a landing page.</p>
+                </>
+              )}
+            </CategoryTitle>
+          </CategoryHeader>
+
+          <CategoryGrid>
+            {BUSINESS_CATEGORIES.map((cat) => {
+              const isDetected = detectedCategory?.id === cat.id;
+              const isSelected = selectedCategory?.id === cat.id;
+              return (
+                <CategoryCard
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat)}
+                  $isDetected={isDetected}
+                  $isSelected={isSelected}
+                >
+                  {isDetected && (
+                    <DetectedBadge>
+                      <FaCheck size={9} /> Detectado
+                    </DetectedBadge>
+                  )}
+                  <span className="cat-icon">{cat.icon}</span>
+                  <span className="cat-label">{cat.label}</span>
+                  <span className="cat-examples">{cat.examples}</span>
+                  {isSelected && <SelectedCheckmark><FaCheck /></SelectedCheckmark>}
+                </CategoryCard>
+              );
+            })}
+          </CategoryGrid>
+
+          <CategoryConfirmBtn
+            onClick={() => selectedCategory && handleCategorySelected(selectedCategory)}
+            disabled={!selectedCategory}
+          >
+            {selectedCategory
+              ? `Confirmar: ${selectedCategory.icon} ${selectedCategory.label} →`
+              : 'Selecione uma categoria para continuar'}
+          </CategoryConfirmBtn>
+        </CategoryScreen>
       )}
 
       {/* TELA: Entrevista Guiada (interviewing) */}
@@ -640,3 +789,339 @@ const ProgressBarWrapper = styled.div`
     }
   }
 `;
+
+// ── Styled Components da Tela de Seleção de Categoria (Passo 0) ──────────────
+
+const CategoryScreen = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 680px;
+`;
+
+const CategoryHeader = styled.div`
+  text-align: center;
+`;
+
+const CategoryTitle = styled.div`
+  .step-badge {
+    display: inline-block;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: #a78bfa;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: white;
+    margin: 0 0 8px;
+    letter-spacing: -0.4px;
+  }
+
+  p {
+    font-size: 0.88rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.6;
+  }
+`;
+
+const CategoryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  @media (max-width: 580px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
+
+const CategoryCard = styled.button`
+  position: relative;
+  background: ${({ $isSelected, $isDetected }) =>
+    $isSelected
+      ? 'rgba(139, 92, 246, 0.18)'
+      : $isDetected
+      ? 'rgba(16, 185, 129, 0.08)'
+      : 'rgba(30, 41, 59, 0.5)'};
+  border: 1.5px solid ${({ $isSelected, $isDetected }) =>
+    $isSelected
+      ? '#8b5cf6'
+      : $isDetected
+      ? '#10b981'
+      : 'rgba(255, 255, 255, 0.07)'};
+  border-radius: 16px;
+  padding: 18px 10px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  text-align: center;
+  backdrop-filter: blur(8px);
+
+  &:hover {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: rgba(139, 92, 246, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .cat-icon {
+    font-size: 2rem;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .cat-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: ${({ $isSelected }) => ($isSelected ? '#c4b5fd' : 'white')};
+    line-height: 1.2;
+  }
+
+  .cat-examples {
+    font-size: 0.65rem;
+    color: #64748b;
+    line-height: 1.3;
+  }
+`;
+
+const DetectedBadge = styled.div`
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+`;
+
+const SelectedCheckmark = styled.div`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #8b5cf6;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+`;
+
+const CategoryConfirmBtn = styled.button`
+  background: ${({ disabled }) =>
+    disabled ? 'rgba(30, 41, 59, 0.5)' : 'linear-gradient(135deg, #8b5cf6, #6d28d9)'};
+  color: ${({ disabled }) => (disabled ? '#475569' : 'white')};
+  border: none;
+  border-radius: 14px;
+  padding: 16px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  transition: all 0.25s ease;
+  letter-spacing: -0.2px;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+`;
+
+// ── Styled Components — Tela de Seleção de Tipo de Projeto ──
+
+const TypeSelectionScreen = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  max-width: 780px;
+  padding: 20px;
+`;
+
+const TypeSelectionHeader = styled.div`
+  text-align: center;
+
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.5px;
+    margin: 0 0 10px;
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin: 0;
+  }
+`;
+
+const TypeCardsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const TypeCard = styled.div`
+  background: ${({ $active }) =>
+    $active
+      ? 'rgba(139, 92, 246, 0.12)'
+      : 'rgba(30, 41, 59, 0.55)'};
+  border: 2px solid ${({ $active }) =>
+    $active ? 'rgba(139, 92, 246, 0.7)' : 'rgba(255, 255, 255, 0.07)'};
+  border-radius: 20px;
+  padding: 28px 24px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    border-color: rgba(139, 92, 246, 0.5);
+    background: rgba(139, 92, 246, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: ${({ $active }) =>
+      $active
+        ? 'linear-gradient(90deg, #8b5cf6, #06b6d4)'
+        : 'transparent'};
+    transition: background 0.25s ease;
+  }
+`;
+
+const TypeCardIcon = styled.div`
+  font-size: 2.2rem;
+  line-height: 1;
+  margin-bottom: 4px;
+`;
+
+const TypeCardTitle = styled.div`
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.3px;
+`;
+
+const TypeCardSubtitle = styled.div`
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+`;
+
+const TypeCardList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  li {
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &::before {
+      content: '✓';
+      color: #8b5cf6;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+  }
+`;
+
+const TypeCardBadge = styled.div`
+  margin-top: 12px;
+  align-self: flex-start;
+  background: ${({ $color }) => `${$color}20`};
+  border: 1px solid ${({ $color }) => `${$color}50`};
+  color: ${({ $color }) => $color};
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const TypeBadgeInline = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: ${({ $type }) =>
+    $type === 'site_institucional'
+      ? 'rgba(6, 182, 212, 0.12)'
+      : 'rgba(139, 92, 246, 0.12)'};
+  border: 1px solid ${({ $type }) =>
+    $type === 'site_institucional'
+      ? 'rgba(6, 182, 212, 0.3)'
+      : 'rgba(139, 92, 246, 0.3)'};
+  color: ${({ $type }) =>
+    $type === 'site_institucional' ? '#22d3ee' : '#a78bfa'};
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+
+  button {
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 0.72rem;
+    padding: 0;
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 1; }
+  }
+`;
+
+

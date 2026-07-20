@@ -6,11 +6,15 @@ export default function StrategyDashboard({ strategyData, isGenerating, generati
   const [activeTab, setActiveTab] = useState('audit');
   const [copied, setCopied] = useState(null);
 
+  // Detectar tipo de projeto gerado
+  const generationType = strategyData?.generationType || 'landing_page';
+  const isSite = generationType === 'site_institucional';
+
   if (isGenerating) {
     return (
       <LoadingContainer className="animate-fade-in">
         <FaRobot className="bot-icon spin-bounce" />
-        <h3>O Estrategista está trabalhando...</h3>
+        <h3>{isSite ? 'Criando o Briefing Institucional...' : 'O Estrategista está trabalhando...'}</h3>
         <LogsWrapper>
           {generationLogs && generationLogs.map((log, index) => (
             <LogItem key={index} className="animate-slide-up">
@@ -23,10 +27,10 @@ export default function StrategyDashboard({ strategyData, isGenerating, generati
   }
 
   const tabs = [
-    { id: 'audit', title: 'Auditoria', icon: <FaClipboardList /> },
-    { id: 'problems', title: 'Problemas & Oportunidades', icon: <FaExclamationTriangle /> },
-    { id: 'briefing', title: 'Briefing Estratégico', icon: <FaLightbulb /> },
-    { id: 'lovablePrompt', title: 'Prompt para Lovable', icon: <FaRobot /> }
+    { id: 'audit',         title: isSite ? 'Auditoria de Branding' : 'Auditoria',             icon: <FaClipboardList /> },
+    { id: 'problems',      title: 'Problemas & Oportunidades',                                 icon: <FaExclamationTriangle /> },
+    { id: 'briefing',      title: isSite ? 'Briefing Institucional' : 'Briefing Estratégico', icon: <FaLightbulb /> },
+    { id: 'lovablePrompt', title: 'Prompt para Lovable',                                       icon: <FaRobot /> }
   ];
 
   const handleCopy = (text, id) => {
@@ -118,8 +122,16 @@ ${strategyData.lovablePrompt}
   return (
     <DashboardContainer className="animate-fade-in">
       <Header>
-        <h2>Estratégia e Briefing Concluídos!</h2>
-        <p>Aqui estão os 4 documentos estratégicos gerados pela IA. Use o "Prompt para Lovable" para gerar a página final no Lovable.</p>
+        <ProjectTypeBadge $type={generationType}>
+          {isSite ? '🏢 Site Institucional Premium' : '🎯 Landing Page — Alta Conversão'}
+        </ProjectTypeBadge>
+        <h2>{isSite ? 'Briefing Institucional Concluído!' : 'Estratégia e Briefing Concluídos!'}</h2>
+        <p>
+          {isSite
+            ? 'Aqui estão os 4 documentos do site institucional premium gerados pela IA. Use o "Prompt para Lovable" para gerar o site com motion imersivo nível Awwwards.'
+            : 'Aqui estão os 4 documentos estratégicos gerados pela IA. Use o "Prompt para Lovable" para gerar a página final no Lovable.'
+          }
+        </p>
       </Header>
 
       <TabsContainer>
@@ -434,4 +446,26 @@ const EmptyState = styled.div`
   text-align: center;
   color: #64748b;
   font-style: italic;
+`;
+
+const ProjectTypeBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
+  background: ${({ $type }) =>
+    $type === 'site_institucional'
+      ? 'rgba(6, 182, 212, 0.12)'
+      : 'rgba(139, 92, 246, 0.12)'};
+  border: 1px solid ${({ $type }) =>
+    $type === 'site_institucional'
+      ? 'rgba(6, 182, 212, 0.35)'
+      : 'rgba(139, 92, 246, 0.35)'};
+  color: ${({ $type }) =>
+    $type === 'site_institucional' ? '#22d3ee' : '#a78bfa'};
 `;

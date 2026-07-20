@@ -65,6 +65,36 @@ export const questions = [
         "Profissionais que almoçam fora e necessitam de prato feito de qualidade e rápido",
         "Fãs da culinária típica (italiana, japonesa, brasileira) preparados com ingredientes selecionados",
         "Pessoas que celebram datas especiais em um ambiente diferenciado e intimista"
+      ],
+      revenda: [
+        "Mulheres que adoram moda e buscam peças com estilo a preço justo",
+        "Pessoas que procuram produtos originais com garantia e facilidade de compra",
+        "Clientes fiéis que indicam amigos por causa da confiança e qualidade dos produtos",
+        "Consumidores que valorizam atendimento rápido e entrega no prazo combinado"
+      ],
+      profissional: [
+        "Pessoas físicas que precisam resolver questões jurídicas, fiscais ou financeiras",
+        "Empresários e empreendedores que buscam assessoria estratégica para crescer",
+        "Empresas de pequeno e médio porte que precisam de suporte técnico especializado",
+        "Profissionais liberais que precisam de suporte contábil, jurídico ou de gestão"
+      ],
+      fitness: [
+        "Iniciantes que querem emagrecer e adotar hábitos saudáveis com orientação profissional",
+        "Pessoas que querem ganhar massa muscular e definição com treino personalizado",
+        "Mulheres e homens que buscam saúde, disposição e qualidade de vida a longo prazo",
+        "Atletas amadores que buscam evolução de performance e recuperação adequada"
+      ],
+      educacao: [
+        "Estudantes que buscam aprovação em vestibulares, concursos ou certificações",
+        "Adultos que querem aprender novas habilidades para crescer profissionalmente",
+        "Pais que buscam reforço escolar de qualidade para seus filhos",
+        "Profissionais que querem se especializar ou mudar de área com capacitação adequada"
+      ],
+      tecnico: [
+        "Proprietários de imóveis que precisam de manutenção e reparos rápidos e confiáveis",
+        "Locatários e síndicos que precisam de serviços técnicos com garantia",
+        "Empresas que necessitam de manutenção predial e suporte técnico recorrente",
+        "Pessoas que passaram por mau atendimento anterior e buscam profissional de confiança"
       ]
     }
   },
@@ -129,6 +159,24 @@ export const questions = [
         "Demora excessiva na cozinha que estraga o almoço ou jantar especial",
         "Atendimento confuso, garçons mal treinados e cobranças erradas na conta",
         "Ambiente barulhento, mal climatizado ou com mesas coladas demais umas nas outras"
+      ],
+      fitness: [
+        "Medo de se machucar por falta de acompanhamento profissional adequado",
+        "Começar e desistir em poucas semanas por não ver resultados rápidos",
+        "Academia lotada onde os aparelhos ficam em fila e não tem instrutor disponível",
+        "Treinos genéricos que não respeitam o corpo e o objetivo individual"
+      ],
+      educacao: [
+        "Métodos de ensino ultrapassados que não prendem a atenção e não geram resultados",
+        "Turmas grandes demais onde o aluno se perde sem atenção individualizada",
+        "Professores que explicam bem mas não conseguem adaptar ao ritmo do aluno",
+        "Custo de cursos que não entregam o retorno esperado na prática"
+      ],
+      tecnico: [
+        "Profissionais que somem após o serviço e não dão garantia do trabalho",
+        "Orçamentos superfaturados ou cobranças de serviços que não foram executados",
+        "Demora excessiva para iniciar e concluir o serviço contratado",
+        "Trabalhos mal feitos que precisam ser refeitos em pouco tempo"
       ]
     }
   },
@@ -204,6 +252,36 @@ export const questions = [
         "Preocupação em pegar filas demoradas na porta para conseguir mesa em dias de pico",
         "Dúvida se a porção é individual ou serve bem duas pessoas",
         "Medo de o ambiente não ser adequado para ir com crianças pequenas ou idosos"
+      ],
+      revenda: [
+        "Preocupação de pagar e não receber o produto ou receber algo diferente do anunciado",
+        "Medo do produto ser defeituoso e não conseguir troca ou reembolso",
+        "Insegurança sobre o prazo e a qualidade da entrega do pedido",
+        "Preço parecer caro comparado a outros vendedores que podem não entregar o mesmo"
+      ],
+      profissional: [
+        "Custo elevado do serviço sem garantia de resultado concreto",
+        "Falta de clareza sobre quanto vai custar e qual o prazo para conclusão",
+        "Medo de contratar um profissional sem experiência ou que não entenda o caso",
+        "Desconfiança sobre a seriedade e comprometimento do profissional"
+      ],
+      fitness: [
+        "Histórico de inscrições em academias sem conseguir manter a frequência",
+        "Preocupação com o preço da mensalidade e a dificuldade de cancelamento",
+        "Medo de não ter resultado e se sentir envergonhado ou fora do lugar",
+        "Dúvida se o horário disponível vai encaixar na rotina apertada"
+      ],
+      educacao: [
+        "Preço do curso versus resultado esperado — se realmente vai valer o investimento",
+        "Medo de não ter tempo disponível para acompanhar as aulas e atividades",
+        "Incerteza se o método vai funcionar para o seu perfil de aprendizado",
+        "Desconfiança se o professor ou escola tem credibilidade e resultados reais"
+      ],
+      tecnico: [
+        "Medo de ser cobrado por serviços desnecessários ou valor acima do mercado",
+        "Desconfiança sobre a qualidade e durabilidade do serviço prestado",
+        "Preocupação com o profissional ter acesso à casa sem ser de confiança",
+        "Experiências ruins anteriores com profissionais que não terminaram o serviço"
       ]
     }
   },
@@ -286,6 +364,46 @@ export const questions = [
         "Sobremesas de alta confeitaria preparadas diariamente na casa",
         "Área infantil ampla e segura com monitor para as crianças brincarem",
         "Pratos clássicos servidos com um toque moderno e apresentação impecável"
+      ],
+      revenda: [
+        "Entrega rápida com rastreamento e embalagem segura",
+        "Garantia de troca em até 7 dias sem burocracia",
+        "Parcelamento facilitado em até 12x",
+        "Atendimento personalizado pelo WhatsApp com resposta rápida",
+        "Produtos originais com nota fiscal e garantia do fabricante",
+        "Preço abaixo do mercado por compra direta do fornecedor"
+      ],
+      profissional: [
+        "Atendimento consultivo com escuta ativa e diagnóstico preciso do problema",
+        "Transparência total sobre honorários, prazos e etapas do trabalho",
+        "Experiência comprovada com cases de sucesso reais",
+        "Registro profissional ativo (OAB / CRC / CAU) e ética irrepreensível",
+        "Atualização constante com cursos e especializações recentes",
+        "Suporte contínuo pós-entrega com acompanhamento do caso"
+      ],
+      fitness: [
+        "Treino 100% personalizado com avaliação física e anamnese completa",
+        "Instrutores formados em educação física com certificações atuais",
+        "Ambiente climatizado, equipamentos modernos e limpeza impecável",
+        "Acompanhamento de evolução com fotos e planilhas mensais",
+        "Aula experimental grátis sem compromisso para conhecer o método",
+        "Turmas reduzidas com atenção individual para cada aluno"
+      ],
+      educacao: [
+        "Método próprio com abordagem prática e foco em resultado real",
+        "Turmas pequenas com atenção individualizada para cada aluno",
+        "Material didático exclusivo incluído sem custo adicional",
+        "Professores com formação na área e experiência de mercado",
+        "Acompanhamento do progresso com relatório periódico para o responsável",
+        "Ambiente físico aconchegante e infraestrutura completa"
+      ],
+      tecnico: [
+        "Orçamento gratuito e transparente sem surpresas na hora do pagamento",
+        "Garantia formal por escrito em todos os serviços realizados",
+        "Profissional uniformizado, identificado e com referências verificáveis",
+        "Pontualidade rigorosa com comunicação antecipada de qualquer imprevisto",
+        "Uso de peças e materiais originais com nota fiscal",
+        "Atendimento de emergência com chegada rápida na sua região"
       ]
     }
   },
@@ -343,6 +461,26 @@ export const questions = [
       restaurante: [
         { name: "Italian Bistro", colors: ["#450a0a", "#16a34a", "#fffbeb", "#7f1d1d"] },
         { name: "Sushi Minimal", colors: ["#09090b", "#e11d48", "#fafaf9", "#1c1917"] }
+      ],
+      revenda: [
+        { name: "Fashion Dark", colors: ["#0a0a0a", "#d4af37", "#fafafa", "#1a1a1a"] },
+        { name: "Fresh Commerce", colors: ["#0f172a", "#0ea5e9", "#f8fafc", "#1e293b"] }
+      ],
+      profissional: [
+        { name: "Corporate Navy", colors: ["#0f172a", "#1d4ed8", "#f8fafc", "#1e293b"] },
+        { name: "Law Premium", colors: ["#1c1917", "#92400e", "#fafaf9", "#292524"] }
+      ],
+      fitness: [
+        { name: "Volcano Iron", colors: ["#09090b", "#ea580c", "#fcfcfc", "#171719"] },
+        { name: "Neon Power", colors: ["#000000", "#84cc16", "#f9fafb", "#0a0a0a"] }
+      ],
+      educacao: [
+        { name: "Academic Blue", colors: ["#0f172a", "#2563eb", "#f8fafc", "#1e293b"] },
+        { name: "Warm Learn", colors: ["#1c1917", "#d97706", "#fffbeb", "#292524"] }
+      ],
+      tecnico: [
+        { name: "Steel Tech", colors: ["#18181b", "#3b82f6", "#f8fafc", "#27272a"] },
+        { name: "Heavy Duty", colors: ["#0c0a09", "#f59e0b", "#fafaf9", "#1c1917"] }
       ]
     }
   },
@@ -391,6 +529,31 @@ export const questions = [
         { question: "Preciso agendar horário?", answer: "Sim, trabalhamos exclusivamente com agendamento prévio para garantir atenção total ao seu atendimento." },
         { question: "Quais as formas de pagamento?", answer: "Aceitamos Pix, cartões de débito e crédito. Parcelamos em até 3x sem juros." },
         { question: "Onde vocês ficam localizados?", answer: "Estamos no endereço indicado no rodapé da página. Há estacionamento no local." }
+      ],
+      revenda: [
+        { question: "Vocês fazem entrega?", answer: "Sim! Realizamos entrega em toda a cidade. O prazo e o frete são combinados no pedido pelo WhatsApp." },
+        { question: "Posso trocar se não gostar?", answer: "Sim, aceitamos trocas em até 7 dias corridos após o recebimento, desde que o produto esteja sem uso e com etiqueta." },
+        { question: "Parcelam as compras?", answer: "Parcelamos em até 3x sem juros no cartão de crédito. Pix e débito têm desconto especial." }
+      ],
+      profissional: [
+        { question: "Como funciona a primeira consulta?", answer: "A primeira conversa é gratuita e acontece pelo WhatsApp ou videochamada. Apresento meu trabalho e entendo o seu caso." },
+        { question: "Quanto custa o serviço?", answer: "O valor varia conforme a complexidade do caso. Após a análise inicial, apresento uma proposta detalhada e transparente." },
+        { question: "Qual o prazo para conclusão?", answer: "Depende do tipo de serviço. Na nossa conversa inicial definimos prazos realistas e assinamos um contrato de prestação de serviços." }
+      ],
+      fitness: [
+        { question: "Preciso de experiência prévia?", answer: "Não! Atendemos desde iniciantes absolutos até atletas avançados. O treino é 100% adaptado ao seu nível e objetivo." },
+        { question: "Posso fazer uma aula grátis antes?", answer: "Sim! Oferecemos uma aula experimental completamente gratuita. Basta entrar em contato pelo WhatsApp para agendar." },
+        { question: "Como funciona o cancelamento?", answer: "Trabalhamos com contratos mensais sem fidelidade obrigatória. O cancelamento é feito com 30 dias de antecedência." }
+      ],
+      educacao: [
+        { question: "As aulas são presenciais ou online?", answer: "Oferecemos ambas as modalidades. Você pode escolher a que melhor se adapta à sua rotina." },
+        { question: "Como é o processo de matrícula?", answer: "É simples! Entre em contato pelo WhatsApp, conversamos sobre seus objetivos e agendamos uma visita ou aula experimental." },
+        { question: "Qual o material didático utilizado?", answer: "Utilizamos material próprio desenvolvido especificamente para o nosso método, incluído no valor da mensalidade." }
+      ],
+      tecnico: [
+        { question: "O orçamento tem algum custo?", answer: "Não! O orçamento é completamente gratuito e sem compromisso. Solicite agora pelo WhatsApp." },
+        { question: "Vocês oferecem garantia?", answer: "Sim, todos os nossos serviços têm garantia formal por escrito. O prazo varia conforme o tipo de serviço." },
+        { question: "Atendem aos finais de semana?", answer: "Sim, atendemos de segunda a sábado. Para urgências, temos atendimento emergencial. Consulte disponibilidade." }
       ]
     }
   },
