@@ -52,7 +52,7 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
         
         <GenerateBtn onClick={handleGenerate} disabled={loading}>
           {loading ? <FaSpinner className="spin" /> : <FaMagic />} 
-          {loading ? 'Gerando mensagens...' : 'Gerar Abordagens'}
+          <span>{loading ? 'Gerando mensagens...' : 'Gerar Abordagens'}</span>
         </GenerateBtn>
       </Controls>
 
@@ -65,7 +65,7 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
             </div>
             <p className="message-text">"{messages.anguloDor}"</p>
             <CopyBtn onClick={() => copyToClipboard(messages.anguloDor, 'dor')}>
-              {copiedIndex === 'dor' ? <><FaCheck /> Copiado</> : <><FaCopy /> Copiar</>}
+              {copiedIndex === 'dor' ? <span className="copy-inner"><FaCheck /> Copiado</span> : <span className="copy-inner"><FaCopy /> Copiar</span>}
             </CopyBtn>
           </Card>
 
@@ -76,7 +76,7 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
             </div>
             <p className="message-text">"{messages.anguloResultado}"</p>
             <CopyBtn onClick={() => copyToClipboard(messages.anguloResultado, 'resultado')}>
-              {copiedIndex === 'resultado' ? <><FaCheck /> Copiado</> : <><FaCopy /> Copiar</>}
+              {copiedIndex === 'resultado' ? <span className="copy-inner"><FaCheck /> Copiado</span> : <span className="copy-inner"><FaCopy /> Copiar</span>}
             </CopyBtn>
           </Card>
 
@@ -87,7 +87,7 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
             </div>
             <p className="message-text">"{messages.anguloCuriosidade}"</p>
             <CopyBtn onClick={() => copyToClipboard(messages.anguloCuriosidade, 'curiosidade')}>
-              {copiedIndex === 'curiosidade' ? <><FaCheck /> Copiado</> : <><FaCopy /> Copiar</>}
+              {copiedIndex === 'curiosidade' ? <span className="copy-inner"><FaCheck /> Copiado</span> : <span className="copy-inner"><FaCopy /> Copiar</span>}
             </CopyBtn>
           </Card>
 

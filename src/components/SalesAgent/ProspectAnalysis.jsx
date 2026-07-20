@@ -158,7 +158,7 @@ export default function ProspectAnalysis({ apiKey, freelancerProfile }) {
 
         <AnalyzeBtn onClick={handleAnalyze} disabled={loading}>
           {loading ? <FaSpinner className="spin" /> : <FaSearch />} 
-          {loading ? 'Analisando...' : 'Analisar Prospect'}
+          <span>{loading ? 'Analisando...' : 'Analisar Prospect'}</span>
         </AnalyzeBtn>
       </InputSection>
 

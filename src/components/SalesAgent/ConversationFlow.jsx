@@ -96,7 +96,7 @@ export default function ConversationFlow({ freelancerProfile, apiKey }) {
         
         <GenerateBtn onClick={handleGenerateResponse} disabled={loading || !clientMessage.trim()}>
           {loading ? <FaSpinner className="spin" /> : <FaPaperPlane />}
-          {loading ? 'Gerando...' : 'Gerar Resposta Empática'}
+          <span>{loading ? 'Gerando...' : 'Gerar Resposta Empática'}</span>
         </GenerateBtn>
 
         {aiResponse && (
