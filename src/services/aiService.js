@@ -301,7 +301,8 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
   const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
   const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
   const apiKey = apiKeyParam || import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+  
+  let currentModel = GEMINI_MODEL;
 
   const isJsonResponse = opts.jsonMode === true;
 
@@ -322,6 +323,7 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey}`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -331,6 +333,8 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       if (!response.ok) {
         const errorText = await response.text();
         if (response.status === 503) {
+          // Se o servidor principal falhar, troca para o modelo 1.5-flash mais estável
+          currentModel = "gemini-1.5-flash";
           throw new Error(`Gemini API 503: Model overloaded. Attempt ${attempt}`);
         }
         throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
