@@ -54,7 +54,8 @@ export default function App() {
           timestamp: r.created_at,
           clientInfo: r.client_info,
           data: r.data,
-          images: r.images || []
+          images: r.images || [],
+          customName: r.business_name
         }))
       );
     })();
@@ -132,7 +133,8 @@ export default function App() {
         timestamp: savedRow?.created_at || new Date().toISOString(),
         clientInfo: richClientJson,
         data: dataToSave,
-        images: extractedImages
+        images: extractedImages,
+        customName: savedRow?.business_name || richClientJson?.nomeDoNegocio || null
       };
       setSavedStrategies(prev => [newStrategy, ...prev]);
 
@@ -189,16 +191,18 @@ export default function App() {
     setGenerationLogs([]);
   };
 
-  const renameStrategy = (e, id, currentName) => {
+  const renameStrategy = async (e, id, currentName) => {
     e.stopPropagation();
     const newName = window.prompt('Digite o novo nome para esta estratégia:', currentName);
     if (newName && newName.trim() !== '') {
+      const trimmedName = newName.trim();
+      
       setSavedStrategies(prev => {
         const updated = prev.map(s => {
           if (s.id === id) {
             return {
               ...s,
-              customName: newName.trim()
+              customName: trimmedName
             };
           }
           return s;
@@ -206,6 +210,17 @@ export default function App() {
         localStorage.setItem('instapage_history', JSON.stringify(updated));
         return updated;
       });
+
+      if (session?.user) {
+        const { error } = await supabase
+          .from('strategies')
+          .update({ business_name: trimmedName })
+          .eq('id', id);
+        if (error) {
+          console.error('Erro ao atualizar nome no servidor:', error);
+          alert('Erro ao sincronizar nome com o servidor: ' + error.message);
+        }
+      }
     }
   };
 
