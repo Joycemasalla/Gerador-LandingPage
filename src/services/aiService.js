@@ -1,7 +1,7 @@
 import { buildLovablePrompt } from '../utils/promptBuilder';
 
-const GEMINI_MODEL = "gemini-2.0-flash";
-const GEMINI_FALLBACK_MODEL = "gemini-2.0-flash-lite";
+const GEMINI_MODEL = "gemini-3.5-flash";
+const GEMINI_FALLBACK_MODEL = "gemini-2-flash";
 
 const ANALYZE_PROMPT = `Você é um especialista em pesquisa de negócios locais, análise de concorrência e extração de perfis do Instagram com foco em CRO (Otimização de Conversão).
 Sua missão é analisar TODAS as informações disponíveis sobre o perfil do Instagram fornecido abaixo (incluindo dados de scrape reais que você recebeu) e estruturá-las em um JSON rico e preciso de 10 blocos.
@@ -368,8 +368,13 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       if (attempt === retries) throw err;
       let delayMs = attempt * 2000;
       if (err.message.includes("429")) {
-        console.warn(`[callGemini] Limite de cota atingido (429). Aguardando 65 segundos antes de tentar novamente...`);
-        delayMs = 65000;
+        console.warn(`[callGemini] Limite de cota atingido (429) no modelo ${currentModel}. Mudando para o fallback model...`);
+        if (currentModel !== GEMINI_FALLBACK_MODEL) {
+          currentModel = GEMINI_FALLBACK_MODEL;
+          delayMs = 2000; // Tenta rapidamente com o novo modelo
+        } else {
+          delayMs = 65000;
+        }
       } else {
         console.warn(`[callGemini] Falha na tentativa ${attempt}. Retentando em ${delayMs/1000}s... Detalhes: ${err.message}`);
       }
