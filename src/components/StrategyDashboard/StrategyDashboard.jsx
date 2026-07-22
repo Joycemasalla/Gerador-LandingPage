@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaCopy, FaDownload, FaCheck, FaClipboardList, FaExclamationTriangle, FaLightbulb, FaRobot, FaImages } from 'react-icons/fa';
+import { safeCopyToClipboard } from '../../utils/clipboard';
 
 export default function StrategyDashboard({ strategyData, isGenerating, generationLogs, images = [] }) {
   const [activeTab, setActiveTab] = useState('audit');
@@ -33,10 +34,12 @@ export default function StrategyDashboard({ strategyData, isGenerating, generati
     { id: 'lovablePrompt', title: 'Prompt para Lovable',                                       icon: <FaRobot /> }
   ];
 
-  const handleCopy = (text, id) => {
-    navigator.clipboard.writeText(text);
-    setCopied(id);
-    setTimeout(() => setCopied(null), 2000);
+  const handleCopy = async (text, id) => {
+    const success = await safeCopyToClipboard(text);
+    if (success) {
+      setCopied(id);
+      setTimeout(() => setCopied(null), 2000);
+    }
   };
 
   const handleDownload = (text, filename) => {

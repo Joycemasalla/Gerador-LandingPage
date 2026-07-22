@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaCopy, FaCheck, FaMagic, FaSpinner, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { generateApproachMessages } from '../../services/aiService';
+import { safeCopyToClipboard } from '../../utils/clipboard';
 
 export default function ApproachGenerator({ prospectData, freelancerProfile, apiKey, onAddLead }) {
   const [loading, setLoading] = useState(false);
@@ -27,10 +28,12 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
     }
   };
 
-  const copyToClipboard = (text, index) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
+  const copyToClipboard = async (text, index) => {
+    const success = await safeCopyToClipboard(text);
+    if (success) {
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    }
   };
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { FaSearch, FaBook, FaCopy, FaCheck } from 'react-icons/fa';
+import { safeCopyToClipboard } from '../../utils/clipboard';
 
 const LIBRARY_DATA = [
   {
@@ -65,10 +66,12 @@ export default function SituationsLibrary() {
     }).filter(category => category.situations.length > 0);
   }, [searchTerm]);
 
-  const handleCopy = (script) => {
-    navigator.clipboard.writeText(script);
-    setCopiedScript(script);
-    setTimeout(() => setCopiedScript(null), 2000);
+  const handleCopy = async (script) => {
+    const success = await safeCopyToClipboard(script);
+    if (success) {
+      setCopiedScript(script);
+      setTimeout(() => setCopiedScript(null), 2000);
+    }
   };
 
   return (
