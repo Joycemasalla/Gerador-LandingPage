@@ -109,7 +109,15 @@ ${strategyData.lovablePrompt}
             <FaDownload /> Baixar Tudo
           </PrimaryActionBtn>
           <ActionBtn onClick={() => handleCopy(content, activeTab)}>
-            {copied === activeTab ? <><FaCheck /> Copiado!</> : <><FaCopy /> Copiar Aba</>}
+            {copied === activeTab ? (
+              <span key="copied" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <FaCheck /> Copiado!
+              </span>
+            ) : (
+              <span key="copy" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <FaCopy /> Copiar Aba
+              </span>
+            )}
           </ActionBtn>
           <ActionBtn onClick={() => handleDownload(content, `${activeTab}.md`)}>
             <FaDownload /> Baixar Aba

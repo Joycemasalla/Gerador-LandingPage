@@ -105,7 +105,15 @@ export default function SituationsLibrary() {
                     <h5>{sit.title}</h5>
                     <p>"{sit.script}"</p>
                     <CopyBtn onClick={() => handleCopy(sit.script)}>
-                      {copiedScript === sit.script ? <><FaCheck/> Copiado</> : <><FaCopy/> Copiar</>}
+                      {copiedScript === sit.script ? (
+                        <span key="copied" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <FaCheck /> Copiado
+                        </span>
+                      ) : (
+                        <span key="copy" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <FaCopy /> Copiar
+                        </span>
+                      )}
                     </CopyBtn>
                   </ScriptCard>
                 ))}

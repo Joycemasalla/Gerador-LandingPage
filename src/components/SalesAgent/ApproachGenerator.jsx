@@ -68,7 +68,11 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
             </div>
             <p className="message-text">"{messages.anguloDor}"</p>
             <CopyBtn onClick={() => copyToClipboard(messages.anguloDor, 'dor')}>
-              {copiedIndex === 'dor' ? <span className="copy-inner"><FaCheck /> Copiado</span> : <span className="copy-inner"><FaCopy /> Copiar</span>}
+              {copiedIndex === 'dor' ? (
+                <span key="copied" className="copy-inner"><FaCheck /> Copiado</span>
+              ) : (
+                <span key="copy" className="copy-inner"><FaCopy /> Copiar</span>
+              )}
             </CopyBtn>
           </Card>
 
@@ -79,7 +83,11 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
             </div>
             <p className="message-text">"{messages.anguloResultado}"</p>
             <CopyBtn onClick={() => copyToClipboard(messages.anguloResultado, 'resultado')}>
-              {copiedIndex === 'resultado' ? <span className="copy-inner"><FaCheck /> Copiado</span> : <span className="copy-inner"><FaCopy /> Copiar</span>}
+              {copiedIndex === 'resultado' ? (
+                <span key="copied" className="copy-inner"><FaCheck /> Copiado</span>
+              ) : (
+                <span key="copy" className="copy-inner"><FaCopy /> Copiar</span>
+              )}
             </CopyBtn>
           </Card>
 
@@ -90,7 +98,11 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
             </div>
             <p className="message-text">"{messages.anguloCuriosidade}"</p>
             <CopyBtn onClick={() => copyToClipboard(messages.anguloCuriosidade, 'curiosidade')}>
-              {copiedIndex === 'curiosidade' ? <span className="copy-inner"><FaCheck /> Copiado</span> : <span className="copy-inner"><FaCopy /> Copiar</span>}
+              {copiedIndex === 'curiosidade' ? (
+                <span key="copied" className="copy-inner"><FaCheck /> Copiado</span>
+              ) : (
+                <span key="copy" className="copy-inner"><FaCopy /> Copiar</span>
+              )}
             </CopyBtn>
           </Card>
 
@@ -105,21 +117,33 @@ export default function ApproachGenerator({ prospectData, freelancerProfile, api
                   <strong>Dia 1:</strong>
                   <p>"{messages.followUp.dia1}"</p>
                   <CopyBtn onClick={() => copyToClipboard(messages.followUp.dia1, 'dia1')}>
-                    {copiedIndex === 'dia1' ? <FaCheck /> : <FaCopy />}
+                    {copiedIndex === 'dia1' ? (
+                      <span key="copied" style={{ display: 'inline-flex' }}><FaCheck /></span>
+                    ) : (
+                      <span key="copy" style={{ display: 'inline-flex' }}><FaCopy /></span>
+                    )}
                   </CopyBtn>
                 </div>
                 <div className="followup-item">
                   <strong>Dia 3:</strong>
                   <p>"{messages.followUp.dia3}"</p>
                   <CopyBtn onClick={() => copyToClipboard(messages.followUp.dia3, 'dia3')}>
-                    {copiedIndex === 'dia3' ? <FaCheck /> : <FaCopy />}
+                    {copiedIndex === 'dia3' ? (
+                      <span key="copied" style={{ display: 'inline-flex' }}><FaCheck /></span>
+                    ) : (
+                      <span key="copy" style={{ display: 'inline-flex' }}><FaCopy /></span>
+                    )}
                   </CopyBtn>
                 </div>
                 <div className="followup-item">
                   <strong>Dia 7:</strong>
                   <p>"{messages.followUp.dia7}"</p>
                   <CopyBtn onClick={() => copyToClipboard(messages.followUp.dia7, 'dia7')}>
-                    {copiedIndex === 'dia7' ? <FaCheck /> : <FaCopy />}
+                    {copiedIndex === 'dia7' ? (
+                      <span key="copied" style={{ display: 'inline-flex' }}><FaCheck /></span>
+                    ) : (
+                      <span key="copy" style={{ display: 'inline-flex' }}><FaCopy /></span>
+                    )}
                   </CopyBtn>
                 </div>
               </div>
