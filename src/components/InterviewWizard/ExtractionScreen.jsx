@@ -128,7 +128,7 @@ export default function ExtractionScreen({ handle, onFinishLogs, isExtractionDon
       </SpinnerSection>
 
       <ProgressWrapper>
-        <ProgressBar $width={progress} $hasError={hasError} />
+        <ProgressBar style={{ width: `${progress}%` }} $hasError={hasError} />
         <ProgressText>{progress}%</ProgressText>
       </ProgressWrapper>
 
@@ -249,7 +249,6 @@ const ProgressWrapper = styled.div`
 `;
 
 const ProgressBar = styled.div`
-  width: ${props => props.$width}%;
   height: 100%;
   background: ${props => props.$hasError 
     ? 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)' 

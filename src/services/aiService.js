@@ -1,7 +1,7 @@
 import { buildLovablePrompt } from '../utils/promptBuilder';
 
-const GEMINI_MODEL = "gemini-3.5-flash";
-const GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite";
+const GEMINI_MODEL = "gemini-1.5-flash";
+const GEMINI_FALLBACK_MODEL = "gemini-1.5-pro";
 
 const ANALYZE_PROMPT = `Você é um especialista em pesquisa de negócios locais, análise de concorrência e extração de perfis do Instagram com foco em CRO (Otimização de Conversão).
 Sua missão é analisar TODAS as informações disponíveis sobre o perfil do Instagram fornecido abaixo (incluindo dados de scrape reais que você recebeu) e estruturá-las em um JSON rico e preciso de 10 blocos.
@@ -395,6 +395,14 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       // Verifica cancelamento intencional da UI
       if (opts.signal && opts.signal.aborted) {
         throw err;
+      }
+
+      // Rotacionar para o modelo de fallback se ocorrer timeout ou falha de conexão de rede
+      if (err.message.includes("Timeout") || err.message.includes("fetch") || err.message.includes("network")) {
+        if (currentModel !== GEMINI_FALLBACK_MODEL) {
+          console.warn(`[callGemini] Falha de conexão/Timeout no modelo ${currentModel}. Alternando para o fallback ${GEMINI_FALLBACK_MODEL}.`);
+          currentModel = GEMINI_FALLBACK_MODEL;
+        }
       }
 
       // Se for Client Error (ex: 404) ou se esgotaram as tentativas
