@@ -1,6 +1,7 @@
 import { buildLovablePrompt } from '../utils/promptBuilder';
 
-const GEMINI_MODEL = "gemini-2.0-flash";
+const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_FALLBACK_MODEL = "gemini-2.0-flash";
 
 const ANALYZE_PROMPT = `Você é um especialista em pesquisa de negócios locais, análise de concorrência e extração de perfis do Instagram com foco em CRO (Otimização de Conversão).
 Sua missão é analisar TODAS as informações disponíveis sobre o perfil do Instagram fornecido abaixo (incluindo dados de scrape reais que você recebeu) e estruturá-las em um JSON rico e preciso de 10 blocos.
@@ -333,8 +334,8 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       if (!response.ok) {
         const errorText = await response.text();
         if (response.status === 503) {
-          // Se o servidor principal falhar, troca para o modelo gemini-1.5-flash como fallback seguro
-          currentModel = "gemini-1.5-flash";
+          // Se o servidor principal falhar, troca para o modelo fallback como seguro
+          currentModel = GEMINI_FALLBACK_MODEL;
           throw new Error(`Gemini API 503: Model overloaded. Attempt ${attempt}`);
         }
         throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
