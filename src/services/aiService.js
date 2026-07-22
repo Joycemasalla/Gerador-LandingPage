@@ -1,7 +1,7 @@
 import { buildLovablePrompt } from '../utils/promptBuilder';
 
 const GEMINI_MODEL = "gemini-3.5-flash";
-const GEMINI_FALLBACK_MODEL = "gemini-1.5-flash";
+const GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite";
 
 const ANALYZE_PROMPT = `Você é um especialista em pesquisa de negócios locais, análise de concorrência e extração de perfis do Instagram com foco em CRO (Otimização de Conversão).
 Sua missão é analisar TODAS as informações disponíveis sobre o perfil do Instagram fornecido abaixo (incluindo dados de scrape reais que você recebeu) e estruturá-las em um JSON rico e preciso de 10 blocos.
@@ -303,11 +303,14 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
   const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
   const apiKey = apiKeyParam || import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
   
+  if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada.");
+  
   let currentModel = GEMINI_MODEL;
-
   const isJsonResponse = opts.jsonMode === true;
+  const timeoutMs = opts.timeoutMs || 45000; // 45s timeout padrão 
 
-  const body = {
+  // Preparar payload apenas uma vez
+  const body = JSON.stringify({
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     generationConfig: {
       temperature: 0.7,
@@ -320,25 +323,49 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
       { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
     ]
-  };
+  });
 
   for (let attempt = 1; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(new Error("Timeout de conexão excedido.")), timeoutMs);
+    
+    let abortListener;
+    if (opts.signal) {
+      if (opts.signal.aborted) throw new DOMException("Aborted", "AbortError");
+      abortListener = () => controller.abort(opts.signal.reason);
+      opts.signal.addEventListener("abort", abortListener);
+    }
+
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey}`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body,
+        signal: controller.signal
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        if (response.status === 503) {
-          // Se o servidor principal falhar, troca para o modelo fallback como seguro
-          currentModel = GEMINI_FALLBACK_MODEL;
-          throw new Error(`Gemini API 503: Model overloaded. Attempt ${attempt}`);
+        const status = response.status;
+        
+        // 1. Client Errors (400, 401, 403, 404): Erros fatais, sem retry
+        if (status >= 400 && status < 500 && status !== 408 && status !== 429) {
+          const err = new Error(`Gemini Client Error: ${status} - ${errorText}`);
+          err.isClientError = true;
+          throw err;
         }
-        throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
+
+        // 2. Server Errors & Rate Limits (502, 503, 429): Fallback de modelo inteligente
+        if (status === 503 || status === 429 || status === 502) {
+          if (currentModel !== GEMINI_FALLBACK_MODEL) {
+            console.warn(`[callGemini] Gargalo no modelo ${currentModel} (Status ${status}). Ativando fallback.`);
+            currentModel = GEMINI_FALLBACK_MODEL;
+          }
+        }
+
+        // 3. Demais erros temporários (500, 504, 408): Lança para ser pego pelo retry catch
+        throw new Error(`Gemini API Error: ${status} - ${errorText}`);
       }
 
       const data = await response.json();
@@ -353,32 +380,45 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
         try {
           return JSON.parse(text);
         } catch (e) {
-          // Fallback parsing case
           try {
             return parseJsonFromAI(text);
           } catch(err2) {
-            console.error("Falha ao fazer o parse do JSON da Gemini:", text);
-            throw new Error("A IA não retornou um JSON válido.");
+            const err = new Error("A IA não retornou um JSON válido.");
+            err.isClientError = true; // Erro lógico irrecuperável por retry
+            throw err;
           }
         }
       }
-      
       return text;
+
     } catch (err) {
-      if (attempt === retries) throw err;
-      let delayMs = attempt * 2000;
-      if (err.message.includes("429")) {
-        console.warn(`[callGemini] Limite de cota atingido (429) no modelo ${currentModel}. Mudando para o fallback model...`);
-        if (currentModel !== GEMINI_FALLBACK_MODEL) {
-          currentModel = GEMINI_FALLBACK_MODEL;
-          delayMs = 2000; // Tenta rapidamente com o novo modelo
-        } else {
-          delayMs = 65000;
-        }
-      } else {
-        console.warn(`[callGemini] Falha na tentativa ${attempt}. Retentando em ${delayMs/1000}s... Detalhes: ${err.message}`);
+      // Verifica cancelamento intencional da UI
+      if (opts.signal && opts.signal.aborted) {
+        throw err;
       }
+
+      // Se for Client Error (ex: 404) ou se esgotaram as tentativas
+      if (err.isClientError || attempt === retries) {
+        throw err;
+      }
+
+      // Exponential Backoff + Jitter (Evita Thundering Herd Effect)
+      const baseDelay = 1000; 
+      let delayMs = baseDelay * Math.pow(2, attempt - 1) + Math.random() * 500;
+      
+      // Penalidade de cooldown longo apenas se o fallback também estourar Rate Limit
+      if (err.message.includes("429") && currentModel === GEMINI_FALLBACK_MODEL) {
+        delayMs = 60000;
+      }
+      
+      console.warn(`[callGemini] Falha tentativa ${attempt} (${err.message}). Retentando em ${(delayMs/1000).toFixed(1)}s...`);
       await new Promise(r => setTimeout(r, delayMs));
+      
+    } finally {
+      clearTimeout(timeoutId);
+      if (opts.signal && abortListener) {
+        opts.signal.removeEventListener("abort", abortListener);
+      }
     }
   }
 }
