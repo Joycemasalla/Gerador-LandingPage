@@ -31,6 +31,7 @@ export default function App() {
   const [generatedData, setGeneratedData] = useState(null);
   const [images, setImages] = useState([]);
   const [customApiKey, setCustomApiKey] = useState('');
+  const [apifyApiKey, setApifyApiKey] = useState('');
   const [showConfig, setShowConfig] = useState(false);
   const [savedStrategies, setSavedStrategies] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -330,6 +331,15 @@ export default function App() {
                 onChange={(e) => setCustomApiKey(e.target.value)}
               />
             </div>
+            <div className="input-group">
+              <label>Apify API Token (Opcional - para extração de Instagram)</label>
+              <input 
+                type="password" 
+                placeholder="Insira sua chave apify_api_..." 
+                value={apifyApiKey}
+                onChange={(e) => setApifyApiKey(e.target.value)}
+              />
+            </div>
             <button className="close-btn" onClick={() => setShowConfig(false)}>Salvar e Fechar</button>
           </div>
         </ConfigPanel>
@@ -383,7 +393,7 @@ export default function App() {
             images={images}
           />
         ) : (
-          <InterviewWizard customApiKey={customApiKey} onComplete={handleGenerate} />
+          <InterviewWizard customApiKey={customApiKey} apifyApiKey={apifyApiKey} onComplete={handleGenerate} />
         )}
       </ContentArea>
     </DashboardLayout>

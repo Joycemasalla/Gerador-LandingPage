@@ -87,7 +87,7 @@ const EMPTY_RICH_JSON = {
   }
 };
 
-export default function InterviewWizard({ customApiKey, onComplete }) {
+export default function InterviewWizard({ customApiKey, apifyApiKey, onComplete }) {
   const [step, setStep] = useState('type_selection'); // idle | type_selection | extracting | category | interviewing | reviewing | generating
   const [generationType, setGenerationType] = useState('landing_page'); // 'landing_page' | 'site_institucional'
   const [instaHandle, setInstaHandle] = useState('');
@@ -122,7 +122,7 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
     setStep('extracting');
 
     try {
-      const data = await analyzeInstagramProfile(instaHandle, customApiKey);
+      const data = await analyzeInstagramProfile(instaHandle, customApiKey, apifyApiKey);
       
       // Sanitizar JSON extraído garantindo todos os campos da especificação
       const sanitized = {
@@ -154,7 +154,7 @@ export default function InterviewWizard({ customApiKey, onComplete }) {
   // Callback de término de animação da extração
   const handleFinishExtractionLogs = () => {
     // Tentar detectar a categoria via segmento do Instagram
-    const segmentName = sanitizedData?.identity?.segment || extractedData?.identity?.segment || '';
+    const segmentName = extractedData?.identity?.segment || '';
     const detected = detectCategoryFromSegment(segmentName) || 
                      (normalizeCategory(segmentName) ? BUSINESS_CATEGORIES.find(c => c.id === normalizeCategory(segmentName)) : null);
     setDetectedCategory(detected || null);

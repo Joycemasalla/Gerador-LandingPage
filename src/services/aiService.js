@@ -1,6 +1,6 @@
 import { buildLovablePrompt } from '../utils/promptBuilder';
 
-const GEMINI_MODEL = "gemini-3.5-flash";
+const GEMINI_MODEL = "gemini-2.0-flash";
 
 const ANALYZE_PROMPT = `Você é um especialista em pesquisa de negócios locais, análise de concorrência e extração de perfis do Instagram com foco em CRO (Otimização de Conversão).
 Sua missão é analisar TODAS as informações disponíveis sobre o perfil do Instagram fornecido abaixo (incluindo dados de scrape reais que você recebeu) e estruturá-las em um JSON rico e preciso de 10 blocos.
@@ -333,8 +333,8 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       if (!response.ok) {
         const errorText = await response.text();
         if (response.status === 503) {
-          // Se o servidor principal falhar, troca para o modelo gemini-flash-latest como fallback seguro
-          currentModel = "gemini-flash-latest";
+          // Se o servidor principal falhar, troca para o modelo gemini-1.5-flash como fallback seguro
+          currentModel = "gemini-1.5-flash";
           throw new Error(`Gemini API 503: Model overloaded. Attempt ${attempt}`);
         }
         throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
@@ -377,8 +377,8 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
   }
 }
 
-export async function apifyScrapeProfile(username) {
-  const token = import.meta.env.VITE_APIFY_API_TOKEN;
+export async function apifyScrapeProfile(username, _customApifyKey = '') {
+  const token = _customApifyKey || import.meta.env.VITE_APIFY_API_TOKEN;
   if (!token) throw new Error("VITE_APIFY_API_TOKEN não configurada no .env");
 
   // Inicia o processo de extração (run)
@@ -425,10 +425,10 @@ export function normalizeHandle(raw) {
 /**
  * Analisa um perfil do Instagram via Apify + Gemini e retorna JSON rico.
  */
-export async function analyzeInstagramProfile(instagramHandle, _customApiKey = '') {
+export async function analyzeInstagramProfile(instagramHandle, _customApiKey = '', _customApifyKey = '') {
     const p1 = import.meta.env.VITE_GEMINI_API_KEY_P1 || "";
     const p2 = import.meta.env.VITE_GEMINI_API_KEY_P2 || "";
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
+    const apiKey = _customApiKey || import.meta.env.VITE_GEMINI_API_KEY || (p1 && p2 ? p1 + p2 : undefined);
     if (!apiKey) throw new Error("VITE_GEMINI_API_KEY não configurada. (Crie a variável no .env)");
 
     const handle = normalizeHandle(instagramHandle);
@@ -437,7 +437,7 @@ export async function analyzeInstagramProfile(instagramHandle, _customApiKey = '
     let scrapedText = "";
     let extractedImages = [];
     try {
-      const apifyData = await apifyScrapeProfile(clean);
+      const apifyData = await apifyScrapeProfile(clean, _customApifyKey);
       
       scrapedText = `
         Nome: ${apifyData.fullName || ""}
