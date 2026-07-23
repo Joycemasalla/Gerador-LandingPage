@@ -33,8 +33,35 @@ export default function App() {
   const [customApiKey, setCustomApiKey] = useState('');
   const [apifyApiKey, setApifyApiKey] = useState('');
   const [showConfig, setShowConfig] = useState(false);
+  const [maxRequests, setMaxRequests] = useState(20);
   const [savedStrategies, setSavedStrategies] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [usageStats, setUsageStats] = useState({ requests: 0, totalTokens: 0, limitReached: false });
+
+  useEffect(() => {
+    const fetchUsage = () => {
+      const date = new Date().toISOString().split('T')[0];
+      const key = `gemini_usage_${date}`;
+      const currentStr = localStorage.getItem(key);
+      if (currentStr) {
+        setUsageStats(JSON.parse(currentStr));
+      }
+      
+      const storedMax = localStorage.getItem('gemini_max_requests');
+      if (storedMax) {
+        setMaxRequests(parseInt(storedMax, 10));
+      }
+    };
+    fetchUsage();
+    window.addEventListener('gemini_usage_updated', fetchUsage);
+    return () => window.removeEventListener('gemini_usage_updated', fetchUsage);
+  }, []);
+
+  const handleMaxRequestsChange = (e) => {
+    const val = parseInt(e.target.value, 10) || 20;
+    setMaxRequests(val);
+    localStorage.setItem('gemini_max_requests', val);
+  };
 
   // Carregar histórico do servidor sempre que houver sessão
   useEffect(() => {
@@ -308,6 +335,18 @@ export default function App() {
               <FaChevronLeft /> Criar Nova LP
             </NewLpBtn>
           )}
+          
+          <UsageBadge 
+            title={usageStats.limitReached ? 'A API bloqueou novas requisições hoje (Limite Excedido)' : `Requisições hoje: ${usageStats.requests}/${maxRequests} | Tokens: ${usageStats.totalTokens}`}
+            $isWarning={usageStats.requests >= maxRequests * 0.8 && !usageStats.limitReached}
+            $isDanger={usageStats.limitReached || usageStats.requests >= maxRequests}
+          >
+            <span className="dot"></span>
+            {usageStats.limitReached ? 'LIMITE ESGOTADO' : `${usageStats.requests}/${maxRequests} Req`} 
+            <span className="divider">|</span> 
+            {(usageStats.totalTokens / 1000).toFixed(1)}k tks
+          </UsageBadge>
+
           <ConfigToggleBtn onClick={() => setShowConfig(!showConfig)}>
             <FaKey /> Configurações de API
           </ConfigToggleBtn>
@@ -344,6 +383,16 @@ export default function App() {
                 placeholder="Insira sua chave AIzaSy... (ou 'mock' para teste)" 
                 value={customApiKey}
                 onChange={(e) => setCustomApiKey(e.target.value)}
+              />
+            </div>
+            <div className="input-group" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label style={{ marginBottom: 0 }}>Limite de Requisições por Dia (RPD)</label>
+              <input 
+                type="number" 
+                value={maxRequests}
+                onChange={handleMaxRequestsChange}
+                style={{ width: '80px', textAlign: 'center' }}
+                title="Para o modelo Gemini Flash gratuito, o padrão é 20."
               />
             </div>
             <div className="input-group">
@@ -516,6 +565,40 @@ const HistoryBtn = styled.button`
     background: rgba(59, 130, 246, 0.2);
     border-color: #3b82f6;
     color: white;
+  }
+`;
+
+const UsageBadge = styled.div`
+  background: ${props => props.$isDanger ? 'rgba(239, 68, 68, 0.15)' : props.$isWarning ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)'};
+  border: 1px solid ${props => props.$isDanger ? 'rgba(239, 68, 68, 0.3)' : props.$isWarning ? 'rgba(245, 158, 11, 0.3)' : 'rgba(16, 185, 129, 0.3)'};
+  color: ${props => props.$isDanger ? '#fca5a5' : props.$isWarning ? '#fcd34d' : '#6ee7b7'};
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: default;
+  white-space: nowrap;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+    animation: pulse 2s infinite;
+  }
+
+  .divider {
+    opacity: 0.3;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
   }
 `;
 

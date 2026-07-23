@@ -358,6 +358,18 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
 
         // 2. Server Errors & Rate Limits (502, 503, 429): Fallback de modelo inteligente
         if (status === 503 || status === 429 || status === 502) {
+          if (status === 429) {
+            try {
+              const date = new Date().toISOString().split('T')[0];
+              const key = `gemini_usage_${date}`;
+              const currentStr = localStorage.getItem(key);
+              const current = currentStr ? JSON.parse(currentStr) : { requests: 0, promptTokens: 0, candidatesTokens: 0, totalTokens: 0, limitReached: false };
+              current.limitReached = true;
+              localStorage.setItem(key, JSON.stringify(current));
+              window.dispatchEvent(new Event('gemini_usage_updated'));
+            } catch (e) {}
+          }
+          
           if (currentModel !== GEMINI_FALLBACK_MODEL) {
             console.warn(`[callGemini] Gargalo no modelo ${currentModel} (Status ${status}). Ativando fallback.`);
             currentModel = GEMINI_FALLBACK_MODEL;
@@ -369,6 +381,23 @@ export async function callGemini(apiKeyParam, prompt, opts = {}, retries = 3) {
       }
 
       const data = await response.json();
+      
+      if (data.usageMetadata) {
+        try {
+          const date = new Date().toISOString().split('T')[0];
+          const key = `gemini_usage_${date}`;
+          const currentStr = localStorage.getItem(key);
+          const current = currentStr ? JSON.parse(currentStr) : { requests: 0, promptTokens: 0, candidatesTokens: 0, totalTokens: 0, limitReached: false };
+          current.requests += 1;
+          current.promptTokens += data.usageMetadata.promptTokenCount || 0;
+          current.candidatesTokens += data.usageMetadata.candidatesTokenCount || 0;
+          current.totalTokens += data.usageMetadata.totalTokenCount || 0;
+          localStorage.setItem(key, JSON.stringify(current));
+          window.dispatchEvent(new Event('gemini_usage_updated'));
+        } catch (e) {
+          console.warn('Erro ao salvar tracking de tokens', e);
+        }
+      }
       
       if (!data.candidates || data.candidates.length === 0) {
         throw new Error('A API do Gemini retornou uma resposta vazia.');
